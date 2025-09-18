@@ -11,8 +11,8 @@ s3 = boto3.client(
 BUCKET_NAME = os.environ.get("pynsight")
 
 def upload_to_s3(file_path, key):
-    s3.upload_file(file_path, pynsight, key)
-    url = f"https://{pynsight}.s3.{os.environ.get('AWS_REGION')}.amazonaws.com/{key}"
+    s3.upload_file(file_path, BUCKET_NAME, key)
+    url = f"https://{BUCKET_NAME}.s3.{os.environ.get('AWS_REGION')}.amazonaws.com/{key}"
     return url
 
 
