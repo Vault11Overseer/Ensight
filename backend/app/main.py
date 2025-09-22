@@ -1,10 +1,13 @@
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from .security import verify_token
-from app.auth_router import router as auth_router
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from .auth_router import router as auth_router
+from .image_router import router as image_router
+from .database import init_db
+from dotenv import load_dotenv
 
-app = FastAPI()
+load_dotenv()
+
+app = FastAPI(title="Ensight")
 
 origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
@@ -17,18 +20,16 @@ app.add_middleware(
 )
 
 app.include_router(auth_router, prefix="/auth")
+app.include_router(image_router)
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+@app.on_event("startup")
+async def startup():
+    await init_db()
 
-app = FastAPI()
-app.include_router(auth_router, prefix="/auth")
+@app.get("/")
+async def root():
+    return {"message": "Backend is running"}
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    payload = verify_token(token)
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    return payload["sub"]
-
-@app.get("/protected")
-def protected_route(current_user: str = Depends(get_current_user)):
-    return {"msg": f"Hello {current_user}, this is protected data."}
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)

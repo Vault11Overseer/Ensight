@@ -1,54 +1,56 @@
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from .security import hash_password, verify_password, verify_token, create_access_token, create_refresh_token
-from datetime import timedelta
+from sqlalchemy.ext.asyncio import AsyncSession
+from .database import get_db
+from .models import User
+from .schemas import UserCreate, UserOut
+from .security import hash_password, verify_password, create_access_token
+from fastapi.security import OAuth2PasswordBearer
 
-router = APIRouter()
+router = APIRouter(tags=["auth"])
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-# temporary in-memory "DB"
-fake_users = {}
+# Register
+@router.post("/register", response_model=UserOut)
+async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        f"SELECT * FROM users WHERE email = :email",
+        {"email": user.email}
+    )
+    existing = result.fetchone()
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
 
-class UserRegister(BaseModel):
-    email: str
-    password: str
+    new_user = User(email=user.email, hashed_password=hash_password(user.password))
+    db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)
+    return new_user
 
-@router.post("/register")
-def register(user: UserRegister):
-    if user.email in fake_users:
-        raise HTTPException(status_code=400, detail="User already exists")
-    hashed = hash_password(user.password)
-    fake_users[user.email] = {"email": user.email, "password": hashed}
-    return {"msg": "User registered"}
-
-
-
-class UserLogin(BaseModel):
-    email: str
-    password: str
-
+# Login
 @router.post("/login")
-def login(user: UserLogin):
-    db_user = fake_users.get(user.email)
-    if not db_user or not verify_password(user.password, db_user["password"]):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+async def login(user: LoginIn, db: AsyncSession = Depends(get_db)):
+    try:
+        result = await db.execute(
+        f"SELECT * FROM users WHERE email = :email",
+        {"email": user.email}
+        )
+        db_user = result.fetchone()
+        if not db_user or not verify_password(user.password, db_user.hashed_password):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+            token = create_access_token({"sub": str(db_user.id)})
+            return {"access_token": token, "token_type": "bearer"}
+            return {"access_token": "token"}
+    except Exception as e:
+        print("Login error:", e)
+        raise HTTPException(status_code=400, detail=str(e))
 
-    access_token_expires = timedelta(minutes=15)
-    access_token = create_access_token({"sub": user.email}, access_token_expires)
-    refresh_token = create_refresh_token({"sub": user.email})
+    
 
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer"
-    }
-    
-    
-    
-#REFRESH ENDPOINT    
-@router.post("/refresh")
-def refresh_token(refresh_token: str):
-    payload = verify_token(refresh_token, scope="refresh_token")
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
-    new_access = create_access_token({"sub": payload["sub"]})
-    return {"access_token": new_access, "token_type": "bearer"}
+# Dependency to get current user
+from fastapi import Request
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    from .security import decode_access_token
+    payload = decode_access_token(token)
+    user_id = int(payload.get("sub"))
+    return {"id": user_id}

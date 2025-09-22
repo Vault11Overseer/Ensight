@@ -1,18 +1,45 @@
+import React, { useState, useEffect } from "react";
+import API, { setAuthToken } from "../api/api";
+import { useAuth } from "../context/AuthContext";
+
 export default function Dashboard() {
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
+  const { token, logout } = useAuth();
+  const [file, setFile] = useState(null);
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    setAuthToken(token);
+    // You can later implement a GET endpoint to fetch user's images
+  }, [token]);
+
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await API.post("/images/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setImages(prev => [...prev, res.data.url]);
+    } catch (err) {
+      alert("Upload failed");
+    }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <h1 className="text-3xl font-bold mb-4">Welcome to Ensight 🚀</h1>
-      <button
-        onClick={handleLogout}
-        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-      >
-        Logout
-      </button>
+    <div>
+      <h1>Dashboard</h1>
+      <button onClick={logout}>Logout</button>
+      <form onSubmit={handleUpload}>
+        <input type="file" onChange={e => setFile(e.target.files[0])} />
+        <button type="submit">Upload</button>
+      </form>
+      <div>
+        {images.map((url, idx) => <img key={idx} src={url} alt="uploaded" width={200} />)}
+      </div>
     </div>
   );
 }

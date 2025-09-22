@@ -1,8 +1,15 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: "http://localhost:8000", // FastAPI backend
-  withCredentials: true,            // for cookies if you use JWT in HttpOnly cookies
+const API = axios.create({
+  baseURL: "http://127.0.0.1:8000",
 });
 
-export default api;
+export const setAuthToken = (token) => {
+  if (token) {
+    API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    delete API.defaults.headers.common["Authorization"];
+  }
+};
+
+export default API;
