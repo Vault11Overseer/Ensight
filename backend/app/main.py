@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .auth_router import router as auth_router
-from .image_router import router as image_router
+from .images_router import router as images_router
 from .database import init_db
 from dotenv import load_dotenv
 
@@ -19,8 +19,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+# include routers *after* CORS setup
 app.include_router(auth_router, prefix="/auth")
-app.include_router(image_router)
+app.include_router(images_router, prefix="/images")
 
 @app.on_event("startup")
 async def startup():
