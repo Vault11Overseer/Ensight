@@ -1,6 +1,4 @@
 Ensight - Backend
 
-To get the backend running in the directory run
-~ uv run main.py --reload
-
-<!-- uv run -m main.py -------- In backend -->
+<!-- To get the backend running in the directory run -->
+<!-- uv run -m app.main --reload-------- In backend -->
