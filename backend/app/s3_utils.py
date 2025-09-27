@@ -10,7 +10,9 @@ s3_client = boto3.client(
     region_name=os.getenv("AWS_REGION"),
 )
 
-BUCKET = os.getenv("AWS_S3_BUCKET")
+BUCKET = os.getenv("AWS_BUCKET_NAME")
+if not BUCKET:
+    raise ValueError("AWS_BUCKET_NAME enviroment variable is not set.")
 
 def upload_file_to_s3(file: UploadFile, user_id: str):
     try:

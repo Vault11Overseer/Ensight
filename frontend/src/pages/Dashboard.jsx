@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import API, { setAuthToken } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 
+
 export default function Dashboard() {
   const { token, logout } = useAuth();
   const [file, setFile] = useState(null);
@@ -20,7 +21,7 @@ export default function Dashboard() {
     formData.append("file", file);
 
     try {
-      const res = await API.post("/images/upload", formData, {
+      const res = await API.post("images/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setImages(prev => [...prev, res.data.url]);
@@ -31,7 +32,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <h1 className="text-xl font-bold text-blue-600">Dashboard</h1>
       <button onClick={logout}>Logout</button>
       <form onSubmit={handleUpload}>
         <input type="file" onChange={e => setFile(e.target.files[0])} />

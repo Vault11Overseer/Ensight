@@ -22,11 +22,19 @@ export default function Login() {
   };
 
   return (
+    <div>
     <form onSubmit={handleSubmit}>
-      <h1>Login</h1>
+      <h1 className="text-4xl bg-red-50">Login</h1>
       <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
       <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
       <button type="submit">Login</button>
     </form>
+    <div className="bg-red-500 text-white text-4xl p-10">
+      Tailwind Test
+    </div>
+    <div className="min-h-screen flex items-center justify-center bg-blue-100">
+      <p className="text-4xl font-bold text-blue-900">Tailwind is Working!</p>
+    </div>
+    </div>
   );
 }
