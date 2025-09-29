@@ -1,2 +1,4 @@
-# backend/app/__init__.py
-# This file can be empty
+from .base import Base
+from .user import User
+from .image import Image
+# import and expose other models here

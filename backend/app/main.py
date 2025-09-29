@@ -1,16 +1,14 @@
-from dotenv import load_dotenv
-load_dotenv()
-
-
 import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from .auth_router import router as auth_router
-from .images_router import router as images_router
-from .database import init_db
+# from .routers.auth_router import router as auth_router
+# from .routers.images_router import router as images_router
+from .routers import auth_router, images_router
+# from .database import init_db
+from app.db.database import async_session
 
-print(os.getenv("AWS_BUCKET_NAME"))  # should print 'pynsight'
+
 app = FastAPI(title="Ensight")
 
 origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
@@ -39,6 +37,3 @@ async def startup():
 async def root():
     return {"message": "Backend is running mate!"}
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
