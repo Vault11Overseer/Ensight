@@ -9,7 +9,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from .auth_router import router as auth_router
 from .images_router import router as images_router
 from .database import init_db
-# from app import images_router
 
 print(os.getenv("AWS_BUCKET_NAME"))  # should print 'pynsight'
 app = FastAPI(title="Ensight")
