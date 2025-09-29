@@ -4,7 +4,6 @@ import axios from "axios";
 export default function ImageUpload() {
   const [file, setFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
-
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
   const handleUpload = async () => {
@@ -47,3 +46,5 @@ export default function ImageUpload() {
     </div>
   );
 }
+
+

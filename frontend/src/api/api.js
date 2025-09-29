@@ -1,9 +1,11 @@
+// api/api.js
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://127.0.0.1:8000",
+  baseURL: "http://localhost:8000", // adjust your backend URL
 });
 
+// helper to set token dynamically
 export const setAuthToken = (token) => {
   if (token) {
     API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
