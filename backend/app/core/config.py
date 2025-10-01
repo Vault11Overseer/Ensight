@@ -5,7 +5,7 @@ import os
 # -------------------------
 # DATABASE SETTINGS
 # -------------------------
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./app/db/database.db")
 
 # -------------------------
 # JWT / AUTHENTICATION SETTINGS

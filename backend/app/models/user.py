@@ -1,21 +1,21 @@
 from sqlalchemy import Column, Integer, String, DateTime, Table, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
+from sqlalchemy.sql import func
+# from app.models import Base
+from app.db.database import Base
 
-
-Base = declarative_base()
+# Base = declarative_base()
 
 
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=True)  # <--- added
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    
+    name = Column(String, nullable=False)          # <-- this must exist
+    email = Column(String, unique=True, nullable=False, index=True)
+    hashed_password = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
 class Image(Base):

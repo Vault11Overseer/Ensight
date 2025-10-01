@@ -1,24 +1,23 @@
+# app/main.py
 import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from .routers.auth_router import router as auth_router
-from .routers.images_router import router as images_router
+from app.routers.auth_router import router as auth_router
+from app.routers.images_router import router as images_router
 from contextlib import asynccontextmanager
-from app.db.database import init_db  # make sure this import is correct
-
+from app.db.database import init_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup logic
-    print("Starting up...")
-    await init_db()  # run your DB init here
+    await init_db()
+    print("Database initialized!")
     yield
-    # Shutdown logic
+    # Shutdown logic (optional)
     print("Shutting down...")
 
-
-app = FastAPI(title="Ensight")
+app = FastAPI(title="Ensight", lifespan=lifespan)
 
 origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
@@ -30,18 +29,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# include routers *after* CORS setup
-app.include_router(auth_router, prefix="/auth")
+# Include routers
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(images_router, prefix="/images")
 
+# Static files
 app.mount("/static", StaticFiles(directory="uploads"), name="static")
 
 @app.get("/")
 async def root():
     return {"message": "Backend is running mate!"}
 
-
-# backend/app/run.py
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)

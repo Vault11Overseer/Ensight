@@ -76,7 +76,7 @@ requires-dist = [
     { name = "boto3", specifier = ">=1.37.38" },
     { name = "email-validator", specifier = ">=2.3.0" },
     { name = "fastapi", extras = ["all"], specifier = ">=0.116.2" },
-    { name = "passlib", extras = ["bcrypt"], specifier = ">=1.7.4" },
+    { name = "passlib", extras = ["bcrypt", "bycrypt"], specifier = ">=1.7.4" },
     { name = "pillow", specifier = ">=10.4.0" },
     { name = "pydantic", extras = ["email"], specifier = ">=2.10.6" },
     { name = "pyjwt", specifier = ">=2.10.1" },

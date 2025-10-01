@@ -1,27 +1,67 @@
+# app/db/database.py
+
+import asyncio
+from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
-from app.models import Base
-import os
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./app/db/test.db")
+# -------------------------
+# DATABASE URL
+# -------------------------
+DATABASE_URL = "sqlite+aiosqlite:///./app/db/database.db"  # <- your db
 
-engine = create_async_engine(DATABASE_URL, echo=True)
+# -------------------------
+# ASYNC ENGINE
+# -------------------------
+async_engine = create_async_engine(
+    DATABASE_URL,
+    echo=True,  # logs SQL queries
+)
 
-# Only define class_ once!
+
+
+# -------------------------
+# ASYNC SESSION
+# -------------------------
 async_session = sessionmaker(
-    bind=engine,
+    bind=async_engine,
     class_=AsyncSession,
     expire_on_commit=False,
 )
 
-async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+# -------------------------
+# BASE CLASS
+# -------------------------
+Base = declarative_base()
 
-# Dependency for FastAPI routes
-async def get_db():
+# -------------------------
+# CONTEXT MANAGER FOR DB
+# -------------------------
+@asynccontextmanager
+async def get_db() -> AsyncSession:
     async with async_session() as session:
         try:
             yield session
-        finally:
-            await session.close()
+            await session.commit()
+        except:
+            await session.rollback()
+            raise
+
+# -------------------------
+# INITIALIZE DATABASE
+# -------------------------
+async def init_db():
+    """
+    Create all tables if they don't exist.
+    Imports models here so Base.metadata knows about them.
+    """
+    # Import all models so SQLAlchemy knows their tables
+    from app.models.user import User  # adjust if your User model is elsewhere
+    # import app.models.user
+    async with async_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print("✅ Database initialized and all tables created!")
+
+# Optional helper to run init_db from CLI
+if __name__ == "__main__":
+    asyncio.run(init_db())
