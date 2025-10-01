@@ -38,5 +38,3 @@ load_dotenv()
 #     DATABASE_URL: str = DATABASE_URL
 #     JWT_SECRET_KEY: str = JWT_SECRET_KEY
 #     DEBUG: bool = DEBUG
-
-# from config import DATABASE_URL, JWT_SECRET_KEY, UPLOAD_DIR

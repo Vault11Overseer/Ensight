@@ -3,8 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import JSONResponse
 import os
 from pathlib import Path
-from .database import get_db
-from .services.s3_utils import upload_file_to_s3
+from app.db.database import get_db
+from app.services.s3_utils import upload_file_to_s3
 from .auth_router import get_current_user
 # from app import s3_utils
 

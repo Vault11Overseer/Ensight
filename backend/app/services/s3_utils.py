@@ -28,4 +28,4 @@ def upload_file_to_s3(file: UploadFile, user_id: str):
     except NoCredentialsError:
         raise Exception("AWS credentials not found")
 
-print(os.getenv("AWS_BUCKET_NAME"))  # should print 'pynsight'
+# print(os.getenv("AWS_BUCKET_NAME"))  # should print 'pynsight'
