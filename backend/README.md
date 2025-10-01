@@ -1,5 +1,5 @@
 Ensight - Backend
-<!-- uv run -m app.main -->
+uv run -m app.main
 
 <!-- sqlite3 ./test.db
 sqlite> .tables

@@ -31,7 +31,9 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex justify-between items-center mb-10">
         <div>
-          <h1 className="text-3xl font-bold">Welcome, {user?.name || "User"} 👋</h1>
+          <h1 className="text-3xl font-bold">
+            Welcome, {user?.first_name || "User"} 👋
+          </h1>
           <p className="text-gray-400">You have uploaded {images.length} images</p>
         </div>
         <div className="flex items-center gap-6">

@@ -1,14 +1,15 @@
 
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Form
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from app.auth.register import register_user, RegisterIn
+from app.auth.register import register_user, UserCreate
 from app.auth.login import login_user, LoginIn
 from app.db.session import get_db
 from app.models.user import User
+from app.schemas.user import UserCreate 
 from app.core.security import decode_access_token
 
 
@@ -20,14 +21,14 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 # -------------------------
 # REGISTER ENDPOINT
 # -------------------------
+
 @router.post("/register")
-async def register(user: RegisterIn, db: AsyncSession = Depends(get_db)):
+async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     """
     Register a new user.
-    Expects RegisterIn schema with name, email, and password.
+    This version accepts form-data (like a normal HTML form).
     """
     return await register_user(user, db)
-    print(user)
 
 
 # -------------------------
