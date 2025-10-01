@@ -1,12 +1,13 @@
 import asyncio
 import os
 from app.db.database import async_engine, Base
-from app.models.user import User  # <-- must import User so SQLAlchemy knows about it
+from app.models.user import User  # required so SQLAlchemy sees User
+from app.models.image import Image  # required so SQLAlchemy sees Image
 
 DB_FILE = "./app/db/database.db"
 
 async def reset_db():
-    # Remove SQLite file to force full recreation
+    # Delete old DB file to avoid leftover indexes/tables
     if os.path.exists(DB_FILE):
         os.remove(DB_FILE)
         print(f"Deleted old database: {DB_FILE}")

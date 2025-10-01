@@ -5,11 +5,11 @@ from sqlalchemy.sql import func
 # from app.models import Base
 from app.db.database import Base
 
-# Base = declarative_base()
 
 
 class User(Base):
     __tablename__ = "users"
+    __table_args__ = {"extend_existing": True}
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)          # <-- this must exist

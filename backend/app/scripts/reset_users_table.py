@@ -1,18 +1,19 @@
 import asyncio
-from app.db.database import async_engine, init_db
-from app.models import Base, User
+import os
+from app.db.database import async_engine, Base
+import app.models.user  # <-- import all models so metadata sees them
 
-async def reset_users():
-    # Make sure all tables exist first
-    await init_db()
+DB_FILE = "./app/db/database.db"
+
+async def reset_db():
+    if os.path.exists(DB_FILE):
+        os.remove(DB_FILE)
+        print(f"Deleted old database: {DB_FILE}")
 
     async with async_engine.begin() as conn:
-        # Drop the users table if it exists
-        await conn.run_sync(User.__table__.drop, checkfirst=True)
-        # Recreate the users table
-        await conn.run_sync(User.__table__.create)
-
-    print("Users table reset complete!")
+        print("Creating all tables...")
+        await conn.run_sync(Base.metadata.create_all)
+        print("All tables created successfully!")
 
 if __name__ == "__main__":
-    asyncio.run(reset_users())
+    asyncio.run(reset_db())
