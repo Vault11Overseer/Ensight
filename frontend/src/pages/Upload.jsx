@@ -1,24 +1,199 @@
+
+
+// import React, { useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import API from "../api/api";
+
+// export default function ImageUpload() {
+//   const navigate = useNavigate();
+//   const [file, setFile] = useState(null);
+//   const [imageUrl, setImageUrl] = useState(null);
+//   const [uploadedImageId, setUploadedImageId] = useState(null);
+
+//   const [title, setTitle] = useState("");
+//   const [description, setDescription] = useState("");
+//   const [tags, setTags] = useState("");
+//   const [libraries, setLibraries] = useState([]);
+//   const [libraryId, setLibraryId] = useState("");
+
+//   useEffect(() => {
+//     const fetchLibraries = async () => {
+//       try {
+//     const token = localStorage.getItem("token"); // or wherever you store it
+//     const response = await axios.get("http://localhost:8000/libraries/", {
+//       headers: { Authorization: `Bearer ${token}` },
+//     });
+//     console.log(response.data);
+//   } catch (err) {
+//     console.error("Error fetching libraries:", err);
+//   }
+//     };
+//     fetchLibraries();
+//   }, []);
+
+//   const handleFileChange = (e) => setFile(e.target.files[0]);
+
+//   const handleUpload = async () => {
+//     if (!file) {
+//       alert("Please select a file first");
+//       return;
+//     }
+
+//     try {
+//       const token = localStorage.getItem("access_token");
+
+//       // Upload file
+//       const formData = new FormData();
+//       formData.append("file", file);
+
+//       const uploadRes = await API.post("/images/upload", formData, {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "Content-Type": "multipart/form-data",
+//         },
+//       });
+
+//       const { id, url } = uploadRes.data;
+//       setUploadedImageId(id);
+//       setImageUrl(url);
+
+//       // Send metadata
+//       const metadata = {
+//         title,
+//         description,
+//         tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
+//         library_id: libraryId || null,
+//       };
+
+//       await API.post(`/images/${id}/metadata`, metadata, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+
+//       alert("Upload + metadata saved successfully!");
+
+//       // Reset form
+//       setFile(null);
+//       setTitle("");
+//       setDescription("");
+//       setTags("");
+//       setLibraryId("");
+//     } catch (err) {
+//       console.error(err);
+//       alert(err.response?.data?.detail || "Upload failed");
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-black text-white p-8 max-w-3xl mx-auto">
+//       <div className="flex justify-between items-center mb-8">
+//         <h1 className="text-3xl font-bold">Upload an Image</h1>
+//         <button
+//           onClick={() => navigate("/")}
+//           className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition"
+//         >
+//           ⬅️ Back to Dashboard
+//         </button>
+//       </div>
+
+//       <div className="space-y-6">
+//         <div>
+//           <label className="block mb-2 font-semibold">Title</label>
+//           <input
+//             type="text"
+//             value={title}
+//             onChange={(e) => setTitle(e.target.value)}
+//             className="w-full p-3 rounded-lg border border-gray-600 bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-400/20 outline-none"
+//           />
+//         </div>
+
+//         <div>
+//           <label className="block mb-2 font-semibold">Description</label>
+//           <textarea
+//             value={description}
+//             onChange={(e) => setDescription(e.target.value)}
+//             className="w-full p-3 rounded-lg border border-gray-600 bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-400/20 outline-none"
+//           />
+//         </div>
+
+//         <div>
+//           <label className="block mb-2 font-semibold">Tags (comma-separated)</label>
+//           <input
+//             type="text"
+//             value={tags}
+//             onChange={(e) => setTags(e.target.value)}
+//             className="w-full p-3 rounded-lg border border-gray-600 bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-400/20 outline-none"
+//           />
+//         </div>
+
+//         <div>
+//           <label className="block mb-2 font-semibold">Select Library</label>
+//           <select
+//             value={libraryId}
+//             onChange={(e) => setLibraryId(e.target.value)}
+//             className="w-full p-3 rounded-lg border border-gray-600 bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-400/20 outline-none"
+//           >
+//             <option value="">-- None --</option>
+//             {libraries.map((lib) => (
+//               <option key={lib.id} value={lib.id}>
+//                 {lib.name}
+//               </option>
+//             ))}
+//           </select>
+//         </div>
+
+//         <div>
+//           <label className="block mb-2 font-semibold">Choose File</label>
+//           <input
+//             type="file"
+//             onChange={handleFileChange}
+//             className="text-white"
+//           />
+//         </div>
+
+//         <button
+//           onClick={handleUpload}
+//           className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-semibold transition"
+//         >
+//           Upload
+//         </button>
+
+//         {imageUrl && (
+//           <div className="mt-8">
+//             <p className="font-semibold mb-2">Uploaded Image Preview:</p>
+//             <img src={imageUrl} alt="uploaded" className="rounded-lg shadow-lg" />
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios"; // <-- import axios
 import API from "../api/api";
 
 export default function ImageUpload() {
+  const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
+  const [uploadedImageId, setUploadedImageId] = useState(null);
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [tags, setTags] = useState(""); // comma-separated string
+  const [tags, setTags] = useState("");
   const [libraries, setLibraries] = useState([]);
   const [libraryId, setLibraryId] = useState("");
 
-  // Fetch user's libraries on load
+  // Fetch libraries for select dropdown
   useEffect(() => {
     const fetchLibraries = async () => {
       try {
-        const token = localStorage.getItem("access_token");
-        const res = await API.get("/libraries", {
+        const token = localStorage.getItem("token"); // or wherever you store it
+        const response = await axios.get("http://localhost:8000/libraries/", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setLibraries(res.data);
+        setLibraries(response.data); // populate libraries state
       } catch (err) {
         console.error("Error fetching libraries:", err);
       }
@@ -33,28 +208,39 @@ export default function ImageUpload() {
       alert("Please select a file first");
       return;
     }
-    if (!title) {
-      alert("Please enter a title");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("tags", tags); // backend will split and merge with AI tags
-    formData.append("library_id", libraryId);
 
     try {
       const token = localStorage.getItem("access_token");
-      const res = await API.post("/images/upload", formData, {
+
+      // Upload file
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadRes = await API.post("/images/upload", formData, {
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
-      setImageUrl(res.data.url);
-      alert("Upload successful!");
+
+      const { id, url } = uploadRes.data;
+      setUploadedImageId(id);
+      setImageUrl(url);
+
+      // Send metadata
+      const metadata = {
+        title,
+        description,
+        tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
+        library_id: libraryId || null,
+      };
+
+      await API.post(`/images/${id}/metadata`, metadata, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      alert("Upload + metadata saved successfully!");
+
       // Reset form
       setFile(null);
       setTitle("");
@@ -68,76 +254,87 @@ export default function ImageUpload() {
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Upload an Image</h1>
-
-      <div className="mb-4">
-        <label className="block mb-1">Title</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-2 rounded border border-gray-300"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1">Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-2 rounded border border-gray-300"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1">Tags (comma-separated)</label>
-        <input
-          type="text"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-          className="w-full p-2 rounded border border-gray-300"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1">Select Library</label>
-        <select
-          value={libraryId}
-          onChange={(e) => setLibraryId(e.target.value)}
-          className="w-full p-2 rounded border border-gray-300"
+    <div className="min-h-screen bg-black text-white p-8 max-w-3xl mx-auto">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Upload an Image</h1>
+        <button
+          onClick={() => navigate("/")}
+          className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition"
         >
-          <option value="">-- None --</option>
-          {libraries.map((lib) => (
-            <option key={lib.id} value={lib.id}>
-              {lib.name}
-            </option>
-          ))}
-        </select>
+          ⬅️ Back to Dashboard
+        </button>
       </div>
 
-      <div className="mb-4">
-        <label className="block mb-1">Choose File</label>
-        <input type="file" onChange={handleFileChange} />
-      </div>
-
-      <button
-        onClick={handleUpload}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-      >
-        Upload
-      </button>
-
-      {imageUrl && (
-        <div className="mt-6">
-          <p>Uploaded Image:</p>
-          <img
-            src={imageUrl}
-            alt="uploaded"
-            className="mt-2 max-w-sm rounded shadow"
+      <div className="space-y-6">
+        <div>
+          <label className="block mb-2 font-semibold">Title</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full p-3 rounded-lg border border-gray-600 bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-400/20 outline-none"
           />
         </div>
-      )}
+
+        <div>
+          <label className="block mb-2 font-semibold">Description</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full p-3 rounded-lg border border-gray-600 bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-400/20 outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-2 font-semibold">Tags (comma-separated)</label>
+          <input
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="w-full p-3 rounded-lg border border-gray-600 bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-400/20 outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-2 font-semibold">Select Library</label>
+          <select
+            value={libraryId}
+            onChange={(e) => setLibraryId(e.target.value)}
+            className="w-full p-3 rounded-lg border border-gray-600 bg-gray-900 focus:border-indigo-500 focus:ring focus:ring-indigo-400/20 outline-none"
+          >
+            <option value="">-- None --</option>
+            {libraries.map((lib) => (
+              <option key={lib.id} value={lib.id}>
+                {lib.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block mb-2 font-semibold">Choose File</label>
+          <input
+            type="file"
+            onChange={handleFileChange}
+            className="text-white"
+          />
+        </div>
+
+        <button
+          onClick={handleUpload}
+          className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-semibold transition"
+        >
+          Upload
+        </button>
+
+        {imageUrl && (
+          <div className="mt-8">
+            <p className="font-semibold mb-2">Uploaded Image Preview:</p>
+            <img src={imageUrl} alt="uploaded" className="rounded-lg shadow-lg" />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
+

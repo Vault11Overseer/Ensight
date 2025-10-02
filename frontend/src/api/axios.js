@@ -46,3 +46,18 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+
+
+const fetchLibraries = async () => {
+  try {
+    const response = await axios.get("http://localhost:8000/libraries/", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    console.log(response.data);
+  } catch (err) {
+    console.error("Error fetching libraries: ", err);
+  }
+};

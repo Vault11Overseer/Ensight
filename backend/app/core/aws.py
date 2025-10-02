@@ -1,9 +1,12 @@
 # app/core/aws.py
+import os
 import boto3
 from botocore.exceptions import ClientError
 
-s3_client = boto3.client("s3")
-rekognition_client = boto3.client("rekognition")
+AWS_REGION = os.getenv("AWS_REGION", "us-west-1")
+
+s3_client = boto3.client("s3", region_name=AWS_REGION)
+rekognition_client = boto3.client("rekognition", region_name=AWS_REGION)
 
 async def s3_upload_file(file, user_id):
     key = f"users/{user_id}/{file.filename}"

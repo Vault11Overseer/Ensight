@@ -3,12 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel, EmailStr
 from datetime import timedelta
-
 from app.db.session import get_db
 from app.models.user import User
 from app.core.security import verify_password, create_access_token
 from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES
-
 from app.schemas.login import LoginIn, TokenOut
 
 
