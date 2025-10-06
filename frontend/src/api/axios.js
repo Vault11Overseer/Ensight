@@ -53,7 +53,9 @@ const fetchLibraries = async () => {
   try {
     const response = await axios.get("http://localhost:8000/libraries/", {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        // Authorization: `Bearer ${localStorage.getItem("token")}`,
+        headers: { Authorization: `Bearer ${token}` }
+
       },
     });
     console.log(response.data);

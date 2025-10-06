@@ -11,9 +11,6 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./app/db/database.
 # JWT / AUTHENTICATION SETTINGS
 # -------------------------
 # JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key")
-# JWT_ALGORITHM = "HS256"
-import os
-
 JWT_SECRET_KEY = "supersecretkey"  # must be the same for encoding and decoding
 JWT_ALGORITHM = "HS256"
 
