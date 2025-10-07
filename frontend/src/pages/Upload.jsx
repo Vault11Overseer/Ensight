@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; // <-- import axios
-import API from "../api/api";
+import API, { setAuthToken } from "../api/api"; // path to your API helper
 
 export default function ImageUpload() {
 const navigate = useNavigate();
@@ -19,13 +19,15 @@ const [libraryId, setLibraryId] = useState("");
 useEffect(() => {
   const fetchLibraries = async () => {
     try {
-      const token = localStorage.getItem("access_token"); // or wherever you store it
-      const response = await axios.get("http://localhost:8000/libraries/", {
+      const token = localStorage.getItem("access_token");
+      const response = await axios.get("http://127.0.0.1:8000/libraries", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setLibraries(response.data); // populate libraries state
+
+      setLibraries(response.data); // should be an array
     } catch (err) {
       console.error("Error fetching libraries:", err);
+      setLibraries([]); // fallback
     }
   };
   fetchLibraries();

@@ -1,10 +1,18 @@
-# app/schemas/library.py
 from pydantic import BaseModel
-from typing import Optional
+from datetime import datetime
 
-class LibraryResponse(BaseModel):
+class LibraryBase(BaseModel):
+    title: str
+    description: str
+    image_url: str | None = None
+
+class LibraryCreate(LibraryBase):
+    pass
+
+class LibraryResponse(LibraryBase):
     id: int
-    name: str
-    description: Optional[str]
+    user_id: int
+    created_at: datetime
 
-    model_config = {"from_attributes": True}  # for Pydantic v2
+    class Config:
+        orm_mode = True

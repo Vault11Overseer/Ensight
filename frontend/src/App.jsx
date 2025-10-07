@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Upload from "./pages/Upload";
+import Libraries from "./pages/Libraries";
 
 // const PrivateRoute = ({ children }) => {
 //   const { token } = useAuth();
@@ -35,6 +36,8 @@ export default function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/upload" element={<Upload />} />
+          <Route path="/libraries" element={<Libraries />} />
+
           {/* Add more protected routes here */}
         </Route>
       </Routes>

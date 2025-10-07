@@ -38,10 +38,10 @@ const handleSubmit = async (e) => {
             alt="cover"
             className="h-full w-full object-cover"
           />
-          <div className="absolute top-5 left-5 text-white font-bold text-lg">AMU</div>
-          <button className="absolute top-5 right-5 bg-white/20 text-white px-4 py-1 rounded-full text-sm hover:bg-white/30">
+          <div className="absolute top-5 left-5 text-white font-bold text-lg">EN-SIGHT</div>
+          {/* <button className="absolute top-5 right-5 bg-white/20 text-white px-4 py-1 rounded-full text-sm hover:bg-white/30">
             Back to website →
-          </button>
+          </button> */}
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white text-lg">
             Capturing Moments, <br /> Creating Memories
           </div>

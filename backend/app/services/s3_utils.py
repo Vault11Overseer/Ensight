@@ -29,3 +29,34 @@ def upload_file_to_s3(file: UploadFile, user_id: str):
         raise Exception("AWS credentials not found")
 
 # print(os.getenv("AWS_BUCKET_NAME"))  # should print 'pynsight'
+def upload_base64_to_s3(base64_str: str, folder: str = "library/default-images/") -> str:
+    """
+    Upload a Base64 image to S3 under the given folder and return public URL
+    """
+    # strip header if present
+    if "," in base64_str:
+        _, data_str = base64_str.split(",", 1)
+    else:
+        data_str = base64_str
+
+    try:
+        image_bytes = base64.b64decode(data_str)
+    except Exception:
+        raise ValueError("Invalid Base64 string")
+
+    # generate unique filename
+    file_name = f"{uuid4()}.png"
+    key = f"{folder}{file_name}"
+
+    try:
+        s3_client.put_object(
+            Bucket=BUCKET,
+            Key=key,
+            Body=image_bytes,
+            ContentType="image/png",
+            ACL="public-read"
+        )
+    except NoCredentialsError:
+        raise Exception("AWS credentials not found")
+
+    return f"https://{BUCKET}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{key}"

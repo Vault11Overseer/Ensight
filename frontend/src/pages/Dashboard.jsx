@@ -73,7 +73,7 @@ export default function Dashboard() {
 
         {/* LIBRARIES LINK */}
         <a
-          href="/libraries"
+          href="/Libraries"
           className="bg-[#1E1C29] p-6 rounded-2xl shadow hover:bg-[#272537] transition"
         >
           <h2 className="text-xl font-semibold">📚 Libraries</h2>

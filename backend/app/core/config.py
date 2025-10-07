@@ -1,42 +1,57 @@
-# config.py now only contains settings, pulled from environment variables or defaults.
-
+# app/core/config.py
 import os
-
-# -------------------------
-# DATABASE SETTINGS
-# -------------------------
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./app/db/database.db")
-
-# -------------------------
-# JWT / AUTHENTICATION SETTINGS
-# -------------------------
-# JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key")
-JWT_SECRET_KEY = "supersecretkey"  # must be the same for encoding and decoding
-JWT_ALGORITHM = "HS256"
-
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 1 day
-
-# -------------------------
-# FILE UPLOAD SETTINGS
-# -------------------------
-UPLOAD_DIR = os.getenv("UPLOAD_DIR", "./uploads")
-ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}
-MAX_FILE_SIZE_MB = 10
-
-# -------------------------
-# APP CONFIG
-# -------------------------
-DEBUG = os.getenv("DEBUG", "True") == "True"
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
-
-# LOAD ENVIROMENT
 from dotenv import load_dotenv
+from pydantic_settings import BaseSettings
+# from pydantic import BaseSettings
+
+# Load .env file
 load_dotenv()
 
+class Settings(BaseSettings):
+    # -------------------------
+    # DATABASE
+    # -------------------------
+    DATABASE_URL: str = "sqlite+aiosqlite:///./app/db/database.db"
 
-# OPTIONAL: SEPERATE ENVIROMENT
+    # -------------------------
+    # JWT / AUTH
+    # -------------------------
+    JWT_SECRET_KEY: str = "supersecretkey"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 1 day
 
-# class Settings:
-#     DATABASE_URL: str = DATABASE_URL
-#     JWT_SECRET_KEY: str = JWT_SECRET_KEY
-#     DEBUG: bool = DEBUG
+    # -------------------------
+    # CORS
+    # -------------------------
+    BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:5173"]
+
+    # -------------------------
+    # FILE UPLOADS
+    # -------------------------
+    UPLOAD_DIR: str = "./uploads"
+    ALLOWED_EXTENSIONS: set[str] = {"jpg", "jpeg", "png", "gif"}
+    MAX_FILE_SIZE_MB: int = 10
+
+    # -------------------------
+    # APP CONFIG
+    # -------------------------
+    DEBUG: bool = True
+    FRONTEND_URL: str = "http://localhost:5173"
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+
+# Instantiate
+settings = Settings()
+
+# Legacy exports for old imports
+DATABASE_URL = settings.DATABASE_URL
+JWT_SECRET_KEY = settings.JWT_SECRET_KEY
+JWT_ALGORITHM = settings.JWT_ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
+UPLOAD_DIR = settings.UPLOAD_DIR
+ALLOWED_EXTENSIONS = settings.ALLOWED_EXTENSIONS
+MAX_FILE_SIZE_MB = settings.MAX_FILE_SIZE_MB
+DEBUG = settings.DEBUG
+FRONTEND_URL = settings.FRONTEND_URL

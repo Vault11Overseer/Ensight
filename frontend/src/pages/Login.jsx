@@ -24,7 +24,8 @@ export default function Login() {
       alert("Login failed");
     }
   };
-
+  
+  
   return (
     <div className="min-h-screen flex w-full items-center justify-center bg-[#2D2B3A]">
       <div className="flex w-[900px] max-w-full bg-[#1E1C29] rounded-2xl shadow-2xl overflow-hidden">

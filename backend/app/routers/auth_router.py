@@ -1,5 +1,3 @@
-
-
 from fastapi import APIRouter, Depends, HTTPException, Form
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +8,7 @@ from app.auth.login import login_user, LoginIn
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.user import UserCreate 
-from app.core.security import decode_access_token
+from app.core.security import decode_access_token, verify_password, create_access_token
 
 
 router = APIRouter()
@@ -35,12 +33,23 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
 # LOGIN ENDPOINT
 # -------------------------
 @router.post("/login")
-async def login(user: LoginIn, db: AsyncSession = Depends(get_db)):
+async def login(user_data: LoginIn, db: AsyncSession = Depends(get_db)):
     """
     Login a user.
     Expects LoginIn schema with email and password.
     """
-    return await login_user(user, db)
+    # Query async instead of using db.query()
+    result = await db.execute(select(User).where(User.email == user_data.email))
+    user = result.scalar_one_or_none()
+
+    # If user not found or password doesn't match
+    if not user or not verify_password(user_data.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+
+    # Create JWT
+    token = create_access_token({"sub": str(user.id)})
+    return {"access_token": token, "token_type": "bearer"}
+
 
 
 # -------------------------
@@ -54,6 +63,7 @@ async def get_current_user(
     Extracts user from JWT token.
     Raises 401 if invalid.
     """
+    
     payload = decode_access_token(token)
     user_id = payload.get("sub")
     if not user_id:
