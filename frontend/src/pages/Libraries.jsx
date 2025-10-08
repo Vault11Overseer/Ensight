@@ -1,58 +1,82 @@
 import React, { useState, useEffect } from "react";
-import API, { setAuthToken } from "../api/api";
+import API from "../api/axios"; // use our Axios instance
 import { useAuth } from "../context/AuthContext";
 
 export default function Libraries() {
-  const { token, user } = useAuth();
+  const { user } = useAuth(); // token is read automatically in Axios
   const [libraries, setLibraries] = useState([]);
   const [otherLibraries, setOtherLibraries] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const [imageBase64, setImageBase64] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!token) return;
-    setAuthToken(token);
-
     fetchMyLibraries();
     fetchOtherLibraries();
-  }, [token]);
+  }, []);
 
-  async function fetchMyLibraries() {
+  const fetchMyLibraries = async () => {
     try {
-      const res = await API.get("/libraries/");
+      const res = await API.get("/libraries/"); // note trailing slash
       setLibraries(res.data);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching libraries:", err.response?.data || err);
     }
-  }
+  };
 
-  async function fetchOtherLibraries() {
+  const fetchOtherLibraries = async () => {
     try {
       const res = await API.get("/libraries/others");
       setOtherLibraries(res.data);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching other libraries:", err.response?.data || err);
     }
-  }
+  };
 
-  async function handleCreate(e) {
+const handleCreate = async (e) => {
   e.preventDefault();
+  setError("");
+
   try {
-    const res = await API.post("/libraries/", {
+    // Build JSON payload
+    const payload = {
       title,
       description,
-      image_base64: imageBase64, // send the Base64 string
-    });
+      image_base64: imageBase64 || null, // send base64 string or null
+    };
+
+    const res = await API.post("/libraries/", payload); // Axios sends JSON by default
+
     setLibraries([...libraries, res.data]);
+
+    // clear form
     setTitle("");
     setDescription("");
-    setImageBase64(null);
+    setImageFile(null);
+    setImageBase64("");
   } catch (err) {
-    console.error(err);
+    console.error("Error creating library:", err.response?.data || err);
+    setError(err.response?.data?.detail || "Failed to create library");
   }
-}
+};
 
+
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result;
+      const base64String = result.split(",")[1];
+      setImageBase64(base64String);
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <div className="min-h-screen bg-black text-white p-8">
@@ -76,28 +100,17 @@ export default function Libraries() {
               onChange={(e) => setDescription(e.target.value)}
               required
             />
-
             <input
-  type="file"
-  accept="image/*"
-  className="p-2 rounded bg-[#1E1C29]"
-  onChange={async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImageBase64(reader.result); // store Base64 in state
-    };
-    reader.readAsDataURL(file);
-  }}
-/>
-
-
+              type="file"
+              accept="image/*"
+              className="p-2 rounded bg-[#1E1C29]"
+              onChange={handleFileChange}
+            />
             <button className="bg-indigo-600 hover:bg-indigo-700 p-2 rounded">
               Create Library
             </button>
           </form>
+          {error && <p className="text-red-500 mt-2">{error}</p>}
         </div>
       )}
 
@@ -107,6 +120,7 @@ export default function Libraries() {
             <div key={lib.id} className="bg-[#1E1C29] p-4 rounded-lg shadow">
               <img
                 src={lib.image_url || "/placeholder.png"}
+                alt={lib.title}
                 className="rounded mb-2"
               />
               <h2 className="font-bold">{lib.title}</h2>
@@ -122,6 +136,7 @@ export default function Libraries() {
           <div key={lib.id} className="bg-[#1E1C29] p-4 rounded-lg shadow">
             <img
               src={lib.image_url || "/placeholder.png"}
+              alt={lib.title}
               className="rounded mb-2"
             />
             <h2 className="font-bold">{lib.title}</h2>

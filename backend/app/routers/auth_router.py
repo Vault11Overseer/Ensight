@@ -11,7 +11,7 @@ from app.schemas.user import UserCreate
 from app.core.security import decode_access_token, verify_password, create_access_token
 
 
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 

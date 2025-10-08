@@ -32,9 +32,12 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
-app.include_router(library_router.router, prefix="/libraries", tags=["libraries"])
-app.include_router(images_router.router, prefix="/images")
+# app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
+app.include_router(auth_router.router)
+
+app.include_router(library_router.router)
+# app.include_router(images_router.router, prefix="/images")
+app.include_router(images_router.router)
 
 
 @app.get("/")

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import List
+from app.routers.auth_router import get_current_user
 # from datetime import datetime
 
 from app.db.session import get_db
@@ -36,7 +37,11 @@ async def get_other_libraries(
 ### POST ###
 # CREATE A NEW LIBRARY
 @router.post("/", response_model=LibraryResponse)
-async def create_library(data: LibraryCreate, db: AsyncSession = Depends(get_db)):
+async def create_library(
+    data: LibraryCreate, 
+    db: AsyncSession = Depends(get_db), 
+    current_user: dict = Depends(get_current_user),
+    ):
     
     image_url = None
     
@@ -54,7 +59,8 @@ async def create_library(data: LibraryCreate, db: AsyncSession = Depends(get_db)
     new_library = Library(
         title=data.title, 
         description=data.description, 
-        image_url=image_url
+        image_url=image_url,
+        user_id=current_user["id"]
     )
     
     db.add(new_library)

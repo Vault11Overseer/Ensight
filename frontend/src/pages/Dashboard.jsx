@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import API, { setAuthToken } from "../api/api";
+import API from "../api/axios";
 import { Settings, Images } from "lucide-react"; // gear icon
 import Search from "../components/Search";
 
@@ -17,10 +17,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!token) return;
-    setAuthToken(token);
-    // you could also log token if needed
-    // console.log("Token:", token);
-   
   }, [token]);
 
   // print(user)

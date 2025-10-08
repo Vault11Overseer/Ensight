@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import API, { setAuthToken } from "../api/api";
+import API from "../api/axios"; // updated Axios instance with interceptors
 
 const AuthContext = createContext();
 
@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // optional: to handle loading state
 
-  // Set token in axios headers and localStorage
+
   const login = (newToken) => {
     localStorage.setItem("token", newToken);
     setToken(newToken);
@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  // Fetch user info when token changes
   useEffect(() => {
     const fetchUser = async () => {
       if (!token) {
@@ -30,12 +29,12 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        setAuthToken(token); // attach token to API requests
-        const res = await API.get("/auth/me"); // your endpoint to get current user
+        // Token is automatically sent via axios interceptor
+        const res = await API.get("/auth/me");
         setUser(res.data);
       } catch (err) {
         console.error("Failed to fetch user:", err);
-        logout(); // optional: logout if token invalid
+        logout();
       } finally {
         setLoading(false);
       }
@@ -52,3 +51,58 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+  // Login: save access & refresh tokens
+  // const login = ({ access_token, refresh_token }) => {
+  //   localStorage.setItem("access_token", access_token);
+  //   localStorage.setItem("refresh_token", refresh_token);
+  //   fetchUser(); // immediately fetch user after login
+  // };
+
+  // Logout: remove tokens and user
+  // const logout = () => {
+  //   localStorage.removeItem("access_token");
+  //   localStorage.removeItem("refresh_token");
+  //   setUser(null);
+  //   window.location.href = "/login"; // redirect if desired
+  // };
+
+  // Fetch user info from backend
+//   useEffect(() => {
+//   const fetchUser = async () => {
+//     if (!token) {
+//       setUser(null);
+//       setLoading(false);
+//       return;
+//     }
+//     try {
+//       const res = await API.get("/auth/me");
+//       setUser(res.data);
+//     } catch (err) {
+//       console.error("Failed to fetch user:", err);
+//       logout(); // token invalid
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+//   fetchUser();
+// }, [token]);
+
+
+//   // Auto-fetch user on mount if access token exists
+//   useEffect(() => {
+//     const token = localStorage.getItem("access_token");
+//     if (token) {
+//       fetchUser();
+//     } else {
+//       setLoading(false);
+//     }
+//   }, []);
+
+//   return (
+//     <AuthContext.Provider value={{ user, login, logout, loading }}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+// export const useAuth = () => useContext(AuthContext);

@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import API, { setAuthToken } from "../api/api";
+import API from "../api/axios"; // no { setAuthToken }
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useAuth();
+  const { login } = useAuth(); // use the context login
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -15,15 +16,14 @@ export default function Login() {
     e.preventDefault();
     try {
       const res = await API.post("/auth/login", { email, password });
-      // Save token for axios headers & context
-      setAuthToken(res.data.access_token);
-      login(res.data.access_token);
+      login(res.data.access_token); // call context login
       navigate("/");
     } catch (err) {
       console.error(err);
       alert("Login failed");
     }
   };
+
   
   
   return (

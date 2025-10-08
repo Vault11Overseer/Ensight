@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import API from "../api/api";
+import API from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -126,7 +126,7 @@ const handleSubmit = async (e) => {
                 Google
               </button>
               <button type="button" className="flex-1 flex items-center justify-center gap-2 bg-white text-gray-800 rounded-lg p-3 hover:bg-gray-100">
-                <img src="https://www.svgrepo.com/show/303128/apple-logo.svg" alt="Apple" className="w-5 h-5" />
+                <img src="https://www.svgrepo.com/show/69341/apple-logo.svg" alt="Apple" className="w-5 h-5" />
                 Apple
               </button>
             </div>

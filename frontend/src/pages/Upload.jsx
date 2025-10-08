@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; // <-- import axios
-import API, { setAuthToken } from "../api/api"; // path to your API helper
+import API from "../api/axios"; // path to your API helper
 
 export default function ImageUpload() {
 const navigate = useNavigate();
