@@ -1,4 +1,4 @@
 # backend/app/db/__init__.py
 
-# Expose SessionLocal and get_db globally for cleaner imports
-from .session import SessionLocal, get_db
+# EXPOSE SESSIONLOCAL AND GET_DB GLOBALLY
+from app.db.session import SessionLocal, get_db

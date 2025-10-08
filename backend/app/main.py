@@ -3,9 +3,10 @@ import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers.auth_router import router as auth_router
-from app.routers.images_router import router as images_router
-from app.routers.library_router import router as library_router
+# from app.routers.auth_router import router as auth_router
+# from app.routers.images_router import router as images_router
+# from app.routers.library_router import router as library_router
+from app.routers import auth_router, library_router, images_router
 from contextlib import asynccontextmanager
 from app.db.database import init_db
 
@@ -31,9 +32,9 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
-app.include_router(library_router, prefix="/libraries", tags=["libraries"])
-app.include_router(images_router, prefix="/images")
+app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
+app.include_router(library_router.router, prefix="/libraries", tags=["libraries"])
+app.include_router(images_router.router, prefix="/images")
 
 
 @app.get("/")

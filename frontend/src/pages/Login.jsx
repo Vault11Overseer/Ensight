@@ -36,7 +36,7 @@ export default function Login() {
             alt="cover"
             className="h-full w-full object-cover"
           />
-          <div className="absolute top-5 left-5 text-white font-bold text-lg">
+          <div className="p-4 absolute top-5 left-5 text-white font-bold text-lg bg-[#2D2B3A]">
             Ensight
           </div>
 
@@ -134,7 +134,7 @@ export default function Login() {
                 className="flex-1 flex items-center justify-center gap-2 bg-white text-gray-800 rounded-lg p-3 hover:bg-gray-100"
               >
                 <img
-                  src="https://www.svgrepo.com/show/303128/apple-logo.svg"
+                  src="https://www.svgrepo.com/show/69341/apple-logo.svg"
                   alt="Apple"
                   className="w-5 h-5"
                 />
