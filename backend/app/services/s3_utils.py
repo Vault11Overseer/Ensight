@@ -11,25 +11,37 @@ s3_client = boto3.client(
 )
 
 BUCKET = os.getenv("AWS_BUCKET_NAME")
+
 if not BUCKET:
     raise ValueError("AWS_BUCKET_NAME enviroment variable is not set.")
 
-def upload_file_to_s3(file: UploadFile, user_id: str):
+
+# For user-uploaded files
+def upload_file_to_s3(file: UploadFile, user_id: str, folder: str = "libraryDefaults/"):
+    """
+    Upload a file to S3 and return the public URL.
+    If folder is specified, it will be used in the S3 key instead of user_id.
+    """
     try:
         file_extension = file.filename.split(".")[-1]
-        key = f"{user_id}/{uuid4()}.{file_extension}"
+        key = f"{folder}{user_id}/{uuid4()}.{file_extension}" if folder else f"{user_id}/{uuid4()}.{file_extension}"
         s3_client.upload_fileobj(
             file.file,
             BUCKET,
             key,
-            ExtraArgs={"ContentType": file.content_type}
+            ExtraArgs={"ContentType": file.content_type} 
         )
         return f"https://{BUCKET}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{key}"
     except NoCredentialsError:
         raise Exception("AWS credentials not found")
 
+    
+    
+    
+    
+
 # print(os.getenv("AWS_BUCKET_NAME"))  # should print 'pynsight'
-def upload_base64_to_s3(base64_str: str, folder: str = "library/default-images/") -> str:
+def upload_base64_to_s3(base64_str: str, folder: str = "libraryDefaults/") -> str:
     """
     Upload a Base64 image to S3 under the given folder and return public URL
     """
@@ -44,7 +56,6 @@ def upload_base64_to_s3(base64_str: str, folder: str = "library/default-images/"
     except Exception:
         raise ValueError("Invalid Base64 string")
 
-    # generate unique filename
     file_name = f"{uuid4()}.png"
     key = f"{folder}{file_name}"
 
@@ -54,7 +65,6 @@ def upload_base64_to_s3(base64_str: str, folder: str = "library/default-images/"
             Key=key,
             Body=image_bytes,
             ContentType="image/png",
-            ACL="public-read"
         )
     except NoCredentialsError:
         raise Exception("AWS credentials not found")

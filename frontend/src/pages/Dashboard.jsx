@@ -28,7 +28,7 @@ export default function Dashboard() {
       <div className="flex justify-between items-center mb-10">
         <div>
           <h1 className="text-3xl font-bold">
-            Welcome, {user?.first_name || "User"} 👋
+            Welcome, {user?.first_name || user?.username || "User"}!
           </h1>
           <p className="text-gray-400">You have uploaded {images.length} images</p>
         </div>

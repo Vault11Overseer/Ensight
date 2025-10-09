@@ -84,10 +84,11 @@ async def get_current_user(
 @router.get("/me")
 async def me(current_user: User = Depends(get_current_user)):
     """
-    Returns the currently logged-in user.
+    Returns the currently logged-in user with their details.
     """
     return {
         "id": current_user.id,
         "email": current_user.email,
-        "name": getattr(current_user, "name", None),
+        "first_name": getattr(current_user, "first_name", None),
+        "last_name": getattr(current_user, "last_name", None),
     }

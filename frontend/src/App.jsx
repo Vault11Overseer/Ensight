@@ -22,15 +22,9 @@ export default function App() {
   return (
     
     <AuthProvider>
-      {/* <Routes>
-       <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-        <Route path="/upload" element={<PrivateRoute><Upload /></PrivateRoute>} />
-      </Routes> */}
       <Routes>
-        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
 
         {/* All routes below require authentication */}
         <Route element={<PrivateRoute />}>
@@ -38,7 +32,6 @@ export default function App() {
           <Route path="/upload" element={<Upload />} />
           <Route path="/libraries" element={<Libraries />} />
 
-          {/* Add more protected routes here */}
         </Route>
       </Routes>
     </AuthProvider>
