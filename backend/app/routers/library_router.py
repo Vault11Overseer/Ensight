@@ -5,8 +5,9 @@ from typing import List
 from app.routers.auth_router import get_current_user
 from sqlalchemy.orm import selectinload
 from pathlib import Path
+from io import BytesIO
 # from datetime import datetime
-
+from functools import partial
 from app.db.session import get_db
 from app.models.library import Library
 from app.schemas.library import LibraryCreate, LibraryResponse
@@ -32,27 +33,29 @@ async def create_library(
     Create a new library.
     Accepts title, description, and optional image file upload.
     """
-    # Get project root dynamically
+
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
     default_image_path = BASE_DIR / "static" / "default_library.png"
 
+   # 1️⃣ If user uploaded an image → upload to S3
+    # 1️⃣ If user uploaded an image → upload to S3
     if image:
         try:
-            image_url = upload_file_to_s3(image, user_id=str(current_user.id))
+            loop = asyncio.get_running_loop()
+            upload_task = partial(upload_file_to_s3, image, user_id=str(current_user.id))
+            image_url = await loop.run_in_executor(None, upload_task)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to upload image: {str(e)}")
-    else:
-        try:
-            # Use dynamic Path for default image
-            with open(default_image_path, "rb") as f:
-                default_upload = UploadFile(
-                    filename="default_library.png",
-                    file=f  # remove content_type
-                )
-                image_url = upload_file_to_s3(default_upload, user_id="default", folder="libraryDefaults/")
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to upload default image: {str(e)}")
 
+    # 2️⃣ If no image → use backend static path
+    else:
+        if not default_image_path.exists():
+            raise HTTPException(status_code=404, detail="Default library image not found on server.")
+
+        # The backend serves static files via FastAPI’s static mount (e.g., /static)
+        image_url = "http://localhost:8000/static/default_library.png"
+
+    # ---------- Create the library record ----------
     new_library = Library(
         title=title,
         description=description,
@@ -63,8 +66,19 @@ async def create_library(
     db.add(new_library)
     await db.commit()
     await db.refresh(new_library)
-    return new_library
-# -------------------------
+
+    # ---------- Return LibraryResponse to client ----------
+    return LibraryResponse(
+        id=new_library.id,
+        title=new_library.title,
+        description=new_library.description,
+        image_url=new_library.image_url,
+        user_id=new_library.user_id,
+        created_at=new_library.created_at,
+        user_name=f"{current_user.first_name} {current_user.last_name}"
+    )
+
+# -------------------------   
 # GET ALL LIBRARIES (protected but public for logged-in users)
 # -------------------------
 @router.get("/", response_model=List[LibraryResponse])

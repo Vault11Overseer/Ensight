@@ -12,9 +12,13 @@ class LibraryCreate(LibraryBase):
 
 class LibraryResponse(LibraryBase):
     id: int
-    user_id: int
+    title: str
+    description: str
     image_url: Optional[str] = None
+    user_id: int
     created_at: datetime
+    #
+    user_name: str
 
     class Config:
         orm_mode = True

@@ -1,41 +1,58 @@
 import boto3, os
 from botocore.exceptions import NoCredentialsError
 from fastapi import UploadFile
+from typing import Optional
 from uuid import uuid4
 
-s3_client = boto3.client(
-    "s3",
-    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-    region_name=os.getenv("AWS_REGION"),
-)
-
+AWS_REGION = os.getenv("AWS_REGION")
 BUCKET = os.getenv("AWS_BUCKET_NAME")
 
 if not BUCKET:
     raise ValueError("AWS_BUCKET_NAME enviroment variable is not set.")
 
+S3_BASE_URL = f"https://{BUCKET}.s3.{AWS_REGION}.amazonaws.com"
 
-# For user-uploaded files
-def upload_file_to_s3(file: UploadFile, user_id: str, folder: str = "libraryDefaults/"):
+s3_client = boto3.client(
+    "s3",
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+    region_name=AWS_REGION,
+)
+
+
+def upload_file_to_s3(
+    file: UploadFile,
+    user_id: str,
+    folder: Optional[str] = None
+) -> str:
     """
-    Upload a file to S3 and return the public URL.
-    If folder is specified, it will be used in the S3 key instead of user_id.
+    Upload a file to AWS S3 and return its public URL.
+    Automatically sets the correct ContentType.
     """
+    file_extension = file.filename.split(".")[-1]
+    # If folder provided, don't append 'uploads/'
+    prefix = folder or f"uploads/{user_id}/"
+    if not prefix.endswith("/"):
+        prefix += "/"
+
+    file_key = f"{prefix}{uuid4()}.{file_extension}"
+
+    content_type = getattr(file, "content_type", None) or "application/octet-stream"
+
     try:
-        file_extension = file.filename.split(".")[-1]
-        key = f"{folder}{user_id}/{uuid4()}.{file_extension}" if folder else f"{user_id}/{uuid4()}.{file_extension}"
         s3_client.upload_fileobj(
             file.file,
             BUCKET,
-            key,
-            ExtraArgs={"ContentType": file.content_type} 
+            file_key,
+            ExtraArgs={
+                "ACL": "public-read",
+                "ContentType": content_type
+            },
         )
-        return f"https://{BUCKET}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{key}"
-    except NoCredentialsError:
-        raise Exception("AWS credentials not found")
+    except Exception as e:
+        raise Exception(f"S3 upload failed: {e}")
 
-    
+    return f"{S3_BASE_URL}/{file_key}"    
     
     
     
@@ -70,3 +87,5 @@ def upload_base64_to_s3(base64_str: str, folder: str = "libraryDefaults/") -> st
         raise Exception("AWS credentials not found")
 
     return f"https://{BUCKET}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{key}"
+
+

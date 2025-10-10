@@ -5,10 +5,13 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import AsyncSession
+from pathlib import Path
+
 # -------------------------
 # DATABASE URL
 # -------------------------
-DATABASE_URL = "sqlite+aiosqlite:///./app/db/database.db"  # <- your db
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATABASE_URL = f"sqlite+aiosqlite:///{BASE_DIR}/db/database.db"
 
 # -------------------------
 # ASYNC ENGINE

@@ -213,9 +213,9 @@ const toggleDarkMode = () => setDarkMode((prev) => !prev);
                 {libraries.map((lib) => (
                   <div key={lib.id} className="bg-black p-2 rounded-lg shadow relative">
                     <img
-                      src={lib.image_url || "/placeholder.png"}
-                      alt={lib.title}
-                      className="w-full h-32 object-cover rounded"
+                      src={lib.image_url || "http://localhost:8000/static/default_library.png"} // ✅ use lib
+      alt={lib.title}
+      className="w-full h-32 object-cover rounded"
                     />
 
                     {inlineEdits.id === lib.id ? (
@@ -290,9 +290,9 @@ const toggleDarkMode = () => setDarkMode((prev) => !prev);
           <div key={lib.id} className="bg-black p-2 rounded-lg shadow text-sm">
             <div className="w-full h-24 overflow-hidden rounded">
               <img
-                src={lib.image_url || "/placeholder.png"}
-                alt={lib.title}
-                className="w-full h-full object-cover"
+                src={lib.image_url || "http://localhost:8000/static/default_library.png"} // ✅ use lib
+        alt={lib.title}
+        className="w-full h-full object-cover"
               />
             </div>
             <h3 className="font-bold text-white">{lib.title}</h3>
