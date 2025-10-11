@@ -13,6 +13,7 @@ export default function Libraries() {
   const [imageBase64, setImageBase64] = useState("");
   const [error, setError] = useState("");
   const [inlineEdits, setInlineEdits] = useState({});
+  const [images, setImages] = useState([]);
   // 1. Initialize state from localStorage
 // 1. Initialize state from localStorage
 const [darkMode, setDarkMode] = useState(() => {
@@ -156,6 +157,13 @@ console.log("toggled")
           <p className="text-gray-400">
             Welcome, {user?.first_name || user?.username || "User"} — You’ve created{" "}
             <span className="text-indigo-400">{libraries.length}</span> libraries
+          </p>
+          {/* <p className={`mt-1 ${darkMode ? "text-indigo-400" : "text-gray-600"}`}>
+            You’ve created{" "}
+            <span className="text-indigo-400">{allLibraries.length}</span> libraries
+          </p> */}
+          <p className={`mt-1 ${darkMode ? "text-gray-300" : "text-gray-500"}`}>
+            You have uploaded {images.length} images
           </p>
         </div>
 

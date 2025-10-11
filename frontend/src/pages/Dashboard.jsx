@@ -62,15 +62,13 @@ setAllLibraries(res.data);
             Welcome, {user?.first_name || user?.username || "User"}!
           </h1>
           <p className={`mt-1 ${darkMode ? "text-gray-300" : "text-gray-500"}`}>
-  You have uploaded {images.length} images
-</p>
+            You have uploaded {images.length} images
+          </p>
 
-<p className={`mt-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-  You’ve created{" "}
-  <span className="text-indigo-400">{allLibraries.length}</span> libraries
-</p>
-
-
+          <p className={`mt-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+            You’ve created{" "}
+            <span className="text-indigo-400">{allLibraries.length}</span> libraries
+          </p>
 
         </div>
 

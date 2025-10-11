@@ -18,8 +18,10 @@ class ImageOut(BaseModel):
     user_id: int
     library_id: Optional[int]
     created_at: datetime
+    
+    # These are for the frontend display
+    user_name: Optional[str] = None
+    library_title: Optional[str] = None
 
-    # class Config:
-    #     orm_mode = True
     class Config:
         from_attributes = True

@@ -38,7 +38,8 @@ app.add_middleware(
 # -------------------------
 app.include_router(auth_router.router)
 app.include_router(library_router.router)
-app.include_router(images_router.router)
+# app.include_router(images_router.router)
+app.include_router(images_router.router, prefix="/images", tags=["images"])
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
 @app.get("/")

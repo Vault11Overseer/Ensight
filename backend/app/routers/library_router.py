@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from typing import List
+from typing import List, Optional
 from app.routers.auth_router import get_current_user
 from sqlalchemy.orm import selectinload
 from pathlib import Path
@@ -136,33 +136,51 @@ async def get_my_libraries(
 # -------------------------
 # UPDATE LIBRARY (owner only)
 # -------------------------
+from fastapi import UploadFile, File, Form
+from typing import Optional
+
+# -------------------------
+# UPDATE LIBRARY (owner only)
+# -------------------------
 @router.put("/{library_id}", response_model=LibraryResponse)
 async def update_library(
     library_id: int,
-    data: LibraryCreate,
+    title: str = Form(...),
+    description: str = Form(...),
+    image: Optional[UploadFile] = File(None),         # new optional file
+    image_base64: Optional[str] = Form(None),         # optional base64
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user = Depends(get_current_user),
 ):
+    # Fetch library
     result = await db.execute(
-        select(Library).where(Library.id == library_id, Library.user_id == current_user["id"])
+        select(Library).where(Library.id == library_id, Library.user_id == current_user.id)
     )
     library = result.scalar_one_or_none()
     if not library:
         raise HTTPException(status_code=404, detail="Library not found")
 
-    library.title = data.title
-    library.description = data.description
+    # Update title and description
+    library.title = title
+    library.description = description
 
-    # ✅ Only handle base64 image if provided using upload_file_to_s3
-    if data.image_base64:
+    # Handle image update
+    if image:
+        # If user uploaded a file
         loop = asyncio.get_running_loop()
-        upload_task = partial(upload_file_to_s3, data.image_base64, user_id=str(current_user["id"]))
+        upload_task = partial(upload_file_to_s3, image, user_id=str(current_user.id))
+        library.image_url = await loop.run_in_executor(None, upload_task)
+    elif image_base64:
+        # If user sent a base64 string
+        loop = asyncio.get_running_loop()
+        upload_task = partial(upload_file_to_s3, image_base64, user_id=str(current_user.id))
         library.image_url = await loop.run_in_executor(None, upload_task)
 
     db.add(library)
     await db.commit()
     await db.refresh(library)
     return library
+
 
 # -------------------------
 # DELETE LIBRARY (owner only)
