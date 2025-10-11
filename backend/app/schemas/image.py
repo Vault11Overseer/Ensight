@@ -19,5 +19,7 @@ class ImageOut(BaseModel):
     library_id: Optional[int]
     created_at: datetime
 
+    # class Config:
+    #     orm_mode = True
     class Config:
-        orm_mode = True
+        from_attributes = True

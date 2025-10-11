@@ -1,6 +1,6 @@
 import asyncio
 import os
-from app.db.database import async_engine, Base
+from backend.db.database import async_engine, Base
 import app.models.user  # <-- import all models so metadata sees them
 
 DB_FILE = "./app/db/database.db"

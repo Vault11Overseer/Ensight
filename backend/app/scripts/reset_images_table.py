@@ -1,6 +1,6 @@
 import asyncio
 import os
-from app.db.database import async_engine, Base
+from backend.db.database import async_engine, Base
 from app.models.user import User  # required so SQLAlchemy sees User
 from app.models.image import Image  # required so SQLAlchemy sees Image
 

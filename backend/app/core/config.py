@@ -11,7 +11,9 @@ class Settings(BaseSettings):
     # -------------------------
     # DATABASE
     # -------------------------
-    DATABASE_URL: str = "sqlite+aiosqlite:///./app/db/database.db"
+    DATABASE_URL: str = os.getenv("DATABASE_URL")
+
+
 
     # -------------------------
     # JWT / AUTH
@@ -28,7 +30,7 @@ class Settings(BaseSettings):
     # -------------------------
     # FILE UPLOADS
     # -------------------------
-    UPLOAD_DIR: str = "./uploads"
+    UPLOAD_DIR: str = "./defaultImages"
     ALLOWED_EXTENSIONS: set[str] = {"jpg", "jpeg", "png", "gif"}
     MAX_FILE_SIZE_MB: int = 10
 
@@ -37,10 +39,6 @@ class Settings(BaseSettings):
     # -------------------------
     DEBUG: bool = True
     FRONTEND_URL: str = "http://localhost:5173"
-
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
 
 # Instantiate
 settings = Settings()

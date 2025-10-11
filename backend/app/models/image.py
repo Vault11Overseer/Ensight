@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from app.db.database import Base
+from ..db.database import Base
 from app.models.library import Library
 
 class Image(Base):

@@ -8,6 +8,8 @@ class LibraryBase(BaseModel):
     image_url: str | None = None
 
 class LibraryCreate(LibraryBase):
+    title: str
+    description: str
     image_base64: Optional[str] = None
 
 class LibraryResponse(LibraryBase):
@@ -20,5 +22,7 @@ class LibraryResponse(LibraryBase):
     #
     user_name: str
 
+    # class Config:
+        # orm_mode = True
     class Config:
-        orm_mode = True
+        from_attributes = True
