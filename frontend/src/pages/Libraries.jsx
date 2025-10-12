@@ -1,46 +1,51 @@
 import React, { useState, useEffect } from "react";
 import API from "../api/axios";
 import { useAuth } from "../context/AuthContext";
-import { ArrowLeft, Sun, Moon } from "lucide-react";
+import Header from "../components/Header";
 
 export default function Libraries() {
+  // ==============================
+  // AUTH CONTEXT & STATE VARIABLES
+  // ==============================
   const { user, logout } = useAuth();
-  const [libraries, setLibraries] = useState([]);
-  const [allLibraries, setAllLibraries] = useState([]);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [imageFile, setImageFile] = useState(null);
-  const [imageBase64, setImageBase64] = useState("");
-  const [error, setError] = useState("");
-  const [inlineEdits, setInlineEdits] = useState({});
-  const [images, setImages] = useState([]);
-  // 1. Initialize state from localStorage
-// 1. Initialize state from localStorage
-const [darkMode, setDarkMode] = useState(() => {
-  if (typeof window !== "undefined") {
-    return JSON.parse(localStorage.getItem("darkMode")) ?? true;
-  }
-  return true; // default
-});
 
-// 2. Sync <html> class whenever darkMode changes
-useEffect(() => {
-  if (darkMode) document.documentElement.classList.add("dark");
-  else document.documentElement.classList.remove("dark");
+  const [libraries, setLibraries] = useState([]); // USER'S LIBRARIES
+  const [allLibraries, setAllLibraries] = useState([]); // ALL LIBRARIES
+  const [title, setTitle] = useState(""); // NEW LIBRARY TITLE
+  const [description, setDescription] = useState(""); // NEW LIBRARY DESCRIPTION
+  const [imageFile, setImageFile] = useState(null); // FILE UPLOAD
+  const [imageBase64, setImageBase64] = useState(""); // IMAGE AS BASE64 FOR INLINE EDIT
+  const [error, setError] = useState(""); // ERROR MESSAGES
+  const [inlineEdits, setInlineEdits] = useState({}); // INLINE EDITING STATE
+  const [images, setImages] = useState([]); // COUNT OF IMAGES
 
-  localStorage.setItem("darkMode", JSON.stringify(darkMode));
-}, [darkMode]);
-
-// 3. Toggle function
-const toggleDarkMode = () => {
-  setDarkMode((prev) => {
-    console.log("toggled", !prev); // shows new value
-    return !prev;
+  // ==============================
+  // DARK MODE STATE INITIALIZATION
+  // ==============================
+  const [darkMode, setDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return JSON.parse(localStorage.getItem("darkMode")) ?? true;
+    }
+    return true; // DEFAULT DARK MODE
   });
-};
 
-console.log("toggled")
+  // ==============================
+  // SYNC DARK MODE TO <HTML> CLASS
+  // ==============================
+  useEffect(() => {
+    if (darkMode) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
 
+  // ==============================
+  // TOGGLE DARK MODE FUNCTION
+  // ==============================
+  const toggleDarkMode = () => setDarkMode((prev) => !prev);
+
+  // ==============================
+  // FETCH USER'S LIBRARIES
+  // ==============================
   const fetchMyLibraries = async () => {
     try {
       const res = await API.get("/libraries/mine");
@@ -50,6 +55,9 @@ console.log("toggled")
     }
   };
 
+  // ==============================
+  // FETCH ALL LIBRARIES
+  // ==============================
   const fetchAllLibraries = async () => {
     try {
       const res = await API.get("/libraries/");
@@ -59,12 +67,17 @@ console.log("toggled")
     }
   };
 
+  // ==============================
+  // INITIAL DATA FETCH
+  // ==============================
   useEffect(() => {
-  fetchMyLibraries();
-  fetchAllLibraries();
-}, []);
+    fetchMyLibraries();
+    fetchAllLibraries();
+  }, []);
 
-
+  // ==============================
+  // HANDLE NEW LIBRARY CREATION
+  // ==============================
   const handleCreate = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -81,12 +94,16 @@ console.log("toggled")
       setTitle("");
       setDescription("");
       setImageFile(null);
+      setError("");
     } catch (err) {
       console.error(err.response?.data || err);
       setError(err.response?.data?.detail || "Failed to create library");
     }
   };
 
+  // ==============================
+  // HANDLE LIBRARY DELETION
+  // ==============================
   const handleDelete = async (libId) => {
     try {
       await API.delete(`/libraries/${libId}`);
@@ -98,6 +115,9 @@ console.log("toggled")
     }
   };
 
+  // ==============================
+  // START INLINE EDIT
+  // ==============================
   const startEditingInline = (lib) => {
     setInlineEdits({
       id: lib.id,
@@ -106,10 +126,16 @@ console.log("toggled")
     });
   };
 
+  // ==============================
+  // HANDLE INLINE INPUT CHANGES
+  // ==============================
   const handleInlineChange = (e) => {
     setInlineEdits({ ...inlineEdits, [e.target.name]: e.target.value });
   };
 
+  // ==============================
+  // SAVE INLINE EDITS
+  // ==============================
   const saveInlineEdits = async (libId) => {
     try {
       const payload = {
@@ -119,16 +145,22 @@ console.log("toggled")
       };
       const res = await API.put(`/libraries/${libId}`, payload);
       setLibraries(libraries.map((lib) => (lib.id === libId ? res.data : lib)));
-      setAllLibraries(allLibraries.map((lib) => (lib.id === libId ? res.data : lib)));
+      setAllLibraries(
+        allLibraries.map((lib) => (lib.id === libId ? res.data : lib))
+      );
       setInlineEdits({});
       setImageFile(null);
       setImageBase64("");
+      setError("");
     } catch (err) {
       console.error(err.response?.data || err);
       setError(err.response?.data?.detail || "Failed to update library");
     }
   };
 
+  // ==============================
+  // HANDLE IMAGE FILE CHANGE
+  // ==============================
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -143,208 +175,167 @@ console.log("toggled")
     reader.readAsDataURL(file);
   };
 
-  return (
-<div
-  className={`min-h-screen p-8 transition-colors duration-300 ${
-    darkMode ? "bg-black text-white" : "bg-white text-black"
-  }`}
->
+  // ==============================
+  // MAIN RENDER
+  // ==============================
+return (
+  <div
+    className={`min-h-screen p-8 transition-colors duration-300 ${
+      darkMode ? "bg-[#0B0E1D] text-white" : "bg-[#EAF1FF] text-black"
+    }`}
+  >
+    {/* HEADER COMPONENT */}
+    <Header
+      introProps={{
+        user: user,
+        imagesCount: images.length,
+        librariesCount: allLibraries.length,
+        darkMode: darkMode,
+      }}
+      navigationProps={{
+        darkMode: darkMode,
+        toggleDarkMode: toggleDarkMode,
+        logout: logout,
+      }}
+    />
 
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-10">
-        <div>
-          <h1 className="text-3xl font-bold">📚 Libraries</h1>
-          <p className="text-gray-400">
-            Welcome, {user?.first_name || user?.username || "User"} — You’ve created{" "}
-            <span className="text-indigo-400">{libraries.length}</span> libraries
-          </p>
-          {/* <p className={`mt-1 ${darkMode ? "text-indigo-400" : "text-gray-600"}`}>
-            You’ve created{" "}
-            <span className="text-indigo-400">{allLibraries.length}</span> libraries
-          </p> */}
-          <p className={`mt-1 ${darkMode ? "text-gray-300" : "text-gray-500"}`}>
-            You have uploaded {images.length} images
-          </p>
-        </div>
-
-        <div className="flex items-center gap-4">
-         <button
-  onClick={() => (window.location.href = "/")}
-  className="group flex items-center space-x-2 p-2 rounded-full border-2 border-green-500 hover:bg-green-500/20 transition"
->
-  <ArrowLeft size={28} />
-  <span className="hidden group-hover:inline">Back To Dashboard</span>
-</button>
-
-          <button
-  onClick={logout}
-  className="text-white bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 px-4 py-2 rounded-lg transition"
->
-  Logout
-</button>
-<button
-  onClick={toggleDarkMode}
-  className={`p-2 rounded-lg transition ${
-    darkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-gray-200 text-black hover:bg-gray-300"
-  }`}
->
-  {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-</button>
-
-
-        </div>
-      </div>
-
-      {/* MAIN CONTENT */}
-      <div className="flex flex-col md:flex-row gap-10">
-        <div className="w-full bg-gray-100 dark:bg-gray-900 p-6 rounded-2xl shadow transition-colors duration-300"
->
-          <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
-  Create a New Library
-</h2>
-
-
-          <form onSubmit={handleCreate} className="flex flex-col gap-4">
-            <input
-              className="p-3 rounded bg-gray-200 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white"
-
-
-              placeholder="Library Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-            <textarea
-              className="p-3 rounded bg-gray-200 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white"
-
-              placeholder="Library Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-            <input
-              type="file"
-              accept="image/*"
-              className="p-2 rounded bg-gray-800 text-white"
-              onChange={handleFileChange}
-            />
-            <button className="bg-indigo-600 hover:bg-indigo-700 p-3 rounded-lg text-white">
-              Create Library
-            </button>
-            {error && <p className="text-red-500 mt-2">{error}</p>}
-          </form>
-
-          {libraries.length > 0 && (
-            <div className="mt-10">
-              <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
-  Your Libraries
-</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {libraries.map((lib) => (
-                  
-                  <div
-  key={lib.id}
-  className={`p-2 rounded-lg shadow relative transition-colors duration-300 ${
-    lib.image_url ? "bg-black dark:bg-gray-900" : "bg-white dark:bg-gray-700"
-  }`}
->
-  <img
-    src={lib.image_url || "http://localhost:8000/static/default_library.png"}
-    alt={lib.title}
-    className="w-full h-32 object-cover rounded"
-  />
-
-
-
-                    {inlineEdits.id === lib.id ? (
-                      <div className="absolute top-2 left-2 right-2 bg-black/80 p-2 rounded">
-                        <input
-                          className="p-1 mb-1 rounded w-full text-white bg-gray-800"
-                          name="title"
-                          value={inlineEdits.title}
-                          onChange={handleInlineChange}
-                        />
-                        <textarea
-                          className="p-1 mb-1 rounded w-full text-white bg-gray-800"
-                          name="description"
-                          value={inlineEdits.description}
-                          onChange={handleInlineChange}
-                        />
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="p-1 mb-2 rounded w-full bg-gray-800 text-white"
-                          onChange={handleFileChange}
-                        />
-                        <div className="flex gap-2">
-                          <button
-                            className="bg-green-600 hover:bg-green-700 p-1 rounded text-sm"
-                            onClick={() => saveInlineEdits(lib.id)}
-                          >
-                            Save
-                          </button>
-                          <button
-                            className="bg-gray-600 hover:bg-gray-700 p-1 rounded text-sm"
-                            onClick={() => setInlineEdits({})}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center bg-black/60 p-1 rounded">
-                        <div>
-                          <h2 className="font-bold text-white">{lib.title}</h2>
-                          <p className="text-gray-400 text-sm">{lib.description}</p>
-                        </div>
-                        <div className="flex gap-1">
-                          <button
-                            className="bg-yellow-500 hover:bg-yellow-600 p-1 rounded text-sm text-black"
-                            onClick={() => startEditingInline(lib)}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="bg-red-600 hover:bg-red-700 p-1 rounded text-sm"
-                            onClick={() => handleDelete(lib.id)}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ALL LIBRARIES */}
-    <h2 className="pt-4 text-2xl font-semibold mb-4 text-gray-900 dark:text-dark">
-  All Libraries
-</h2>
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {allLibraries.map((lib) => (
-        <div
-          key={lib.id}
-          className="p-2 rounded-lg shadow bg-white dark:bg-gray-700 text-black dark:text-white transition-colors duration-300 text-sm"
+    {/* CREATE LIBRARY FORM */}
+    <div className="flex flex-col md:flex-row gap-10 mt-6">
+      <div
+        className={`w-full p-6 rounded-2xl shadow transition-colors duration-300 ${
+          darkMode ? "bg-[#1A1F3D]" : "bg-white"
+        }`}
+      >
+        <h2
+          className={`text-2xl font-bold mb-4 ${
+            darkMode ? "text-[#BDD63B]" : "text-[#0B0E1D]"
+          }`}
         >
-          <div className="w-full h-24 overflow-hidden rounded">
-            <img
-              src={lib.image_url || "http://localhost:8000/static/default_library.png"}
-              alt={lib.title}
-              className="w-full h-full object-cover"
-            />
+          CREATE A NEW LIBRARY
+        </h2>
+
+        <form onSubmit={handleCreate} className="flex flex-col gap-4">
+          <input
+            className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] ${
+              darkMode
+                ? "bg-[#0B0E1D] text-white placeholder-gray-400"
+                : "bg-[#DDE7FF] text-[#0B0E1D] placeholder-gray-500"
+            }`}
+            placeholder="Library Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+          <textarea
+            className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] ${
+              darkMode
+                ? "bg-[#0B0E1D] text-white placeholder-gray-400"
+                : "bg-[#DDE7FF] text-[#0B0E1D] placeholder-gray-500"
+            }`}
+            placeholder="Library Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+          <input
+            type="file"
+            accept="image/*"
+            className="p-2 rounded bg-[#0B0E1D] text-white"
+            onChange={handleFileChange}
+          />
+          <button className="bg-[#BDD63B] hover:bg-[#A4C22F] p-3 rounded-lg text-black font-semibold transition-colors duration-300">
+            CREATE LIBRARY
+          </button>
+          {error && <p className="text-red-500 mt-2">{error}</p>}
+        </form>
+
+        {/* USER LIBRARIES */}
+        {libraries.length > 0 && (
+          <div className="mt-10">
+            <h2
+              className={`text-2xl font-bold mb-4 ${
+                darkMode ? "text-[#BDD63B]" : "text-[#0B0E1D]"
+              }`}
+            >
+              YOUR LIBRARIES
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {libraries.map((lib) => (
+                <div
+                  key={lib.id}
+                  className={`p-2 rounded-lg shadow cursor-pointer transition-colors duration-300 ${
+                    lib.image_url
+                      ? darkMode
+                        ? "bg-[#0B0E1D]"
+                        : "bg-[#F0F5FF]"
+                      : darkMode
+                      ? "bg-[#1A1F3D]"
+                      : "bg-[#EAF1FF]"
+                  }`}
+                  onClick={() => (window.location.href = `/library/${lib.id}`)}
+                >
+                  <div className="w-full h-32 overflow-hidden rounded mb-2">
+                    <img
+                      src={
+                        lib.image_url ||
+                        "http://localhost:8000/static/default_library.png"
+                      }
+                      alt={lib.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="font-bold">{lib.title}</h3>
+                  <p className="text-gray-400 dark:text-gray-300 text-xs">
+                    {new Date(lib.created_at).toLocaleDateString()} by{" "}
+                    {lib.user_name || "Unknown"}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-          <h3 className="font-bold">{lib.title}</h3>
-          <p className="text-gray-600 dark:text-gray-300 text-xs">
-            {new Date(lib.created_at).toLocaleDateString()} by {lib.user_name || "Unknown"}
-          </p>
-        </div>
-      ))}
+        )}
+
+        {/* ALL LIBRARIES SECTION */}
+        {allLibraries.length > 0 && (
+          <div className="mt-10">
+            <h2
+              className={`text-2xl font-bold mb-4 ${
+                darkMode ? "text-[#BDD63B]" : "text-[#0B0E1D]"
+              }`}
+            >
+              ALL LIBRARIES
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {allLibraries.map((lib) => (
+                <div
+                  key={lib.id}
+                  className={`p-2 rounded-lg shadow transition-colors duration-300 ${
+                    darkMode
+                      ? "bg-[#1A1F3D] text-white"
+                      : "bg-[#F0F5FF] text-[#0B0E1D]"
+                  } text-sm`}
+                >
+                  <div className="w-full h-24 overflow-hidden rounded mb-2">
+                    <img
+                      src={
+                        lib.image_url ||
+                        "http://localhost:8000/static/default_library.png"
+                      }
+                      alt={lib.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="font-bold">{lib.title}</h3>
+                  <p className="text-gray-400 dark:text-gray-300 text-xs">
+                    {new Date(lib.created_at).toLocaleDateString()} by{" "}
+                    {lib.user_name || "Unknown"}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
-    </div>
-  );
-}
+  </div>
+);

@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import API from "../api/axios";
 import { useAuth } from "../context/AuthContext";
-import { ArrowLeft, Sun, Moon } from "lucide-react";
+import Header from "../components/Header"; // ✅ IMPORT SHARED HEADER COMPONENT
 
 export default function Upload() {
+  // =========================
+  // AUTH CONTEXT
+  // =========================
   const { user, logout } = useAuth();
 
-  // Dark mode state
+  // =========================
+  // DARK MODE STATE MANAGEMENT
+  // =========================
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       return JSON.parse(localStorage.getItem("darkMode")) ?? true;
@@ -15,42 +20,45 @@ export default function Upload() {
   });
 
   useEffect(() => {
+    // console.log(user);
+
+    // ADD OR REMOVE DARK CLASS ON HTML
     if (darkMode) document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
+
+    // SAVE CURRENT MODE TO LOCALSTORAGE
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
 
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
-  // Form state
-  const [file, setFile] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [tags, setTags] = useState("");
-  const [libraryId, setLibraryId] = useState("");
+  // =========================
+  // FORM STATE VARIABLES
+  // =========================
+  const [file, setFile] = useState(null); // SELECTED FILE
+  const [imageUrl, setImageUrl] = useState(null); // UPLOADED IMAGE URL
+  const [title, setTitle] = useState(""); // IMAGE TITLE
+  const [description, setDescription] = useState(""); // IMAGE DESCRIPTION
+  const [tags, setTags] = useState(""); // IMAGE TAGS
+  const [libraryId, setLibraryId] = useState(""); // SELECTED LIBRARY
+  const [success, setSuccess] = useState(""); // SUCCESS MESSAGE
+  const [libraries, setLibraries] = useState([]); // USER LIBRARIES
+  const [error, setError] = useState(""); // ERROR MESSAGE
 
-  // Libraries dropdown
-  const [libraries, setLibraries] = useState([]);
-  const [error, setError] = useState("");
+  // LAST UPLOAD
+  const [lastUpload, setLastUpload] = useState(() => {
+    if (typeof window !== "undefined") {
+      return JSON.parse(localStorage.getItem("lastUpload")) || null;
+    }
+    return null;
+  });
 
-  // User's images
-  const [myImages, setMyImages] = useState([]);
+  // EDIT MODE STATE
+  const [isEditing, setIsEditing] = useState(false); // TOGGLE EDIT FORM
 
-  // Fetch user's images
-  useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const res = await API.get("/images/mine");
-        setMyImages(res.data);
-      } catch (err) {
-        console.error(err.response?.data || err);
-      }
-    };
-    fetchImages();
-  }, []);
-
-  // Fetch libraries
+  // =========================
+  // FETCH USER'S LIBRARIES
+  // =========================
   useEffect(() => {
     const fetchLibraries = async () => {
       try {
@@ -63,14 +71,24 @@ export default function Upload() {
     fetchLibraries();
   }, []);
 
+  // =========================
+  // HANDLE FILE SELECTION
+  // =========================
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
+  // =========================
+  // HANDLE FILE UPLOAD + METADATA
+  // =========================
   const handleUpload = async () => {
     if (!file) return alert("Please select a file first");
+
     try {
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("title", title);
+      formData.append("library_id", libraryId);
 
+      // UPLOAD FILE
       const uploadRes = await API.post("/images/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -78,107 +96,226 @@ export default function Upload() {
       const { id, url } = uploadRes.data;
       setImageUrl(url);
 
+      // =========================
+      // PREPARE UPLOADED DATA
+      // =========================
+      const selectedLibrary = libraries.find((lib) => lib.id === libraryId);
+      const uploadedData = {
+        id,
+        title,
+        description,
+        tags: tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
+        library: selectedLibrary
+          ? selectedLibrary.title || selectedLibrary.name
+          : "None",
+        libraryId: libraryId || "",
+        fileName: file?.name || "N/A",
+        fileSize: file ? (file.size / 1024).toFixed(2) + " KB" : "N/A",
+        fileType: file?.type || "N/A",
+        url,
+        uploadedAt: new Date().toLocaleString(),
+        uploadedBy:
+          user?.first_name && user?.last_name
+            ? `${user.first_name} ${user.last_name}`
+            : user?.name || "Unknown",
+      };
+      setLastUpload(uploadedData);
+      localStorage.setItem("lastUpload", JSON.stringify(uploadedData));
+
+      // SAVE METADATA
       await API.post(`/images/${id}/metadata`, {
         title,
         description,
-        tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
-        library_id: libraryId || null,
+        tags: uploadedData.tags,
+        library_id: uploadedData.libraryId || null,
       });
 
-      // Add new image to state so image count updates
-      setMyImages(prev => [...prev, { id, url, title, description, library_id: libraryId }]);
-
-      alert("Upload + metadata saved successfully!");
+      // RESET FORM
+      setSuccess("Upload + metadata saved successfully!");
+      setError("");
       setFile(null);
       setTitle("");
       setDescription("");
       setTags("");
       setLibraryId("");
+      setTimeout(() => setSuccess(""), 5000);
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.detail || "Upload failed");
+      setError(err.response?.data || err.message);
+      setSuccess("");
     }
   };
 
+  // =========================
+  // HANDLE DELETE LAST UPLOAD
+  // =========================
+  const handleDelete = async () => {
+    if (!lastUpload) return;
+    try {
+      await API.delete(`/images/${lastUpload.id}`);
+      setLastUpload(null);
+      localStorage.removeItem("lastUpload");
+      setSuccess("Image deleted successfully!");
+      setTimeout(() => setSuccess(""), 5000);
+    } catch (err) {
+      setError(err.response?.data || err.message);
+    }
+  };
+
+  // =========================
+  // HANDLE EDIT SAVE
+  // =========================
+  const handleEditSave = async () => {
+    if (!lastUpload) return;
+    try {
+      const selectedLibrary = libraries.find((lib) => lib.id === libraryId);
+      const updatedData = {
+        ...lastUpload,
+        title,
+        description,
+        tags: tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
+        library: selectedLibrary
+          ? selectedLibrary.title || selectedLibrary.name
+          : "None",
+        libraryId: libraryId || "",
+      };
+
+      // SAVE TO BACKEND
+      await API.put(`/images/${lastUpload.id}/metadata`, {
+        title: updatedData.title,
+        description: updatedData.description,
+        tags: updatedData.tags,
+        library_id: updatedData.libraryId || null,
+      });
+
+      setLastUpload(updatedData);
+      localStorage.setItem("lastUpload", JSON.stringify(updatedData));
+      setIsEditing(false);
+      setSuccess("Changes saved successfully!");
+      setTimeout(() => setSuccess(""), 5000);
+    } catch (err) {
+      setError(err.response?.data || err.message);
+    }
+  };
+
+  // =========================
+  // POPULATE FORM FIELDS FOR EDIT
+  // =========================
+  const handleEdit = () => {
+    if (!lastUpload) return;
+    setTitle(lastUpload.title);
+    setDescription(lastUpload.description);
+    setTags(lastUpload.tags.join(", "));
+    setLibraryId(lastUpload.libraryId || "");
+    setIsEditing(true);
+    // ✅ DO NOT TOUCH lastUpload.id
+  };
+
+  // =========================
+  // RENDER COMPONENT
+  // =========================
   return (
     <div
       className={`min-h-screen p-8 transition-colors duration-300 ${
-        darkMode ? "bg-black text-white" : "bg-white text-black"
+        darkMode ? "bg-[#0B0E1D] text-white" : "bg-[#EAF1FF] text-black"
       }`}
     >
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-10">
-        <div>
-          <h1 className="text-3xl font-bold">🖼️ Upload</h1>
-          <p className="text-gray-400">
-            Welcome, {user?.first_name || user?.username || "User"}
-          </p>
-          <p className={`mt-1 ${darkMode ? "text-gray-300" : "text-gray-500"}`}>
-            You have <span className="text-indigo-400">{libraries.length}</span> libraries
-          </p>
-          <p className={`mt-1 ${darkMode ? "text-gray-300" : "text-gray-500"}`}>
-            You have uploaded <span className="text-indigo-400">{myImages.length}</span> images
-          </p>
-        </div>
+      {/* ✅ HEADER COMPONENT */}
+      <Header
+        introProps={{
+          user: user,
+          imagesCount: imageUrl ? 1 : 0,
+          librariesCount: libraries.length,
+          darkMode: darkMode,
+        }}
+        navigationProps={{
+          darkMode: darkMode,
+          toggleDarkMode: toggleDarkMode,
+          logout: logout,
+        }}
+      />
 
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => (window.location.href = "/")}
-            className="group flex items-center space-x-2 p-2 rounded-full border-2 border-green-500 hover:bg-green-500/20 transition"
-          >
-            <ArrowLeft size={28} />
-            <span className="hidden group-hover:inline">Back To Dashboard</span>
-          </button>
-
-          <button
-            onClick={logout}
-            className="text-white bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 px-4 py-2 rounded-lg transition"
-          >
-            Logout
-          </button>
-
-          <button
-            onClick={toggleDarkMode}
-            className={`p-2 rounded-lg transition ${
-              darkMode ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-gray-200 text-black hover:bg-gray-300"
-            }`}
-          >
-            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-          </button>
-        </div>
-      </div>
-
-      {/* UPLOAD FORM */}
-      <div className="w-full bg-gray-100 dark:bg-gray-900 p-6 rounded-2xl shadow transition-colors duration-300">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
-          Upload a New Image
+      {/* =========================
+          UPLOAD FORM SECTION
+      ========================= */}
+      <div className="w-full bg-gray-100 dark:bg-gray-900 p-6 rounded-2xl shadow transition-colors duration-300 mt-10">
+        <h2
+          className={`text-2xl font-bold mb-4 ${
+            darkMode ? "text-[#BDD63B]" : "text-[#BDD63B]"
+          }`}
+        >
+          UPLOAD A NEW IMAGE
         </h2>
 
         <div className="flex flex-col gap-4">
+          {/* TITLE INPUT */}
+          <label htmlFor="Title" className="mb-1 font-semibold text-white">
+            Title
+          </label>
           <input
             type="text"
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="p-3 rounded bg-gray-200 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white"
+            className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] ${
+              darkMode
+                ? "bg-[#0B0E1D] text-white placeholder-gray-400"
+                : "bg-[#DDE7FF] text-[#0B0E1D] placeholder-gray-500"
+            }`}
           />
+
+          {/* DESCRIPTION INPUT */}
+          <label
+            htmlFor="description"
+            className="mb-1 font-semibold text-white"
+          >
+            Description
+          </label>
           <textarea
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="p-3 rounded bg-gray-200 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white"
+            className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] ${
+              darkMode
+                ? "bg-[#0B0E1D] text-white placeholder-gray-400"
+                : "bg-[#DDE7FF] text-[#0B0E1D] placeholder-gray-500"
+            }`}
           />
+
+          {/* TAGS INPUT */}
+          <label htmlFor="tags" className="mb-1 font-semibold text-white">
+            Tags - (Comma,Seperated)
+          </label>
           <input
             type="text"
             placeholder="Tags (comma-separated)"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="p-3 rounded bg-gray-200 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white"
+            className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] ${
+              darkMode
+                ? "bg-[#0B0E1D] text-white placeholder-gray-400"
+                : "bg-[#DDE7FF] text-[#0B0E1D] placeholder-gray-500"
+            }`}
           />
+
+          {/* LIBRARY SELECT */}
+          <label htmlFor="library" className="mb-1 font-semibold text-white">
+            Library - (None is default)
+          </label>
           <select
             value={libraryId}
             onChange={(e) => setLibraryId(e.target.value)}
-            className="p-3 rounded bg-gray-200 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black dark:text-white"
+            className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] ${
+              darkMode
+                ? "bg-[#0B0E1D] text-white"
+                : "bg-[#DDE7FF] text-[#0B0E1D]"
+            }`}
           >
             <option value="">-- None --</option>
             {libraries.map((lib) => (
@@ -187,22 +324,128 @@ export default function Upload() {
               </option>
             ))}
           </select>
+
+          {/* FILE INPUT */}
+          <label htmlFor="file" className="mb-1 font-semibold text-white">
+            Image Upload - (jpg, jpeg, png, svg) - (Max file size = "5 Gigs")
+          </label>
           <input
             type="file"
             onChange={handleFileChange}
-            className="p-2 rounded bg-gray-800 text-white"
+            className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] ${
+              darkMode
+                ? "bg-[#0B0E1D] text-white"
+                : "bg-[#DDE7FF] text-[#0B0E1D]"
+            }`}
           />
+
+          {/* UPLOAD BUTTON */}
           <button
-            onClick={handleUpload}
-            className="bg-indigo-600 hover:bg-indigo-700 p-3 rounded-lg text-white"
+            onClick={isEditing ? handleEditSave : handleUpload} // SAVE EDITS OR UPLOAD NEW
+            className="bg-[#BDD63B] hover:bg-[#A4C22F] p-3 rounded-lg text-black font-semibold transition-colors duration-300"
           >
-            Upload
+            {isEditing ? "Save Changes" : "Upload"}
           </button>
-          {error && <p className="text-red-500 mt-2">{error}</p>}
-          {imageUrl && (
-            <div className="mt-8">
-              <p className="font-semibold mb-2">Uploaded Image Preview:</p>
-              <img src={imageUrl} alt="uploaded" className="rounded-lg shadow-lg" />
+
+          {/* ERROR + SUCCESS MESSAGES */}
+          {error && (
+            <p className="text-red-500">
+              {typeof error === "string"
+                ? error
+                : JSON.stringify(error, null, 2)}
+            </p>
+          )}
+          {success && <p className="text-green-500">{success}</p>}
+
+          {/* =========================
+      LAST UPLOADED IMAGE SECTION
+========================= */}
+          <h2
+            className={`text-2xl font-bold mb-0 mt-10 ${
+              darkMode ? "text-[#BDD63B]" : "text-[#BDD63B]"
+            }`}
+          >
+            MOST RECENT UPLOAD
+          </h2>
+
+          {lastUpload && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* LEFT COLUMN: IMAGE INFORMATION */}
+              <div
+                className={`p-4 rounded-lg shadow-lg ${
+                  darkMode
+                    ? "bg-[#0B0E1D] text-white"
+                    : "bg-[#F7FAFF] text-black"
+                }`}
+              >
+                {/* Make title one size bigger */}
+                <h3 className="text-2xl font-bold mb-4">
+                  <strong>Title:</strong> {lastUpload.title || "N/A"}
+                </h3>
+                <p>
+                  <strong>Description:</strong>{" "}
+                  {lastUpload.description || "N/A"}
+                </p>
+                <p>
+                  <strong>Tags:</strong> {lastUpload.tags.join(", ") || "N/A"}
+                </p>
+                <p>
+                  <strong>Library:</strong> {lastUpload.library}
+                </p>
+                <p>
+                  <strong>File Name:</strong> {lastUpload.fileName}
+                </p>
+                <p>
+                  <strong>File Size:</strong> {lastUpload.fileSize}
+                </p>
+                <p>
+                  <strong>File Type:</strong> {lastUpload.fileType}
+                </p>
+                <p>
+                  <strong>Uploaded URL:</strong>{" "}
+                  <a
+                    href={lastUpload.url}
+                    className={`underline ${
+                      darkMode ? "text-[#BDD63B]" : "text-[#263248]"
+                    }`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {lastUpload.url}
+                  </a>
+                </p>
+                <p>
+                  <strong>Uploaded At:</strong> {lastUpload.uploadedAt}
+                </p>
+                <p>
+                  <strong>Uploaded By:</strong> {lastUpload.uploadedBy}
+                </p>
+              </div>
+
+              {/* RIGHT COLUMN: IMAGE PREVIEW + EDIT/DELETE BUTTONS */}
+              <div className="flex flex-col items-center justify-center gap-4">
+                <img
+                  src={lastUpload.url}
+                  alt="last-uploaded"
+                  className="w-full max-h-[80vh] object-contain rounded-lg shadow-lg"
+                />
+
+                {/* EDIT BUTTON */}
+                {/* <button
+                  onClick={handleEdit}
+                  className="bg-yellow-400 hover:bg-yellow-500 p-2 rounded-lg font-semibold text-black w-full"
+                >
+                  Edit
+                </button> */}
+
+                {/* DELETE BUTTON */}
+                {/* <button
+                  onClick={handleDelete}
+                  className="bg-red-500 hover:bg-red-600 p-2 rounded-lg font-semibold text-white w-full"
+                >
+                  Delete
+                </button> */}
+              </div>
             </div>
           )}
         </div>

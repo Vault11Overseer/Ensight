@@ -6,6 +6,7 @@ from fastapi import UploadFile
 from botocore.exceptions import NoCredentialsError
 from app.core.aws import s3_client  # import shared client
 from app.core.config import settings
+import boto3
 # --- AWS Rekognition helper ---
 from app.core.aws import rekognition_client
 
@@ -18,7 +19,14 @@ if not BUCKET:
 
 S3_BASE_URL = f"https://{BUCKET}.s3.{AWS_REGION}.amazonaws.com"
 
-
+def get_s3_client():
+    return boto3.client(
+        "s3",
+        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+        region_name=os.getenv("AWS_REGION"),
+    )
+    
 def upload_file_to_s3(
     file: UploadFile,
     user_id: str,
