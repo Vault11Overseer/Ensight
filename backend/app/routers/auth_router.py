@@ -1,8 +1,12 @@
+# backend/app/routers/auth_router.py
+
+# ======================================
+# IMPORTS
+# ======================================
 from fastapi import APIRouter, Depends, HTTPException, Form
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-
 from app.auth.register import register_user, UserCreate
 from app.auth.login import login_user, LoginIn
 from app.db.session import get_db
@@ -11,14 +15,18 @@ from app.schemas.user import UserCreate
 from app.core.security import decode_access_token, verify_password, create_access_token
 
 
+
+# ======================================
+# ROUTER ENDPOINT
+# ======================================
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
-# -------------------------
+# ======================================
 # REGISTER ENDPOINT
-# -------------------------
+# ======================================
 
 @router.post("/register")
 async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
@@ -29,9 +37,9 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     return await register_user(user, db)
 
 
-# -------------------------
+# ======================================
 # LOGIN ENDPOINT
-# -------------------------
+# ======================================
 @router.post("/login")
 async def login(user_data: LoginIn, db: AsyncSession = Depends(get_db)):
     """
@@ -52,9 +60,9 @@ async def login(user_data: LoginIn, db: AsyncSession = Depends(get_db)):
 
 
 
-# -------------------------
+# ======================================
 # CURRENT USER DEPENDENCY
-# -------------------------
+# ======================================
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: AsyncSession = Depends(get_db),
@@ -78,9 +86,9 @@ async def get_current_user(
     return db_user
 
 
-# -------------------------
-# CURRENT USER ENDPOINT
-# -------------------------
+# ======================================
+# CURRENT USER ENDPOINT /ME
+# ======================================
 @router.get("/me")
 async def me(current_user: User = Depends(get_current_user)):
     """

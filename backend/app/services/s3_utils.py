@@ -1,4 +1,9 @@
 # app/services/s3_utils.py
+
+
+# ======================================
+# IMPORTS
+# ======================================
 import os, base64
 from uuid import uuid4
 from typing import Optional
@@ -11,6 +16,10 @@ import boto3
 from app.core.aws import rekognition_client
 
 
+
+# ======================================
+# IMPORTS
+# ======================================
 AWS_REGION = os.getenv("AWS_REGION")
 BUCKET = os.getenv("AWS_BUCKET_NAME")
 
@@ -19,6 +28,10 @@ if not BUCKET:
 
 S3_BASE_URL = f"https://{BUCKET}.s3.{AWS_REGION}.amazonaws.com"
 
+
+# ======================================
+# IMPORTS
+# ======================================
 def get_s3_client():
     return boto3.client(
         "s3",
@@ -58,6 +71,10 @@ def upload_file_to_s3(
     return f"{S3_BASE_URL}/{file_key}"
 
 
+
+# ======================================
+# IMPORTS
+# ======================================
 def upload_base64_to_s3(base64_str: str, folder: str = "defaultImages/") -> str:
     """
     Upload Base64 image to S3. Returns public URL.
@@ -89,6 +106,11 @@ def upload_base64_to_s3(base64_str: str, folder: str = "defaultImages/") -> str:
     return f"{S3_BASE_URL}/{key}"
 
 
+
+
+# ======================================
+# IMPORTS
+# ======================================
 def rekognition_detect_labels(s3_url: str, max_labels: int = 10, min_confidence: float = 80.0):
     """
     Detects labels in an image stored on S3.
@@ -112,3 +134,15 @@ def rekognition_detect_labels(s3_url: str, max_labels: int = 10, min_confidence:
 
     except Exception as e:
         raise Exception(f"Rekognition label detection failed: {e}")
+
+
+
+def delete_s3_object(s3_url: str):
+    """Delete a file from the AWS S3 bucket based on its URL."""
+    if not s3_url or BUCKET not in s3_url:
+        return
+    try:
+        key = s3_url.split(f"{BUCKET}/")[-1]
+        s3.delete_object(Bucket=BUCKET, Key=key)
+    except ClientError as e:
+        print(f"❌ Error deleting S3 object: {e}")

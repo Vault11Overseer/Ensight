@@ -1,3 +1,8 @@
+# ======================================
+# IMPORTS
+# ======================================
+
+
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -14,15 +19,16 @@ from app.routers.auth_router import get_current_user
 from app.services.s3_utils import upload_file_to_s3
 import asyncio
 
+
+# ======================================
 # ROUTER ENDPOINT
+# ======================================
 router = APIRouter(prefix="/libraries", tags=["libraries"])
 
 
-
-
-# -------------------------
+# ======================================
 # CREATE A NEW LIBRARY
-# -------------------------
+# ======================================
 @router.post("/", response_model=LibraryResponse)
 async def create_library(
     title: str = Form(...),
@@ -74,16 +80,9 @@ async def create_library(
 
 
 
-
-
-
-
-
-
-
-# -------------------------   
-# GET ALL LIBRARIES (protected but public for logged-in users)
-# -------------------------
+# ======================================
+# GET ALL LIBRARIES (PROTECTED)
+# ======================================
 @router.get("/", response_model=List[LibraryResponse])
 async def get_all_libraries(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Library).options(selectinload(Library.user)))
@@ -103,11 +102,9 @@ async def get_all_libraries(db: AsyncSession = Depends(get_db)):
     ]
 
 
-
-
-# -------------------------
-# GET CURRENT USER LIBRARIES (CRUD only for owner)
-# -------------------------
+# ======================================
+# GET CURRENT USER LIBRARIES (PROTECTED)
+# ======================================
 @router.get("/mine", response_model=List[LibraryResponse])
 async def get_my_libraries(
     db: AsyncSession = Depends(get_db),
@@ -133,15 +130,10 @@ async def get_my_libraries(
     ]
 
 
-# -------------------------
-# UPDATE LIBRARY (owner only)
-# -------------------------
-from fastapi import UploadFile, File, Form
-from typing import Optional
 
-# -------------------------
-# UPDATE LIBRARY (owner only)
-# -------------------------
+# ======================================
+# UPDATE LIBRARY (PROTECTED)
+# ======================================
 @router.put("/{library_id}", response_model=LibraryResponse)
 async def update_library(
     library_id: int,
@@ -182,9 +174,9 @@ async def update_library(
     return library
 
 
-# -------------------------
-# DELETE LIBRARY (owner only)
-# -------------------------
+# ======================================
+# DELETE LIBRARY (PROTECTED)
+# ======================================
 @router.delete("/{library_id}")
 async def delete_library(
     library_id: int,
