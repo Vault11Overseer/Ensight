@@ -1,51 +1,36 @@
 import React, { useState, useEffect } from "react";
 import API from "../api/axios";
 import { useAuth } from "../context/AuthContext";
-import Header from "../components/Header";
+import Header from "../components/module/Header";
 
 export default function Libraries() {
-  // ==============================
-  // AUTH CONTEXT & STATE VARIABLES
-  // ==============================
   const { user, logout } = useAuth();
 
-  const [libraries, setLibraries] = useState([]); // USER'S LIBRARIES
-  const [allLibraries, setAllLibraries] = useState([]); // ALL LIBRARIES
-  const [title, setTitle] = useState(""); // NEW LIBRARY TITLE
-  const [description, setDescription] = useState(""); // NEW LIBRARY DESCRIPTION
-  const [imageFile, setImageFile] = useState(null); // FILE UPLOAD
-  const [imageBase64, setImageBase64] = useState(""); // IMAGE AS BASE64 FOR INLINE EDIT
-  const [error, setError] = useState(""); // ERROR MESSAGES
-  const [inlineEdits, setInlineEdits] = useState({}); // INLINE EDITING STATE
-  const [images, setImages] = useState([]); // COUNT OF IMAGES
+  const [libraries, setLibraries] = useState([]);
+  const [allLibraries, setAllLibraries] = useState([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imageBase64, setImageBase64] = useState("");
+  const [error, setError] = useState("");
+  const [inlineEdits, setInlineEdits] = useState({});
+  const [images, setImages] = useState([]);
 
-  // ==============================
-  // DARK MODE STATE INITIALIZATION
-  // ==============================
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       return JSON.parse(localStorage.getItem("darkMode")) ?? true;
     }
-    return true; // DEFAULT DARK MODE
+    return true;
   });
 
-  // ==============================
-  // SYNC DARK MODE TO <HTML> CLASS
-  // ==============================
   useEffect(() => {
     if (darkMode) document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
 
-  // ==============================
-  // TOGGLE DARK MODE FUNCTION
-  // ==============================
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
-  // ==============================
-  // FETCH USER'S LIBRARIES
-  // ==============================
   const fetchMyLibraries = async () => {
     try {
       const res = await API.get("/libraries/mine");
@@ -55,9 +40,6 @@ export default function Libraries() {
     }
   };
 
-  // ==============================
-  // FETCH ALL LIBRARIES
-  // ==============================
   const fetchAllLibraries = async () => {
     try {
       const res = await API.get("/libraries/");
@@ -67,17 +49,11 @@ export default function Libraries() {
     }
   };
 
-  // ==============================
-  // INITIAL DATA FETCH
-  // ==============================
   useEffect(() => {
     fetchMyLibraries();
     fetchAllLibraries();
   }, []);
 
-  // ==============================
-  // HANDLE NEW LIBRARY CREATION
-  // ==============================
   const handleCreate = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -101,9 +77,6 @@ export default function Libraries() {
     }
   };
 
-  // ==============================
-  // HANDLE LIBRARY DELETION
-  // ==============================
   const handleDelete = async (libId) => {
     try {
       await API.delete(`/libraries/${libId}`);
@@ -115,9 +88,6 @@ export default function Libraries() {
     }
   };
 
-  // ==============================
-  // START INLINE EDIT
-  // ==============================
   const startEditingInline = (lib) => {
     setInlineEdits({
       id: lib.id,
@@ -126,16 +96,10 @@ export default function Libraries() {
     });
   };
 
-  // ==============================
-  // HANDLE INLINE INPUT CHANGES
-  // ==============================
   const handleInlineChange = (e) => {
     setInlineEdits({ ...inlineEdits, [e.target.name]: e.target.value });
   };
 
-  // ==============================
-  // SAVE INLINE EDITS
-  // ==============================
   const saveInlineEdits = async (libId) => {
     try {
       const payload = {
@@ -158,9 +122,6 @@ export default function Libraries() {
     }
   };
 
-  // ==============================
-  // HANDLE IMAGE FILE CHANGE
-  // ==============================
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -175,167 +136,225 @@ export default function Libraries() {
     reader.readAsDataURL(file);
   };
 
-  // ==============================
-  // MAIN RENDER
-  // ==============================
-return (
-  <div
-    className={`min-h-screen p-8 transition-colors duration-300 ${
-      darkMode ? "bg-[#0B0E1D] text-white" : "bg-[#EAF1FF] text-black"
-    }`}
-  >
-    {/* HEADER COMPONENT */}
-    <Header
-      introProps={{
-        user: user,
-        imagesCount: images.length,
-        librariesCount: allLibraries.length,
-        darkMode: darkMode,
-      }}
-      navigationProps={{
-        darkMode: darkMode,
-        toggleDarkMode: toggleDarkMode,
-        logout: logout,
-      }}
-    />
+  return (
+    <div
+      className={`min-h-screen p-8 transition-colors duration-300 ${
+        darkMode ? "bg-[#0B0E1D] text-white" : "bg-[#EAF1FF] text-black"
+      }`}
+    >
+      <Header
+        introProps={{
+          user: user,
+          imagesCount: images.length,
+          librariesCount: allLibraries.length,
+          darkMode: darkMode,
+        }}
+        navigationProps={{
+          darkMode: darkMode,
+          toggleDarkMode: toggleDarkMode,
+          logout: logout,
+        }}
+      />
 
-    {/* CREATE LIBRARY FORM */}
-    <div className="flex flex-col md:flex-row gap-10 mt-6">
-      <div
-        className={`w-full p-6 rounded-2xl shadow transition-colors duration-300 ${
-          darkMode ? "bg-[#1A1F3D]" : "bg-white"
-        }`}
-      >
-        <h2
-          className={`text-2xl font-bold mb-4 ${
-            darkMode ? "text-[#BDD63B]" : "text-[#0B0E1D]"
+      {/* CREATE LIBRARY FORM */}
+      <div className="flex flex-col md:flex-row gap-10 mt-6">
+        <div
+          className={`w-full p-6 rounded-2xl shadow transition-colors duration-300 ${
+            darkMode ? "bg-[#1A1F3D]" : "bg-white"
           }`}
         >
-          CREATE A NEW LIBRARY
-        </h2>
-
-        <form onSubmit={handleCreate} className="flex flex-col gap-4">
-          <input
-            className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] ${
-              darkMode
-                ? "bg-[#0B0E1D] text-white placeholder-gray-400"
-                : "bg-[#DDE7FF] text-[#0B0E1D] placeholder-gray-500"
+          <h2
+            className={`text-2xl font-bold mb-4 ${
+              darkMode ? "text-[#BDD63B]" : "text-[#0B0E1D]"
             }`}
-            placeholder="Library Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-          <textarea
-            className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] ${
-              darkMode
-                ? "bg-[#0B0E1D] text-white placeholder-gray-400"
-                : "bg-[#DDE7FF] text-[#0B0E1D] placeholder-gray-500"
+          >
+            CREATE A NEW LIBRARY
+          </h2>
+
+          <form onSubmit={handleCreate} className="flex flex-col gap-4">
+            <label className="font-semibold">Library Title</label>
+            <input
+              className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] ${
+                darkMode
+                  ? "bg-[#0B0E1D] text-white placeholder-gray-400"
+                  : "bg-[#DDE7FF] text-[#0B0E1D] placeholder-gray-500"
+              }`}
+              placeholder="Library Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+
+            <label className="font-semibold">Library Description</label>
+            <textarea
+              className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] ${
+                darkMode
+                  ? "bg-[#0B0E1D] text-white placeholder-gray-400"
+                  : "bg-[#DDE7FF] text-[#0B0E1D] placeholder-gray-500"
+              }`}
+              placeholder="Library Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            />
+
+            <label className="font-semibold">Library Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] ${
+                darkMode
+                  ? "bg-[#0B0E1D] text-white"
+                  : "bg-[#DDE7FF] text-[#0B0E1D]"
+              }`}
+              onChange={handleFileChange}
+            />
+
+            <button className="bg-[#BDD63B] hover:bg-[#A4C22F] p-3 rounded-lg text-black font-semibold transition-colors duration-300">
+              CREATE LIBRARY
+            </button>
+
+            {error && <p className="text-red-500 mt-2">{error}</p>}
+          </form>
+        </div>
+      </div>
+
+      {/* USER LIBRARIES */}
+      {libraries.length > 0 && (
+        <div className="mt-10">
+          <h2
+            className={`text-2xl font-bold mb-4 ${
+              darkMode ? "text-[#BDD63B]" : "text-[#0B0E1D]"
             }`}
-            placeholder="Library Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-          <input
-            type="file"
-            accept="image/*"
-            className="p-2 rounded bg-[#0B0E1D] text-white"
-            onChange={handleFileChange}
-          />
-          <button className="bg-[#BDD63B] hover:bg-[#A4C22F] p-3 rounded-lg text-black font-semibold transition-colors duration-300">
-            CREATE LIBRARY
-          </button>
-          {error && <p className="text-red-500 mt-2">{error}</p>}
-        </form>
+          >
+            YOUR LIBRARIES
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {libraries.map((lib) => (
+              <div
+                key={lib.id}
+                className={`p-2 rounded-lg shadow relative transition-colors duration-300 ${
+                  lib.image_url
+                    ? darkMode
+                      ? "bg-[#0B0E1D]"
+                      : "bg-[#F0F5FF]"
+                    : darkMode
+                    ? "bg-[#1A1F3D]"
+                    : "bg-[#EAF1FF]"
+                }`}
+              >
+                <img
+                  src={
+                    lib.image_url ||
+                    "http://localhost:8000/static/default_library.png"
+                  }
+                  alt={lib.title}
+                  className="w-full h-32 object-cover rounded"
+                />
 
-        {/* USER LIBRARIES */}
-        {libraries.length > 0 && (
-          <div className="mt-10">
-            <h2
-              className={`text-2xl font-bold mb-4 ${
-                darkMode ? "text-[#BDD63B]" : "text-[#0B0E1D]"
-              }`}
-            >
-              YOUR LIBRARIES
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {libraries.map((lib) => (
-                <div
-                  key={lib.id}
-                  className={`p-2 rounded-lg shadow cursor-pointer transition-colors duration-300 ${
-                    lib.image_url
-                      ? darkMode
-                        ? "bg-[#0B0E1D]"
-                        : "bg-[#F0F5FF]"
-                      : darkMode
-                      ? "bg-[#1A1F3D]"
-                      : "bg-[#EAF1FF]"
-                  }`}
-                  onClick={() => (window.location.href = `/library/${lib.id}`)}
-                >
-                  <div className="w-full h-32 overflow-hidden rounded mb-2">
-                    <img
-                      src={
-                        lib.image_url ||
-                        "http://localhost:8000/static/default_library.png"
-                      }
-                      alt={lib.title}
-                      className="w-full h-full object-cover"
+                {/* INLINE EDIT MODE */}
+                {inlineEdits.id === lib.id ? (
+                  <div className="absolute top-2 left-2 right-2 bg-black/80 p-2 rounded">
+                    <label className="text-white text-sm">Title</label>
+                    <input
+                      className="p-1 mb-1 rounded w-full text-white bg-[#0B0E1D]"
+                      name="title"
+                      value={inlineEdits.title}
+                      onChange={handleInlineChange}
                     />
+                    <label className="text-white text-sm">Description</label>
+                    <textarea
+                      className="p-1 mb-1 rounded w-full text-white bg-[#0B0E1D]"
+                      name="description"
+                      value={inlineEdits.description}
+                      onChange={handleInlineChange}
+                    />
+                    <label className="text-white text-sm">Image</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="p-1 mb-2 rounded w-full bg-[#0B0E1D] text-white"
+                      onChange={handleFileChange}
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        className="bg-[#BDD63B] hover:bg-[#A4C22F] p-1 rounded text-sm"
+                        onClick={() => saveInlineEdits(lib.id)}
+                      >
+                        SAVE
+                      </button>
+                      <button
+                        className="bg-gray-600 hover:bg-gray-700 p-1 rounded text-sm"
+                        onClick={() => setInlineEdits({})}
+                      >
+                        CANCEL
+                      </button>
+                    </div>
                   </div>
-                  <h3 className="font-bold">{lib.title}</h3>
-                  <p className="text-gray-400 dark:text-gray-300 text-xs">
-                    {new Date(lib.created_at).toLocaleDateString()} by{" "}
-                    {lib.user_name || "Unknown"}
-                  </p>
-                </div>
-              ))}
-            </div>
+                ) : (
+                  <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center bg-black/60 p-1 rounded">
+                    <div>
+                      <h2 className="font-bold text-white">{lib.title}</h2>
+                      <p className="text-gray-400 text-sm">{lib.description}</p>
+                    </div>
+                    <div className="flex gap-1">
+                      <button
+                        className="bg-yellow-500 hover:bg-yellow-600 p-1 rounded text-sm text-black"
+                        onClick={() => startEditingInline(lib)}
+                      >
+                        EDIT
+                      </button>
+                      <button
+                        className="bg-red-600 hover:bg-red-700 p-1 rounded text-sm"
+                        onClick={() => handleDelete(lib.id)}
+                      >
+                        DELETE
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+      )}
 
-        {/* ALL LIBRARIES SECTION */}
-        {allLibraries.length > 0 && (
-          <div className="mt-10">
-            <h2
-              className={`text-2xl font-bold mb-4 ${
-                darkMode ? "text-[#BDD63B]" : "text-[#0B0E1D]"
-              }`}
-            >
-              ALL LIBRARIES
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {allLibraries.map((lib) => (
-                <div
-                  key={lib.id}
-                  className={`p-2 rounded-lg shadow transition-colors duration-300 ${
-                    darkMode
-                      ? "bg-[#1A1F3D] text-white"
-                      : "bg-[#F0F5FF] text-[#0B0E1D]"
-                  } text-sm`}
-                >
-                  <div className="w-full h-24 overflow-hidden rounded mb-2">
-                    <img
-                      src={
-                        lib.image_url ||
-                        "http://localhost:8000/static/default_library.png"
-                      }
-                      alt={lib.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h3 className="font-bold">{lib.title}</h3>
-                  <p className="text-gray-400 dark:text-gray-300 text-xs">
-                    {new Date(lib.created_at).toLocaleDateString()} by{" "}
-                    {lib.user_name || "Unknown"}
-                  </p>
-                </div>
-              ))}
+      {/* ALL LIBRARIES SECTION */}
+      <h2
+        className={`pt-6 text-2xl font-bold mb-4 ${
+          darkMode ? "text-[#BDD63B]" : "text-[#0B0E1D]"
+        }`}
+      >
+        ALL LIBRARIES
+      </h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {allLibraries.map((lib) => (
+          <div
+            key={lib.id}
+            className={`p-2 rounded-lg shadow transition-colors duration-300 ${
+              darkMode
+                ? "bg-[#1A1F3D] text-white"
+                : "bg-[#F0F5FF] text-[#0B0E1D]"
+            } text-sm`}
+          >
+            <div className="w-full h-24 overflow-hidden rounded mb-2">
+              <img
+                src={
+                  lib.image_url ||
+                  "http://localhost:8000/static/default_library.png"
+                }
+                alt={lib.title}
+                className="w-full h-full object-cover"
+              />
             </div>
+            <h3 className="font-bold">{lib.title}</h3>
+            <p className="text-gray-400 dark:text-gray-300 text-xs">
+              {new Date(lib.created_at).toLocaleDateString()} by{" "}
+              {lib.user_name || "Unknown"}
+            </p>
           </div>
-        )}
+        ))}
       </div>
     </div>
-  </div>
-);
+  );
+}

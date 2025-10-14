@@ -23,15 +23,15 @@ export default function Navigation({ darkMode, toggleDarkMode, logout }) {
           backgroundColor: green,
           color: "black",
           minWidth: "48px",
-          // padding: "6px 10px",
-          padding: "6px 20px 6px 10px",
+          padding: "6px 10px",
+          // padding: "6px 25x 6px 0px",
         }}
       >
         {/* Icon changes based on page */}
         {isDashboard ? <Settings size={28} /> : <ArrowLeft size={28} />}
 
         {/* Text fills in from left on hover */}
-        <span className="font-semibold whitespace-nowrap max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[180px] mr-2 text-left">
+        <span className="font-semibold whitespace-nowrap max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[180px] mr-2 text-left ">
           {isDashboard ? "User Settings" : "Back To Dashboard"}
         </span>
       </button>

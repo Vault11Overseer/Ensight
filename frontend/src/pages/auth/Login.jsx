@@ -2,8 +2,8 @@
 
 // IMPORTS
 import React, { useState, useEffect } from "react";
-import API from "../api/axios";
-import { useAuth } from "../context/AuthContext";
+import API from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Sun, Moon, X } from "lucide-react";
 
@@ -34,6 +34,7 @@ export default function Login() {
   const slideshowImages = [
     "/images/winter-at-the-strater.jpg",
     "/images/durango_road.jpg",
+    "/images/durango_train.jpg",
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -103,8 +104,8 @@ export default function Login() {
           </div>
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center">
             <p
-              className={`text-lg font-medium ${
-                darkMode ? "text-white" : "text-black"
+              className={` px-3 py-1 rounded-lg font-bold text-lg ${
+                darkMode ? "bg-black text-[#BDD63B]" : "bg-white text-[#1E1C29]"
               }`}
             >
               Capturing Moments,

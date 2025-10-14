@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import API from "../api/axios";
-import { Images } from "lucide-react";
+import { Images, ImageUp, LibraryBig, GalleryVerticalEnd } from "lucide-react";
 
-import Header from "../components/Header";
+import Header from "../components/module/Header";
 
 export default function Dashboard() {
   const { token, logout, user } = useAuth();
@@ -47,12 +47,15 @@ export default function Dashboard() {
     fetchAllLibraries();
   }, [token]);
 
+  // DISPLAY
   return (
+    // DARK / LIGHT THEME WRAPPER
     <div
       className={`min-h-screen p-8 transition-colors duration-300 ${
         darkMode ? "bg-black text-white" : "bg-white text-black"
       }`}
     >
+      {/* HEADER SECTION */}
       <Header
         introProps={{
           user: user,
@@ -67,7 +70,7 @@ export default function Dashboard() {
         }}
       />
 
-      {/* Portal Links */}
+      {/* UPLOAD LINK */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-10">
         <a
           href="/Upload"
@@ -77,10 +80,18 @@ export default function Dashboard() {
               : "bg-[#263248] text-white hover:bg-[#122342]"
           }`}
         >
-          <h2 className="text-xl font-semibold">⬆️ Upload</h2>
-          <p className="mt-2">Upload your images</p>
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <ImageUp size={18} /> Upload
+          </h2>
+          <hr className="my-4 border-black w-full" />
+
+          <p className="mt-2">
+            Upload and edit photos to the library or just the main image
+            gallery.
+          </p>
         </a>
 
+        {/* LIBRARY LINK */}
         <a
           href="/Libraries"
           className={`p-6 rounded-2xl shadow transition ${
@@ -89,21 +100,35 @@ export default function Dashboard() {
               : "bg-[#263248] text-white hover:bg-[#122342]"
           }`}
         >
-          <h2 className="text-xl font-semibold">📚 Libraries</h2>
-          <p className="mt-2">Browse Collections of Images</p>
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <LibraryBig size={18} /> Libraries
+          </h2>
+          <hr className="my-4 border-black w-full" />
+
+          <p className="mt-2">
+            {" "}
+            Create, edit, and delete your own libraries and browse libraries of
+            images made by other users.
+          </p>
         </a>
 
+        {/* PERSONAL LINK */}
         <a
-          href="/personal"
+          href="/Personal"
           className={`p-6 rounded-2xl shadow transition ${
             darkMode
               ? "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"
               : "bg-[#263248] text-white hover:bg-[#122342]"
           }`}
         >
-          <h2 className="text-xl font-semibold">📷 Personal</h2>
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <Images size={18} /> Personal
+          </h2>
+          <hr className="my-4 border-black w-full" />
+
           <p className="mt-2 flex items-center gap-1">
-            Manage your uploads <Images size={18} />
+            Search... view, edit, and delete all your person uploaded images
+            here.
           </p>
         </a>
       </div>
@@ -118,11 +143,14 @@ export default function Dashboard() {
               : "bg-[#263248] text-white hover:bg-[#122342]"
           }`}
         >
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <span>📷 Gallery</span>
+          <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <GalleryVerticalEnd size={18} /> Gallery
           </h2>
+          <hr className="my-4 border-black w-full" />
+
           <p className="mt-2 flex items-center gap-2">
-            Browse the main gallery
+            Browse or search the main gallery, which contains all images created
+            by all users.
           </p>
         </a>
       </div>

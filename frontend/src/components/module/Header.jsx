@@ -1,6 +1,6 @@
 import React from "react";
-import Intro from "./Intro";
-import Navigation from "./Navigation";
+import Intro from "./submodule/Intro";
+import Navigation from "./submodule/Navigation";
 
 export default function Header({ introProps, navigationProps }) {
   return (

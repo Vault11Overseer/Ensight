@@ -1,7 +1,12 @@
+// frontend/src/pages/Upload.jsx
+
+// =========================
+// IMPORTS
+// =========================
 import React, { useState, useEffect } from "react";
 import API from "../api/axios";
 import { useAuth } from "../context/AuthContext";
-import Header from "../components/Header"; // ✅ IMPORT SHARED HEADER COMPONENT
+import Header from "../components/module/Header"; // ✅ IMPORT SHARED HEADER COMPONENT
 
 export default function Upload() {
   // =========================
@@ -86,7 +91,8 @@ export default function Upload() {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("title", title);
-      formData.append("library_id", libraryId);
+      // Only append library_id if it's set
+      if (libraryId) formData.append("library_id", parseInt(libraryId));
 
       // UPLOAD FILE
       const uploadRes = await API.post("/images/upload", formData, {
@@ -125,13 +131,22 @@ export default function Upload() {
       setLastUpload(uploadedData);
       localStorage.setItem("lastUpload", JSON.stringify(uploadedData));
 
-      // SAVE METADATA
-      await API.post(`/images/${id}/metadata`, {
+      // =========================
+      // PREPARE METADATA OBJECT
+      // =========================
+      const metadata = {
         title,
         description,
         tags: uploadedData.tags,
-        library_id: uploadedData.libraryId || null,
-      });
+        library_id: libraryId ? parseInt(libraryId) : null,
+      };
+
+      // =========================
+      // SAVE METADATA
+      // =========================
+      await API.post(`/images/${id}/metadata`, metadata);
+
+      await API.post(`/images/${id}/metadata`, metadata);
 
       // RESET FORM
       setSuccess("Upload + metadata saved successfully!");
@@ -241,9 +256,7 @@ export default function Upload() {
         }}
       />
 
-      {/* =========================
-          UPLOAD FORM SECTION
-      ========================= */}
+      {/* UPLOAD FORM */}
       <div className="w-full bg-gray-100 dark:bg-gray-900 p-6 rounded-2xl shadow transition-colors duration-300 mt-10">
         <h2
           className={`text-2xl font-bold mb-4 ${

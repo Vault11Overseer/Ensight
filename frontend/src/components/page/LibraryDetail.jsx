@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import API from "../api/axios";
-import Header from "../components/Header";
+import API from "../../api/axios";
+import Header from "../module/Header";
 
 export default function LibraryDetail({
   darkMode,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"; // IMPORT REACT HOOKS
-import API from "../api/axios"; // IMPORT API INSTANCE
+import API from "../../api/axios"; // IMPORT API INSTANCE
 import { useNavigate } from "react-router-dom"; // IMPORT NAVIGATION
 import { Eye, EyeOff, Sun, Moon } from "lucide-react"; // IMPORT ICONS FOR PASSWORD & THEME TOGGLE
 
@@ -42,6 +42,7 @@ export default function Register() {
   const slideshowImages = [
     "/images/winter-at-the-strater.jpg",
     "/images/durango_road.jpg",
+    "/images/durango_train.jpg",
   ];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -113,8 +114,8 @@ export default function Register() {
           {/* TAGLINE */}
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center">
             <p
-              className={`text-lg font-medium ${
-                darkMode ? "text-white" : "text-black"
+              className={` px-3 py-1 rounded-lg font-bold text-lg ${
+                darkMode ? "bg-black text-[#BDD63B]" : "bg-white text-[#1E1C29]"
               }`}
             >
               Capturing Moments,
