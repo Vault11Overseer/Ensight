@@ -1,4 +1,4 @@
-<!-- Ensight - Backend -->
+<!-- ENSIGHT BACKEND -->
 
 <!-- UV SERVER START -->
 
@@ -13,7 +13,28 @@ users -->
 
 python -m app.scripts.reset_users_table
 
-<!-- SWAGGER ENPOINT -->
+<!-- SWAGGER ENDPOINT -->
 <!-- http://localhost:8000/docs -->
 
 THINGS TO DO CHECKLIST:
+/backend/app
+
+<!-- /auth/ -->
+
+/core/
+/db/
+/migrations/
+/models/
+/routers/
+/schemas/
+/scripts/
+/services/
+
+<!-- .env -->
+
+main.py
+
+<!-- /static/ -->
+<!-- /db/ -->
+
+LOOK INTO CURL CALLS

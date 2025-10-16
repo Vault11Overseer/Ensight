@@ -1,33 +1,43 @@
-
 # app/auth/register.py
+
+# ======================================
+# REGISTER ROUTER
+# ======================================
+
+# ======================================
+# IMPORTS
+# ======================================
 from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel, EmailStr
-
 from app.db.session import get_db
 from app.models.user import User
 from app.core.security import hash_password
 from passlib.context import CryptContext  
 from app.schemas.user import UserCreate
 
-# Password hashing
+# ======================================
+# PASSWORD HASHING
+# ======================================
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-
+# ======================================
+# REGISTER USER METHOD
+# ======================================
 async def register_user(user: UserCreate, db: AsyncSession):
     
-    # 1. Check if user with email already exists
+    # CHECK IF USER WITH EMAIL ALREADY EXSISTS
     result = await db.execute(select(User).where(User.email == user.email))
     existing_user = result.scalar_one_or_none()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    # 2. Hash the password
+    # HASK THE PASSWORD
     hashed_password = pwd_context.hash(user.password)
 
-    # 3. Create the new user
+    # CREATE THE NEW USER
     new_user = User(
         first_name=user.first_name,
         last_name=user.last_name,
@@ -35,12 +45,12 @@ async def register_user(user: UserCreate, db: AsyncSession):
         hashed_password=hashed_password
     )
 
-    # 4. Add and commit
+    # ADD AND COMMIT
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
 
-    # 5. Return minimal info
+    # RETURN ONLY THE ESSENTIAL INFO
     return {
         "id": new_user.id,
         "first_name": new_user.first_name,

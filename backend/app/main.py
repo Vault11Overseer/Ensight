@@ -1,3 +1,13 @@
+# backend/app/main.py
+
+
+# ======================================
+# MAIN 
+# ======================================
+
+# ======================================
+# IMPORTS
+# ======================================
 import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -7,23 +17,27 @@ from pathlib import Path
 from app.routers import auth_router, library_router, images_router
 from app.db.database import init_db
 
+
+# ======================================
+# BASE DIRECTORY
+# ======================================
 BASE_DIR = Path(__file__).resolve().parent.parent  # backend/
 
-# -------------------------
+# ======================================
 # LIFESPAN CONTEXT
-# -------------------------
+# ======================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_db()  # ensure DB is created at startup
+    await init_db()  # INITIALIZE DATABASE
     print("Database initialized!")
     yield
     print("Shutting down...")
 
 app = FastAPI(title="Ensight", lifespan=lifespan)
 
-# -------------------------
+# ======================================
 # CORS
-# -------------------------
+# ======================================
 origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
 app.add_middleware(
     CORSMiddleware,
@@ -33,9 +47,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# -------------------------
-# ROUTERS & STATIC FILES
-# -------------------------
+# ======================================
+# ROUTERS AND STATIC FILES
+# ======================================
 app.include_router(auth_router.router)
 app.include_router(library_router.router)
 # app.include_router(images_router.router)
@@ -46,9 +60,9 @@ app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 async def root():
     return {"message": "Backend is running!"}
 
-# -------------------------
+# ======================================
 # RUN SERVER
-# -------------------------
+# ======================================
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
