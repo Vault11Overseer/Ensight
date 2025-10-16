@@ -1,5 +1,6 @@
 # backend/app/models/__init__.py
 
+# MODELS
 # SQLAlCHEMY - FASTAPI MODELS 
 # REPRESENT DATABASE TABLE - DEFINE THE SHAPE OF DATA
 # ENABLE INPUT VALIDATION
@@ -11,7 +12,6 @@
 # INTEGRATE WITH DATABASE ORM MODELS
 # KEEP CODE CLEAN, CONSISTENT, AND MAINTAINABLE
 
-# Import all models so they are registered with Base.metadata
 # IMPORT ALL MODELS SO THEY ARE REGISTERED WITH BASE.METADATA
 from .user import User
 from .image import Image

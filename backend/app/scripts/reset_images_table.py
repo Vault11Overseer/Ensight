@@ -1,3 +1,12 @@
+# backend/app/scripts/reset_images_table.py
+
+# ======================================
+# RESET IMAGES TABLE
+# ======================================
+
+# ======================================
+# IMPORTS
+# ======================================
 import asyncio
 import os
 from backend.db.database import async_engine, Base
@@ -6,6 +15,9 @@ from app.models.image import Image  # required so SQLAlchemy sees Image
 
 DB_FILE = "./app/db/database.db"
 
+# ======================================
+# RESET IMAGES TABLE IN THE DATABASE
+# ======================================
 async def reset_db():
     # Delete old DB file to avoid leftover indexes/tables
     if os.path.exists(DB_FILE):

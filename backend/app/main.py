@@ -21,7 +21,7 @@ from app.db.database import init_db
 # ======================================
 # BASE DIRECTORY
 # ======================================
-BASE_DIR = Path(__file__).resolve().parent.parent  # backend/
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ======================================
 # LIFESPAN CONTEXT
@@ -33,6 +33,7 @@ async def lifespan(app: FastAPI):
     yield
     print("Shutting down...")
 
+# INITIALIZE FASTAPI
 app = FastAPI(title="Ensight", lifespan=lifespan)
 
 # ======================================
@@ -52,10 +53,12 @@ app.add_middleware(
 # ======================================
 app.include_router(auth_router.router)
 app.include_router(library_router.router)
-# app.include_router(images_router.router)
 app.include_router(images_router.router, prefix="/images", tags=["images"])
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
+# ======================================
+# SET ROUTE
+# ======================================
 @app.get("/")
 async def root():
     return {"message": "Backend is running!"}

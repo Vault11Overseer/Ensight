@@ -1,3 +1,13 @@
+# backend/app/scripts/reset_users_table.py
+
+# ======================================
+# RESET USERS TABLE
+# ======================================
+
+# ======================================
+# IMPORTS
+# ======================================
+
 import asyncio
 import os
 from backend.db.database import async_engine, Base
@@ -5,6 +15,9 @@ import app.models.user  # <-- import all models so metadata sees them
 
 DB_FILE = "./app/db/database.db"
 
+# ======================================
+# RESET USERS TABLE IN THE DATABASE
+# ======================================
 async def reset_db():
     if os.path.exists(DB_FILE):
         os.remove(DB_FILE)

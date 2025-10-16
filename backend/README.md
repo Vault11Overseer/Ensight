@@ -16,24 +16,22 @@ python -m app.scripts.reset_users_table
 <!-- SWAGGER ENDPOINT -->
 <!-- http://localhost:8000/docs -->
 
-THINGS TO DO CHECKLIST:
+<!-- THINGS TO DO CHECKLIST: -->
+
 /backend/app
 
 <!-- /auth/ -->
+<!-- /core/ -->
+<!-- /db/ -->
+<!-- /models/ -->
+<!-- /routers/ -->
+<!-- /schemas/ -->
+<!-- /scripts/ -->
 
-/core/
-/db/
-/migrations/
-/models/
-/routers/
-/schemas/
-/scripts/
-/services/
+/services/ DELETE
 
 <!-- .env -->
-
-main.py
-
+<!-- main.py -->
 <!-- /static/ -->
 <!-- /db/ -->
 

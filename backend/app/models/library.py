@@ -1,8 +1,12 @@
+# backend/app/models/library.py
+
+# ======================================
+# LIBRARY MODELS
+# ======================================
 
 # ======================================
 # IMPORTS
 # ======================================
-
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, func
 from sqlalchemy.orm import relationship
 from ..db.database import Base
@@ -10,11 +14,11 @@ from datetime import datetime
 
 
 # ======================================
-# IMPORTS
+# LIBRARY CLASS
 # ======================================
 class Library(Base):
     __tablename__ = "libraries"
-
+    # LIBRARY MODEL
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column(String, index=True, nullable=False)
     description = Column(String)
@@ -22,8 +26,8 @@ class Library(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
 
+    # RELATIONAL MODEL
     user = relationship("User", back_populates="libraries")
-    
     images = relationship(
         "Image",
         back_populates="library",

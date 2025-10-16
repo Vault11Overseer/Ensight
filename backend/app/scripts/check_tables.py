@@ -1,8 +1,20 @@
+# backend/app/scripts/check_tables.py
+
+# ======================================
+# CHECK TABLES SCRIPTS
+# ======================================
+
+# ======================================
+# IMPORTS
+# ======================================
 from app.db.session import async_session
 from app.models.user import User
 from app.models.library import Library
 import asyncio
 
+# ======================================
+# CHECK TABLES IN DATABASE
+# ======================================
 async def check_tables():
     async with async_session() as session:
         users = await session.execute("SELECT * FROM users")

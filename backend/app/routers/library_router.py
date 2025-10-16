@@ -1,8 +1,12 @@
+# backend/app/routers/library_router.py
+
+# ======================================
+# LIBRARY ROUTER
+# ======================================
+
 # ======================================
 # IMPORTS
 # ======================================
-
-
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -16,7 +20,7 @@ from app.db.session import get_db
 from app.models.library import Library
 from app.schemas.library import LibraryCreate, LibraryResponse
 from app.routers.auth_router import get_current_user
-from app.services.s3_utils import upload_file_to_s3
+from backend.app.services.s3_utils_DEL import upload_file_to_s3
 import asyncio
 
 
@@ -40,23 +44,23 @@ async def create_library(
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
     default_image_path = BASE_DIR / "static" / "default_library.png"
 
-    # If user uploaded an image → upload to S3
+    # IF USER UPLOADED AN IMAGE -> UPLOAD TO S3
     if image:
         try:
             loop = asyncio.get_running_loop()
-            # ✅ Store user-uploaded library image in defaultImages/
+            # STORE USER UPLOADED LIBRARY IMAGE IN DEFAULTLIBRARY
             upload_task = partial(upload_file_to_s3, image, user_id=str(current_user.id), folder="defaultImages/")
             image_url = await loop.run_in_executor(None, upload_task)
 
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to upload image: {str(e)}")
-    # If no image → use backend static path
+    # IF NO IMAGE -> USE BACKEND STATIC PATH
     else:
         if not default_image_path.exists():
             raise HTTPException(status_code=404, detail="Default library image not found on server.")
         image_url = "http://localhost:8000/static/default_library.png"
 
-    # Create library record
+    # CREATE LIBRARY RECORD
     new_library = Library(
         title=title,
         description=description,
@@ -115,7 +119,7 @@ async def get_my_libraries(
     )
     libraries = result.scalars().all()
 
-    # Map to response schema including user_name
+    # MAP TO RESPONSE SCHEMA INCLUDING USER_NAME
     return [
         LibraryResponse(
             id=lib.id,
@@ -139,12 +143,12 @@ async def update_library(
     library_id: int,
     title: str = Form(...),
     description: str = Form(...),
-    image: Optional[UploadFile] = File(None),         # new optional file
-    image_base64: Optional[str] = Form(None),         # optional base64
+    image: Optional[UploadFile] = File(None),
+    image_base64: Optional[str] = Form(None),
     db: AsyncSession = Depends(get_db),
     current_user = Depends(get_current_user),
 ):
-    # Fetch library
+    # FETCH LIBRARY
     result = await db.execute(
         select(Library).where(Library.id == library_id, Library.user_id == current_user.id)
     )
@@ -152,18 +156,18 @@ async def update_library(
     if not library:
         raise HTTPException(status_code=404, detail="Library not found")
 
-    # Update title and description
+    # UPDATE TITLE AND DESCRIPTION
     library.title = title
     library.description = description
 
-    # Handle image update
+    # HANDLE IMAGE UPDATE
     if image:
-        # If user uploaded a file
+        # IF USER UPLOADS A FILE
         loop = asyncio.get_running_loop()
         upload_task = partial(upload_file_to_s3, image, user_id=str(current_user.id))
         library.image_url = await loop.run_in_executor(None, upload_task)
     elif image_base64:
-        # If user sent a base64 string
+        # IF USER SENT A BASE64 STRING
         loop = asyncio.get_running_loop()
         upload_task = partial(upload_file_to_s3, image_base64, user_id=str(current_user.id))
         library.image_url = await loop.run_in_executor(None, upload_task)

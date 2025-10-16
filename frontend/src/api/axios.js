@@ -1,5 +1,15 @@
+// ======================================
+// AXIOS
+// ======================================
+
+// ======================================
+// IMPORTS
+// ======================================
 import axios from "axios";
 
+// ======================================
+// CREATE AXIOS
+// ======================================
 const API = axios.create({
   baseURL: "http://localhost:8000",
   headers: {
@@ -8,7 +18,9 @@ const API = axios.create({
   withCredentials: true,
 });
 
-// Attach token from localStorage
+// ======================================
+// ATTACH TOKEN FROM LOCAL STORAGE
+// ======================================
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -17,7 +29,9 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// Refresh token on 401
+// ======================================
+// REFRESH TOKEN ON 401
+// ======================================
 API.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -36,9 +50,9 @@ API.interceptors.response.use(
         const res = await axios.post("http://localhost:8000/auth/refresh", {
           refresh_token,
         });
-        // Save refreshed token using the same key your app expects
+        // SAVE REFRESH TOKEN USING THE SAME KEY YOUR BACKEND EXPECTS
         localStorage.setItem("token", res.data.token);
-        // Retry the original request
+        // RETRY THE ORIGINAL REQUEST
         originalRequest.headers.Authorization = `Bearer ${res.data.token}`;
         return API(originalRequest);
       } catch (err) {
