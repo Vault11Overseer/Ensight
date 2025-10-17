@@ -1,15 +1,35 @@
 // /src/context/UserDataContext.jsx
+
+// =========================
+// USER DATA CONTEXT
+// =========================
+
+// =========================
+// IMPORTS
+// =========================
 import React, { createContext, useState, useEffect, useContext } from "react";
 import API from "../api/axios";
 import { useAuth } from "./AuthContext";
 
+// =========================
+// IMPORTS
+// =========================
 const UserDataContext = createContext();
 
+// =========================
+// USER DATA PROVIDER
+// =========================
 export const UserDataProvider = ({ children }) => {
+  // =========================
+  // STATE
+  // =========================
   const { user } = useAuth();
   const [librariesCount, setLibrariesCount] = useState(0);
   const [imagesCount, setImagesCount] = useState(0);
 
+  // =========================
+  // FETCH DATA
+  // =========================
   useEffect(() => {
     if (!user) return;
 
@@ -28,6 +48,9 @@ export const UserDataProvider = ({ children }) => {
     fetchData();
   }, [user]);
 
+  // =========================
+  // RETURN
+  // =========================
   return (
     <UserDataContext.Provider value={{ librariesCount, imagesCount }}>
       {children}
@@ -35,4 +58,7 @@ export const UserDataProvider = ({ children }) => {
   );
 };
 
+// =========================
+// EXPORT USE USER DATA
+// =========================
 export const useUserData = () => useContext(UserDataContext);

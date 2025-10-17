@@ -20,7 +20,7 @@ from app.db.session import get_db
 from app.models.library import Library
 from app.schemas.library import LibraryCreate, LibraryResponse
 from app.routers.auth_router import get_current_user
-from backend.app.services.s3_utils_DEL import upload_file_to_s3
+from app.core.s3_utils import upload_file_to_s3
 import asyncio
 
 

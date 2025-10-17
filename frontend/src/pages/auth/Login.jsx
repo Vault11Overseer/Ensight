@@ -1,21 +1,34 @@
-// Login.jsx
+// frontend/src/pages/auth/Login.jsx
 
+// =========================
+// LOGIN PAGE
+// =========================
+
+// =========================
 // IMPORTS
+// =========================
 import React, { useState, useEffect } from "react";
 import API from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Sun, Moon, X } from "lucide-react";
 
+// =========================
+// IMPORTS
+// =========================
 export default function Login() {
-  // STATE MANAGEMENT
+  // =========================
+  // STATE
+  // =========================
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // DARK MODE - STATE MANAGEMENT
+  // =========================
+  // DARK MODE
+  // =========================
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       return JSON.parse(localStorage.getItem("darkMode")) ?? true;
@@ -31,6 +44,9 @@ export default function Login() {
 
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
+  // =========================
+  // SLIDE SHOW IMAGES
+  // =========================
   const slideshowImages = [
     "/images/winter-at-the-strater.jpg",
     "/images/durango_road.jpg",
@@ -59,9 +75,9 @@ export default function Login() {
     }
   };
 
-  // =============================
-  // Forgot Password Modal Logic
-  // =============================
+  // =========================
+  // FORGOT PASSWORD MODAL LOGIC
+  // =========================
   const [showForgot, setShowForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
 
@@ -77,6 +93,9 @@ export default function Login() {
     }
   };
 
+  // =========================
+  // RETURN
+  // =========================
   return (
     <div
       className={`min-h-screen flex w-full items-center justify-center transition-colors duration-500 ${

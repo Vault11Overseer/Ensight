@@ -16,7 +16,7 @@ from app.db.session import get_db
 from app.models.image import Image
 from app.schemas.image import ImageCreate, ImageOut
 from app.routers.auth_router import get_current_user
-from backend.app.services.s3_utils_DEL import upload_file_to_s3, rekognition_detect_labels, get_s3_client
+from app.core.s3_utils import upload_file_to_s3, rekognition_detect_labels, get_s3_client
 from app.models.user import User
 from app.models.library import Library
 import boto3

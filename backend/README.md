@@ -16,23 +16,11 @@ python -m app.scripts.reset_users_table
 <!-- SWAGGER ENDPOINT -->
 <!-- http://localhost:8000/docs -->
 
-<!-- THINGS TO DO CHECKLIST: -->
-
-/backend/app
-
-<!-- /auth/ -->
-<!-- /core/ -->
-<!-- /db/ -->
-<!-- /models/ -->
-<!-- /routers/ -->
-<!-- /schemas/ -->
-<!-- /scripts/ -->
-
-/services/ DELETE
-
-<!-- .env -->
-<!-- main.py -->
-<!-- /static/ -->
-<!-- /db/ -->
-
+THINGS TO DO CHECKLIST:
 LOOK INTO CURL CALLS
+/components/
+//module/
+//page/
+/context/
+/pages/
+//auth/

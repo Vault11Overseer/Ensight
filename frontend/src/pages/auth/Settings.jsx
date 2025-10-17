@@ -1,13 +1,25 @@
+// frontend/src/pages/auth/Settings.jsx
+
+// =========================
+// SETTINGS PAGE
+// =========================
+
+// =========================
+// IMPORTS
+// =========================
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import API from "../../api/axios";
 import Header from "../../components/module/Header";
 
+// =========================
+// SETTING FUNCTION
+// =========================
 export default function Settings() {
   const { user, logout } = useAuth();
 
   // =========================
-  // DARK MODE STATE (like Dashboard.jsx)
+  // DARK MODE
   // =========================
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
@@ -62,6 +74,9 @@ export default function Settings() {
     }
   };
 
+  // =========================
+  // RETURN
+  // =========================
   return (
     <div
       className={`min-h-screen p-8 transition-colors duration-300 ${

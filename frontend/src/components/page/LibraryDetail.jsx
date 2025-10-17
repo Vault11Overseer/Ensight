@@ -1,8 +1,20 @@
+// frontend/src/components/page/LibraryDetail.jsx
+
+// =========================
+// LIBRARY DETAIL
+// =========================
+
+// =========================
+// IMPORTS
+// =========================
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../../api/axios";
 import Header from "../module/Header";
 
+// =========================
+// LIBRARY DETAIL
+// =========================
 export default function LibraryDetail({
   darkMode,
   toggleDarkMode,
@@ -13,6 +25,9 @@ export default function LibraryDetail({
   const [library, setLibrary] = useState(null);
   const [images, setImages] = useState([]);
 
+  // =========================
+  // FETCH LIBRARY
+  // =========================
   useEffect(() => {
     const fetchLibrary = async () => {
       try {
@@ -36,6 +51,9 @@ export default function LibraryDetail({
 
   if (!library) return <p className="p-8">Loading...</p>;
 
+  // =========================
+  // RETURN
+  // =========================
   return (
     <div
       className={`min-h-screen p-8 ${

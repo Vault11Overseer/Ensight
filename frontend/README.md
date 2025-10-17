@@ -19,3 +19,17 @@ If you are developing a production application, we recommend using TypeScript wi
 
 to run the front end of this project run:
 ~ npm run dev -->
+
+THINGS TO DO:
+FRONTEND/SRC/
+API/AXIOS.JS
+ASSETS/
+COMPONENTS/
+CONTEXT/
+HOOKS/
+PAGES/
+App.css
+App.jsx
+Main.jsx
+
+delete indexdel.css

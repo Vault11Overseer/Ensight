@@ -1,21 +1,38 @@
 // /src/components/Navigation.jsx
+
+// ======================================
+// NAVIGATION
+// ======================================
+
+// ======================================
+// IMPORTS
+// ======================================
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Settings, Sun, Moon, ArrowLeft } from "lucide-react";
 
+// ======================================
+// NAVIGATION FUNCTION
+// ======================================
 export default function Navigation({ darkMode, toggleDarkMode, logout }) {
+  // ======================================
+  // STATE
+  // ======================================
   const location = useLocation();
   const navigate = useNavigate();
 
   const green = "#BDD63B";
   const darkBlue = "#212B3E";
 
-  // Check if user is on Dashboard
+  // CHECK IF THE USER IS ON THE DASHBOARD
   const isDashboard = location.pathname === "/" || location.pathname === "/";
 
+  // ======================================
+  // RETURN
+  // ======================================
   return (
     <div className="flex flex-wrap items-center gap-3 mb-8 justify-end">
-      {/* User Settings / Back Button */}
+      {/* USER SETTINGS / BACK BUTTON */}
       <button
         onClick={() => (isDashboard ? navigate("/settings") : navigate("/"))}
         className={`group flex flex-row-reverse items-center rounded-full transition-all duration-300 overflow-hidden `}
@@ -24,19 +41,18 @@ export default function Navigation({ darkMode, toggleDarkMode, logout }) {
           color: "black",
           minWidth: "48px",
           padding: "6px 10px",
-          // padding: "6px 25x 6px 0px",
         }}
       >
-        {/* Icon changes based on page */}
+        {/* ICON CHANGES BASED ON PAGE */}
         {isDashboard ? <Settings size={28} /> : <ArrowLeft size={28} />}
 
-        {/* Text fills in from left on hover */}
+        {/* TEXT FILES IN FROM LEFT ON HOVER */}
         <span className="font-semibold whitespace-nowrap max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[180px] mr-2 text-left ">
           {isDashboard ? "User Settings" : "Back To Dashboard"}
         </span>
       </button>
 
-      {/* Logout Button */}
+      {/* LOGUT BUTTON */}
       <button
         onClick={logout}
         className="px-4 py-2 rounded-lg bg-red-500 text-white transition-colors duration-300 hover:bg-red-700"
@@ -44,7 +60,7 @@ export default function Navigation({ darkMode, toggleDarkMode, logout }) {
         Logout
       </button>
 
-      {/* Dark/Light Mode Toggle */}
+      {/* DARK / LIGHT MODE TOGGLE */}
       <button
         onClick={toggleDarkMode}
         className="p-2 rounded-lg transition"

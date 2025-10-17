@@ -1,9 +1,24 @@
+// frontend/src/components/module/submodule/Intro.jsx
+
+// ======================================
+// INTRO
+// ======================================
+
+// ======================================
+// IMPORTS
+// ======================================
 import React from "react";
 import { useUserData } from "../../../context/UserDataContext";
 
+// ======================================
+// INTRO FUNCTION
+// ======================================
 export default function Intro({ user, darkMode }) {
   const { librariesCount, imagesCount } = useUserData();
 
+  // ======================================
+  // RETURN
+  // ======================================
   return (
     <div className="mb-10">
       <h1

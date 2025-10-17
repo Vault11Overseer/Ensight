@@ -1,3 +1,12 @@
+// frontend/src/pages/Dashboard.jsx
+
+// =========================
+// DARK MODE
+// =========================
+
+// =========================
+// DARK MODE
+// =========================
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import API from "../api/axios";
@@ -5,12 +14,21 @@ import { Images, ImageUp, LibraryBig, GalleryVerticalEnd } from "lucide-react";
 
 import Header from "../components/module/Header";
 
+// =========================
+// DARK MODE
+// =========================
 export default function Dashboard() {
+  // =========================
+  // DARK MODE
+  // =========================
   const { token, logout, user } = useAuth();
   const [images, setImages] = useState([]);
   const [allLibraries, setAllLibraries] = useState([]);
 
   // Dark mode
+  // =========================
+  // DARK MODE
+  // =========================
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       return JSON.parse(localStorage.getItem("darkMode")) ?? true;

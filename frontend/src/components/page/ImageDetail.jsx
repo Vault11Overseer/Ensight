@@ -1,3 +1,9 @@
+// frontend/src/components/page/ImageDetail.jsx
+
+// =========================
+// IMAGE DETAIL
+// =========================
+
 // =========================
 // IMPORTS
 // =========================
@@ -61,7 +67,9 @@ export default function ImageDetail() {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
-  // Populate form when image loads
+  // =========================
+  // POPULATE FROM WHEN IMAGE LOADS
+  // =========================
   useEffect(() => {
     if (image) {
       setTitle(image.title || "");
@@ -121,7 +129,13 @@ export default function ImageDetail() {
 
   if (!image) return <p className="text-center mt-10">Loading...</p>;
 
+  // =========================
+  // RETURN
+  // =========================
   return (
+    // =========================
+    // DARK / LIGHT THEME
+    // =========================
     <div
       className={`min-h-screen p-8 transition-colors duration-300 ${
         darkMode ? "bg-black text-white" : "bg-white text-black"

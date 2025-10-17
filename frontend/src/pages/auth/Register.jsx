@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react"; // IMPORT REACT HOOKS
-import API from "../../api/axios"; // IMPORT API INSTANCE
-import { useNavigate } from "react-router-dom"; // IMPORT NAVIGATION
-import { Eye, EyeOff, Sun, Moon } from "lucide-react"; // IMPORT ICONS FOR PASSWORD & THEME TOGGLE
+import React, { useState, useEffect } from "react";
+import API from "../../api/axios";
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Sun, Moon } from "lucide-react";
 
 export default function Register() {
   // ============================
-  // STATE MANAGEMENT
+  // STATE
   // ============================
-
   const [showPassword, setShowPassword] = useState(false); // TOGGLE PASSWORD VISIBILITY
   const [firstName, setFirstName] = useState(""); // FIRST NAME INPUT
   const [lastName, setLastName] = useState(""); // LAST NAME INPUT
@@ -16,9 +15,8 @@ export default function Register() {
   const navigate = useNavigate(); // ENABLE PAGE NAVIGATION
 
   // ============================
-  // DARK MODE STATE MANAGEMENT
+  // DARK MODE
   // ============================
-
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       return JSON.parse(localStorage.getItem("darkMode")) ?? true;
@@ -36,9 +34,8 @@ export default function Register() {
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
   // ============================
-  // IMAGE SLIDESHOW STATE
+  // IMAGE SLIDESHOW
   // ============================
-
   const slideshowImages = [
     "/images/winter-at-the-strater.jpg",
     "/images/durango_road.jpg",
@@ -59,7 +56,6 @@ export default function Register() {
   // ============================
   // FORM SUBMISSION HANDLER
   // ============================
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -79,7 +75,6 @@ export default function Register() {
   // ============================
   // COMPONENT RENDER
   // ============================
-
   return (
     // MAIN PAGE WRAPPER WITH THEME BACKGROUND
     <div
