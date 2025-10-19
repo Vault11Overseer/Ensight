@@ -49,10 +49,32 @@ export const UserDataProvider = ({ children }) => {
   }, [user]);
 
   // =========================
+  // REFRESH USER DATA
+  // =========================
+  const refreshUserData = async () => {
+    if (!user) return;
+    try {
+      const librariesRes = await API.get("/libraries/mine");
+      setLibrariesCount(librariesRes.data.length);
+
+      const imagesRes = await API.get("/images/mine");
+      setImagesCount(imagesRes.data.length);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    refreshUserData();
+  }, [user]);
+
+  // =========================
   // RETURN
   // =========================
   return (
-    <UserDataContext.Provider value={{ librariesCount, imagesCount }}>
+    <UserDataContext.Provider
+      value={{ librariesCount, imagesCount, refreshUserData }}
+    >
       {children}
     </UserDataContext.Provider>
   );

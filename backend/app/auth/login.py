@@ -32,6 +32,7 @@ class LoginIn(BaseModel):
 async def login_user(user: LoginIn, db: AsyncSession = Depends(get_db)):
     # SELECT USER WHERE EMAIL CHECK PASSES
     result = await db.execute(select(User).where(User.email == user.email))
+
     db_user = result.scalar_one_or_none()
     
     # INVALID CREDENTIALS CHECK

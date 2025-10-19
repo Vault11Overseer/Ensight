@@ -51,9 +51,9 @@ API.interceptors.response.use(
           refresh_token,
         });
         // SAVE REFRESH TOKEN USING THE SAME KEY YOUR BACKEND EXPECTS
-        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("token", res.data.access_token);
         // RETRY THE ORIGINAL REQUEST
-        originalRequest.headers.Authorization = `Bearer ${res.data.token}`;
+        originalRequest.headers.Authorization = `Bearer ${res.data.access_token}`;
         return API(originalRequest);
       } catch (err) {
         localStorage.removeItem("token");

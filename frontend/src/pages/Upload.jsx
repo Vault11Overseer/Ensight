@@ -49,6 +49,8 @@ export default function Upload() {
   const [success, setSuccess] = useState(""); // SUCCESS MESSAGE
   const [libraries, setLibraries] = useState([]); // USER LIBRARIES
   const [error, setError] = useState(""); // ERROR MESSAGE
+  const [validatingLastUpload, setValidatingLastUpload] = useState(false);
+  const [imageExists, setImageExists] = useState(true); // assume true until validated
 
   // LAST UPLOAD
   const [lastUpload, setLastUpload] = useState(() => {
@@ -57,6 +59,40 @@ export default function Upload() {
     }
     return null;
   });
+
+  // =========================
+  // VALIDATE LASTUPLOAD AGAINST BACKEND
+  // =========================
+  // validate lastUpload against backend (if present). If image was removed from DB/S3, drop it.
+  useEffect(() => {
+    const validateLast = async () => {
+      if (!lastUpload || !lastUpload.id) {
+        setImageExists(false);
+        return;
+      }
+
+      setValidatingLastUpload(true);
+      try {
+        // Try to fetch the image by id from backend
+        await API.get(`/images/${lastUpload.id}`);
+        // If success, image exists
+        setImageExists(true);
+      } catch (err) {
+        // If any error (404 etc.), clear stale lastUpload
+        console.warn(
+          "lastUpload validation failed, clearing local lastUpload:",
+          err?.response?.data || err.message
+        );
+        setLastUpload(null);
+        localStorage.removeItem("lastUpload");
+        setImageExists(false);
+      } finally {
+        setValidatingLastUpload(false);
+      }
+    };
+
+    validateLast();
+  }, [lastUpload]);
 
   // EDIT MODE STATE
   const [isEditing, setIsEditing] = useState(false); // TOGGLE EDIT FORM
@@ -282,7 +318,6 @@ export default function Upload() {
                 : "bg-[#DDE7FF] text-[#0B0E1D] placeholder-gray-500"
             }`}
           />
-
           {/* DESCRIPTION INPUT */}
           <label
             htmlFor="description"
@@ -300,7 +335,6 @@ export default function Upload() {
                 : "bg-[#DDE7FF] text-[#0B0E1D] placeholder-gray-500"
             }`}
           />
-
           {/* TAGS INPUT */}
           <label htmlFor="tags" className="mb-1 font-semibold text-white">
             Tags - (Comma,Seperated)
@@ -316,7 +350,6 @@ export default function Upload() {
                 : "bg-[#DDE7FF] text-[#0B0E1D] placeholder-gray-500"
             }`}
           />
-
           {/* LIBRARY SELECT */}
           <label htmlFor="library" className="mb-1 font-semibold text-white">
             Library - (None is default)
@@ -337,7 +370,6 @@ export default function Upload() {
               </option>
             ))}
           </select>
-
           {/* FILE INPUT */}
           <label htmlFor="file" className="mb-1 font-semibold text-white">
             Image Upload - (jpg, jpeg, png, svg) - (Max file size = "5 Gigs")
@@ -351,7 +383,6 @@ export default function Upload() {
                 : "bg-[#DDE7FF] text-[#0B0E1D]"
             }`}
           />
-
           {/* UPLOAD BUTTON */}
           <button
             onClick={isEditing ? handleEditSave : handleUpload} // SAVE EDITS OR UPLOAD NEW
@@ -359,7 +390,6 @@ export default function Upload() {
           >
             {isEditing ? "Save Changes" : "Upload"}
           </button>
-
           {/* ERROR + SUCCESS MESSAGES */}
           {error && (
             <p className="text-red-500">
@@ -369,7 +399,6 @@ export default function Upload() {
             </p>
           )}
           {success && <p className="text-green-500">{success}</p>}
-
           {/* =========================
       LAST UPLOADED IMAGE SECTION
 ========================= */}
@@ -380,87 +409,105 @@ export default function Upload() {
           >
             MOST RECENT UPLOAD
           </h2>
+          {
+            /* If we're validating, show a small loading state */
+            validatingLastUpload ? (
+              <div className="p-6 mt-4 rounded-xl text-center shadow-lg">
+                <p className="text-gray-400">Checking recent upload…</p>
+              </div>
+            ) : imageExists && lastUpload ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* LEFT COLUMN: IMAGE INFORMATION */}
+                <div
+                  className={`p-4 rounded-lg shadow-lg ${
+                    darkMode
+                      ? "bg-[#0B0E1D] text-white"
+                      : "bg-[#F7FAFF] text-black"
+                  }`}
+                >
+                  <h3 className="text-2xl font-bold mb-4">
+                    <strong>Title:</strong> {lastUpload.title || "N/A"}
+                  </h3>
+                  <p>
+                    <strong>Description:</strong>{" "}
+                    {lastUpload.description || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Tags:</strong>{" "}
+                    {Array.isArray(lastUpload.tags) && lastUpload.tags.length
+                      ? lastUpload.tags.join(", ")
+                      : "N/A"}
+                  </p>
+                  <p>
+                    <strong>Library:</strong> {lastUpload.library || "N/A"}
+                  </p>
+                  <p>
+                    <strong>File Name:</strong> {lastUpload.fileName || "N/A"}
+                  </p>
+                  <p>
+                    <strong>File Size:</strong> {lastUpload.fileSize || "N/A"}
+                  </p>
+                  <p>
+                    <strong>File Type:</strong> {lastUpload.fileType || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Uploaded URL:</strong>{" "}
+                    {lastUpload.url ? (
+                      <a
+                        href={lastUpload.url}
+                        className={`underline ${
+                          darkMode ? "text-[#BDD63B]" : "text-[#263248]"
+                        }`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {lastUpload.url}
+                      </a>
+                    ) : (
+                      "N/A"
+                    )}
+                  </p>
+                  <p>
+                    <strong>Uploaded At:</strong>{" "}
+                    {lastUpload.uploadedAt || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Uploaded By:</strong>{" "}
+                    {lastUpload.uploadedBy || "N/A"}
+                  </p>
+                </div>
 
-          {lastUpload && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* LEFT COLUMN: IMAGE INFORMATION */}
+                {/* RIGHT COLUMN: IMAGE PREVIEW + BUTTONS */}
+                <div className="flex flex-col items-center justify-center gap-4">
+                  <img
+                    src={
+                      lastUpload.url ||
+                      "https://via.placeholder.com/600x400?text=No+Image+Available"
+                    }
+                    alt={lastUpload.title || "default-image"}
+                    className="w-full max-h-[80vh] object-contain rounded-lg shadow-lg"
+                  />
+                </div>
+              </div>
+            ) : (
               <div
-                className={`p-4 rounded-lg shadow-lg ${
+                className={`p-6 mt-4 rounded-xl text-center shadow-lg ${
                   darkMode
                     ? "bg-[#0B0E1D] text-white"
                     : "bg-[#F7FAFF] text-black"
                 }`}
               >
-                {/* Make title one size bigger */}
-                <h3 className="text-2xl font-bold mb-4">
-                  <strong>Title:</strong> {lastUpload.title || "N/A"}
-                </h3>
-                <p>
-                  <strong>Description:</strong>{" "}
-                  {lastUpload.description || "N/A"}
-                </p>
-                <p>
-                  <strong>Tags:</strong> {lastUpload.tags.join(", ") || "N/A"}
-                </p>
-                <p>
-                  <strong>Library:</strong> {lastUpload.library}
-                </p>
-                <p>
-                  <strong>File Name:</strong> {lastUpload.fileName}
-                </p>
-                <p>
-                  <strong>File Size:</strong> {lastUpload.fileSize}
-                </p>
-                <p>
-                  <strong>File Type:</strong> {lastUpload.fileType}
-                </p>
-                <p>
-                  <strong>Uploaded URL:</strong>{" "}
-                  <a
-                    href={lastUpload.url}
-                    className={`underline ${
-                      darkMode ? "text-[#BDD63B]" : "text-[#263248]"
-                    }`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {lastUpload.url}
-                  </a>
-                </p>
-                <p>
-                  <strong>Uploaded At:</strong> {lastUpload.uploadedAt}
-                </p>
-                <p>
-                  <strong>Uploaded By:</strong> {lastUpload.uploadedBy}
-                </p>
-              </div>
-
-              {/* RIGHT COLUMN: IMAGE PREVIEW + EDIT/DELETE BUTTONS */}
-              <div className="flex flex-col items-center justify-center gap-4">
                 <img
-                  src={lastUpload.url}
-                  alt="last-uploaded"
-                  className="w-full max-h-[80vh] object-contain rounded-lg shadow-lg"
+                  src="https://via.placeholder.com/600x400?text=No+Recent+Uploads"
+                  // alt="no-upload"
+                  className="mx-auto mb-4 rounded-lg shadow-lg"
                 />
-
-                {/* EDIT BUTTON */}
-                {/* <button
-                  onClick={handleEdit}
-                  className="bg-yellow-400 hover:bg-yellow-500 p-2 rounded-lg font-semibold text-black w-full"
-                >
-                  Edit
-                </button> */}
-
-                {/* DELETE BUTTON */}
-                {/* <button
-                  onClick={handleDelete}
-                  className="bg-red-500 hover:bg-red-600 p-2 rounded-lg font-semibold text-white w-full"
-                >
-                  Delete
-                </button> */}
+                <p className="text-lg font-semibold text-gray-400">
+                  No recent uploads found.
+                </p>
               </div>
-            </div>
-          )}
+            )
+          }
         </div>
       </div>
     </div>

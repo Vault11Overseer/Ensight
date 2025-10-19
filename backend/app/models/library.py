@@ -7,9 +7,9 @@
 # ======================================
 # IMPORTS
 # ======================================
+import uuid
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID
-import uuid
 from sqlalchemy.orm import relationship
 from ..db.database import Base
 from datetime import datetime

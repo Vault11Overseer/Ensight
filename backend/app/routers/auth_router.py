@@ -7,7 +7,7 @@
 # ======================================
 # IMPORTS
 # ======================================
-from fastapi import APIRouter, Depends, HTTPException, Form
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -17,6 +17,8 @@ from app.db.session import get_db
 from app.models.user import User
 from app.schemas.user import UserCreate 
 from app.core.security import decode_access_token, verify_password, create_access_token
+from jose import JWTError, jwt
+from app.core.config import JWT_SECRET_KEY, JWT_ALGORITHM
 
 # ======================================
 # ROUTER ENDPOINT
@@ -59,27 +61,36 @@ async def login(user_data: LoginIn, db: AsyncSession = Depends(get_db)):
 # ======================================
 # CURRENT USER DEPENDENCY
 # ======================================
-async def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: AsyncSession = Depends(get_db),
-):
-    """
-    Extracts user from JWT token.
-    Raises 401 if invalid.
-    """
-    
-    payload = decode_access_token(token)
-    user_id = payload.get("sub")
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid token")
+from uuid import UUID
 
-    result = await db.execute(select(User).where(User.id == int(user_id)))
-    db_user = result.scalar_one_or_none()
+async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
 
-    if not db_user:
-        raise HTTPException(status_code=401, detail="User not found")
+    try:
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+
+    try:
+        user_uuid = UUID(user_id)  # ✅ Convert string → UUID
+    except ValueError:
+        raise credentials_exception
+
+    result = await db.execute(select(User).where(User.id == user_id))
+    db_user = result.scalars().first()
+
+    if db_user is None:
+        raise credentials_exception
 
     return db_user
+
 
 # ======================================
 # CURRENT USER ENDPOINT /ME

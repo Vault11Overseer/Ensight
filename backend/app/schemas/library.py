@@ -10,6 +10,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
+from uuid import UUID
 
 # ======================================
 # LIBRARY BASE - BASE MODEL
@@ -31,11 +32,11 @@ class LibraryCreate(LibraryBase):
 # LIBRARY RESPONSE - LIBRARY BASE
 # ======================================
 class LibraryResponse(LibraryBase):
-    id: int
+    id: UUID
     title: str
     description: str
     image_url: Optional[str] = None
-    user_id: int
+    user_id: UUID
     created_at: datetime
     
     user_name: str

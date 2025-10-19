@@ -9,7 +9,8 @@ from datetime import datetime
 from ..db.database import Base
 from app.models.library import Library
 from sqlalchemy.sql import func
-
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
 
 # ======================================
 # IMAGE CLASS
@@ -17,15 +18,16 @@ from sqlalchemy.sql import func
 class Image(Base):
     __tablename__ = "images"
     # IMAGES MODEL
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)  # keep or change to UUID if you prefer
+
     url = Column(String, nullable=False)
     title = Column(String, nullable=False)
     description = Column(String, nullable=True)
     tags = Column(String, nullable=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    library_id = Column(Integer, ForeignKey("libraries.id"), nullable=True)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)  # allow UUID strings
+    library_id = Column(Integer, ForeignKey("libraries.id"), nullable=True)  # UUID as string
     is_public = Column(Boolean, default=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())  
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     # RELATIONAL MODEL
     user = relationship("User", back_populates="images")
     library = relationship("Library", back_populates="images")

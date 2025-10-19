@@ -40,7 +40,7 @@ export default function Search({ placeholder = "Search...", onSearch }) {
           {/* BUTTON COLUMN */}
           <button
             type="submit"
-            className="w-16 flex items-center justify-center bg-white hover:bg-[#3b3a50] text-gray-400 transition"
+            className="w-16 flex items-center justify-center bg-white hover:bg-[#263248] text-gray-400 transition"
           >
             <SearchIcon size={22} />
           </button>

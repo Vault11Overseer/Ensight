@@ -164,7 +164,7 @@ export default function ImageDetail() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         <div
           className={`p-4 rounded-lg shadow-lg ${
-            darkMode ? "bg-[#0B0E1D]" : "bg-[#F7FAFF]"
+            darkMode ? "bg-[#263248]" : "bg-[#F7FAFF]"
           }`}
         >
           <h3 className="text-xl font-bold mb-4">{image.title || "N/A"}</h3>

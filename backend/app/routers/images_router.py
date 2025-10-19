@@ -24,6 +24,10 @@ import os
 import uuid
 from datetime import datetime
 import requests
+from sqlalchemy.orm import Session
+from uuid import uuid4
+from app.models.image import Image
+# from app.models.user import get_current_user
 
 # ===============================
 # CALL ROUTER AND CLIENT
@@ -74,11 +78,12 @@ async def upload_image(
             title=title,
             description=description,
             url=s3_url,
-            tags=",".join(tag_list),  # STORE AS STRING FOR SQLITE
-            user_id=current_user.id,
-            library_id=library_id,
+            tags=",".join(tag_list),
+            user_id=str(current_user.id),        # <- convert UUID to string
+            library_id=str(library_id) if library_id else None,  # <- convert if exists
             created_at=datetime.utcnow(),
         )
+
 
         db.add(new_image)
         await db.commit()

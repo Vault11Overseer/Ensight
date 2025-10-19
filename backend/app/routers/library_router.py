@@ -22,6 +22,8 @@ from app.schemas.library import LibraryCreate, LibraryResponse
 from app.routers.auth_router import get_current_user
 from app.core.s3_utils import upload_file_to_s3
 import asyncio
+import uuid
+
 
 
 # ======================================
@@ -65,7 +67,7 @@ async def create_library(
         title=title,
         description=description,
         image_url=image_url,
-        user_id=current_user.id,
+        user_id=uuid.UUID(str(current_user.id)),
     )
 
     db.add(new_library)
@@ -115,8 +117,9 @@ async def get_my_libraries(
     current_user = Depends(get_current_user),
 ):
     result = await db.execute(
-        select(Library).where(Library.user_id == current_user.id)
-    )
+    select(Library).where(Library.user_id == uuid.UUID(str(current_user.id)))  # ✅ convert
+)
+
     libraries = result.scalars().all()
 
     # MAP TO RESPONSE SCHEMA INCLUDING USER_NAME
@@ -150,7 +153,8 @@ async def update_library(
 ):
     # FETCH LIBRARY
     result = await db.execute(
-        select(Library).where(Library.id == library_id, Library.user_id == current_user.id)
+        select(Library).where(Library.id == library_id, Library.user_id == uuid.UUID(str(current_user.id)))
+
     )
     library = result.scalar_one_or_none()
     if not library:
@@ -188,7 +192,8 @@ async def delete_library(
     current_user: dict = Depends(get_current_user),
 ):
     result = await db.execute(
-        select(Library).where(Library.id == library_id, Library.user_id == current_user.id)
+        select(Library).where(Library.id == library_id, Library.user_id == uuid.UUID(str(current_user.id)))
+
     )
     library = result.scalar_one_or_none()
     if not library:
