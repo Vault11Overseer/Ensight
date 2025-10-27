@@ -4,15 +4,6 @@
 
 uv run -m app.main
 
-<!-- SQLITE 3 DATABASE STARTUP -->
-<!-- sqlite3 ./test.db
-sqlite> .tables
-users -->
-
-<!-- SCRIPTS RUN FROM BACKEND DIRECTORY -->
-
-python -m app.scripts.reset_users_table
-
 <!-- SWAGGER ENDPOINT -->
 <!-- http://localhost:8000/docs -->
 

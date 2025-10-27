@@ -11,7 +11,7 @@ import axios from "axios";
 // CREATE AXIOS
 // ======================================
 const API = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8000",
   headers: {
     "Content-Type": "application/json",
   },
@@ -47,9 +47,14 @@ API.interceptors.response.use(
       }
 
       try {
-        const res = await axios.post("http://localhost:8000/auth/refresh", {
-          refresh_token,
-        });
+        const res = await axios.post(
+          `${
+            import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"
+          }/auth/refresh`,
+          {
+            refresh_token,
+          }
+        );
         // SAVE REFRESH TOKEN USING THE SAME KEY YOUR BACKEND EXPECTS
         localStorage.setItem("token", res.data.access_token);
         // RETRY THE ORIGINAL REQUEST

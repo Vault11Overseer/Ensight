@@ -1,4 +1,5 @@
 // frontend/src/components/page/LibraryDetail.jsx
+"use client";
 
 // =========================
 // LIBRARY DETAIL
@@ -7,7 +8,7 @@
 // =========================
 // IMPORTS
 // =========================
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../../api/axios";
 import Header from "../module/Header";
@@ -80,7 +81,10 @@ export default function LibraryDetail({
           <img
             src={
               library.image_url ||
-              "http://localhost:8000/static/default_library.png"
+              // "http://localhost:8000/static/default_library.png"
+              `${
+                import.meta.env.VITE_API_BASE_URL || "http://localhost:8000"
+              }/static/default_library.png`
             }
             alt={library.title}
             className="w-full h-full object-cover rounded"
@@ -106,7 +110,7 @@ export default function LibraryDetail({
           {images.map((img) => (
             <div key={img.id} className="w-full h-32 overflow-hidden rounded">
               <img
-                src={img.url}
+                src={img.url || "/placeholder.svg"}
                 alt={img.title || "Library Image"}
                 className="w-full h-full object-cover"
               />

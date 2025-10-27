@@ -1,18 +1,21 @@
 // import { defineConfig } from "vite";
 // import react from "@vitejs/plugin-react";
 
-// export default defineConfig({
+// export default defineConfig(({ mode }) => ({
+//   base: mode === "production" ? "https://bcimedia.com/ensight/" : "/",
 //   plugins: [react()],
-//   base: "/ensight/", // important for subfolder deployment
-// });
+//   optimizeDeps: {
+//     exclude: ["fsevents"],
+//   },
+// }));
 
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  base: mode === "production" ? "/ensight/" : "/",
   plugins: [react()],
-  base: "./", // relative paths
-  build: {
-    target: "es2015", // produce older JS that works in Apache without module support
+  optimizeDeps: {
+    exclude: ["fsevents"],
   },
-});
+}));
