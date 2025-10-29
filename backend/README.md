@@ -15,3 +15,6 @@ LOOK INTO CURL CALLS
 /context/
 /pages/
 //auth/
+
+On the production server:
+uv run fastapi dev app/main.py
