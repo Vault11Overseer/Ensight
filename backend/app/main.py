@@ -39,7 +39,18 @@ app = FastAPI(title="Ensight", lifespan=lifespan)
 # ======================================
 # CORS
 # ======================================
-origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://bcimedia.com",
+    "https://www.bcimedia.com",
+    "https://bcimedia.com/ensight",
+    "https://www.bcimedia.com/ensight",
+]
+
+from fastapi.middleware.cors import CORSMiddleware
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -47,6 +58,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # ======================================
 # ROUTERS AND STATIC FILES

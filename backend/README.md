@@ -18,3 +18,5 @@ LOOK INTO CURL CALLS
 
 On the production server:
 uv run fastapi dev app/main.py
+
+curl -I https://bcimedia.com/ensight/api/docs
