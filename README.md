@@ -33,9 +33,9 @@ cPanel was designed in 2008-era PHP shared hosting, not modern web apps.
 DB
 
 
-OPTION A — KEEP YOUR STACK, CHANGE HOSTING (BEST OPTION)
+OPTION A — KEEP YOUR STACK, CHANGE HOSTING
 PostgreSQL or MySQL
-Static hosting (S3 + CloudFront)
+
 
 
 
@@ -51,12 +51,12 @@ AWS ECS (later)
 
 
 
-OPTION C — Hybrid (best compromise)
+OPTION C — Hybrid
 Keep FastAPI on:
 Railway / Render / Fly.io
 Host React build on:
 cPanel OR S3
-This works surprisingly well.
+
 
 
 
@@ -68,7 +68,6 @@ Hosted on Render / Railway / AWS EC2
 
 Frontend
 React + Vite
-Built once
 Hosted on S3 + CloudFront
 Auth
 AWS Cognito
