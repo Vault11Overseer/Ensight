@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-app = FastAPI(title="Ensight API")
+app = FastAPI(title="Insight API")
 
 @app.get("/")
 def health_check():
