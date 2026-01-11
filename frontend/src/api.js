@@ -1,8 +1,7 @@
-// src/api.js
-export const API_BASE = "https://<your-render-backend>.onrender.com";
+// Replace this URL with your actual Render backend URL
+export const API_BASE = import.meta.env.VITE_API_BASE;
 
 export async function healthCheck() {
   const res = await fetch(`${API_BASE}/`);
   return res.json();
 }
-

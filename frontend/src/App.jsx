@@ -5,7 +5,9 @@ function App() {
   const [status, setStatus] = useState("Loading...");
 
   useEffect(() => {
-    healthCheck().then(data => setStatus(data.status)).catch(() => setStatus("Error"));
+    healthCheck()
+      .then(data => setStatus(data.status))
+      .catch(() => setStatus("Error"));
   }, []);
 
   return (
