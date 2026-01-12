@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Dashboard from "./pages/Dashboard";
-import PrivateRoute from "./components/PrivateRoute";
-import { healthCheck } from "./api";
+import { healthCheck } from "./api"; // make sure this points to your backend endpoint
 
 function App() {
   const [status, setStatus] = useState("Loading...");
@@ -14,10 +13,15 @@ function App() {
     healthCheck()
       .then(data => {
         setStatus(data.status);
-        if (data.db) setDbStatus(data.db);
-        console.log("Backend status:", data.status, "DB status:", data.db);
+        console.log("Backend status:", data.status);
+
+        // Optionally, log database connection status if returned by backend
+        if (data.db) {
+          setDbStatus(data.db);
+          console.log("Database status:", data.db);
+        }
       })
-      .catch(err => {
+      .catch((err) => {
         setStatus("Error");
         console.error("Health check error:", err);
       });
@@ -30,23 +34,14 @@ function App() {
         <p>Backend status: {status}</p>
         <p>Database status: {dbStatus}</p>
 
+        {/* =================== ROUTES =================== */}
         <Routes>
-          {/* Public pages */}
+          {/* Default landing page redirects to login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
-          {/* Protected pages */}
-          <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
-
-          {/* Catch-all redirects */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          {/* Catch-all 404 redirect to login */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>

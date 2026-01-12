@@ -6,33 +6,70 @@ Blue:
 Green:
 #BDD63B
 
-USE PIP INSTEAD
 
 
 
+Subject: cPanel Limitations and Recommended Hosting Option
 
+Hi [Boss’s Name],
 
-cPanel / WHM environments limitations:
-❌ Do not support long-running processes (Node, Uvicorn, Gunicorn ASGI)
-❌ Expect PHP or WSGI, not ASGI
-❌ Kill background workers
-❌ No reverse proxy (nginx) unless you pay for custom config
-❌ No process manager (PM2, Supervisor, systemd)
+This app cannot run on our cPanel/WHM environment due to a platform mismatch.
 
-Your app requires:
-A persistent ASGI server (FastAPI + Uvicorn)
-A build step for React (Vite)
-A static file host OR CDN
-Environment variables
-HTTPS termination + proxying
-cPanel was designed in 2008-era PHP shared hosting, not modern web apps.
+The backend uses FastAPI, which runs on **ASGI (Asynchronous Server Gateway Interface)**. ASGI requires a persistent, long-running server process (such as Uvicorn) to handle asynchronous and concurrent requests. cPanel is built around PHP and **WSGI (Web Server Gateway Interface)**, which assumes short-lived request/response cycles and does not support persistent ASGI servers. Because of this, the backend cannot stay running or operate reliably on cPanel.
 
+cPanel also does not support Node-based build steps for the React frontend, background workers, or proper reverse proxying and process management without paid custom configuration. It was designed for older shared PHP hosting, not modern full-stack applications.
 
+A better option is **Render**, which is designed for this type of architecture and provides process management, HTTPS, and deployments out of the box.
 
+Approximate Render pricing:
 
-DB
+* Backend (FastAPI ASGI service): ~$7–$25/month
+* Frontend (React static site): Free
+* PostgreSQL database: ~$7/month (starter tier)
 
+Total expected cost is roughly **$15–$40/month**, depending on usage.
 
+I’m currently working in a development environment and should have a test solution available soon.
+
+Best,
+[Your Name]
+
+Is AWS Cognito free? And is it a good fit?
+✅ Yes — for your case, Cognito is effectively free.
+AWS Cognito pricing (simplified):
+50,000 Monthly Active Users free
+You need ~100 internal employees
+You are orders of magnitude under the free tier
+
+So:
+👉 Cost = $0
+3️⃣ Is Cognito a good fit for your stack?
+
+Given your setup:
+✅ FastAPI backend
+✅ React frontend
+✅ S3 for images
+✅ AWS already in use
+❌ Want to avoid Auth0 pricing surprises
+
+Cognito is actually the correct choice here.
+Why Cognito fits Insight well
+Requirement	Cognito
+Internal users	✅ Excellent
+JWT-based auth	✅ Native
+FastAPI integration	✅ Easy
+S3 access control	✅ Best-in-class
+Free tier	✅
+Vendor lock-in risk	⚠️ Moderate but acceptable
+Enterprise-style setup	✅
+
+Auth0 / Clerk are great, but Cognito:
+
+Integrates directly with S3
+
+Lets you issue IAM roles
+
+Avoids another SaaS dependency
 
 
 
@@ -43,7 +80,6 @@ Hosted on Render
 
 Frontend
 React + Vite
-Hosted on S3 + CloudFront
 Auth
 AWS Cognito
 
