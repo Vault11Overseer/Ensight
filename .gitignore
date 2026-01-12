@@ -1,10 +1,10 @@
-# Python
+# PYTHON
 venv/
 __pycache__/
 *.pyc
 .env
 
-# Node
+# NODE
 node_modules/
 dist/
 
