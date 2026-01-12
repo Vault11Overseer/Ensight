@@ -2,14 +2,19 @@ import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import Dashboard from "./pages/Dashboard";
-import PrivateRoute from "./components/PrivateRoute";
+// import Dashboard from "./pages/Dashboard";
+// import PrivateRoute from "./pages/auth/PrivateRoute";
 import { healthCheck } from "./api";
 
+
+
 function App() {
+
+
   const [status, setStatus] = useState("Loading...");
   const [dbStatus, setDbStatus] = useState("Checking DB...");
 
+  // USE EFFECT - HEALTH CHECK FOR BACKEND CONNECTION
   useEffect(() => {
     healthCheck()
       .then(data => {
@@ -23,6 +28,8 @@ function App() {
       });
   }, []);
 
+
+  // RETURN
   return (
     <Router>
       <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
@@ -31,12 +38,12 @@ function App() {
         <p>Database status: {dbStatus}</p>
 
         <Routes>
-          {/* Public pages */}
+          {/* PUBLIC PAGES */}
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Protected pages */}
+          {/* PROTECTED PAGES */}
           <Route
             path="/dashboard"
             element={
@@ -46,7 +53,7 @@ function App() {
             }
           />
 
-          {/* Catch-all redirects */}
+          {/* REDIRECTS */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>

@@ -1,24 +1,33 @@
 <!-- INSIGHT BACKEND -->
 
-<!-- UV SERVER START -->
+<!-- CREATING A VIRTUAL ENVIROMENT -->
+    python3 -m venv venv
+<!-- FIRST ACCESS THE VIRTUAL ENVIROMENT -->
+    source venv/bin/activate
 
-uv run -m app.main
+<!-- COMMANDS SHOWING WHCIH ENVIROMENT -->
+    which python3 
+<!-- /path/to/backend/venv/bin/python -->
+    which pip3
+<!-- /path/to/backend/venv/bin/pip -->
+
+
+<!-- START THE FAST API SERVER -->
+    uvicorn app.main:app --reload
+
+<!-- LOCAL ENDPOINT -->
+    http://127.0.0.1:8000
 
 <!-- SWAGGER ENDPOINT -->
 <!-- http://localhost:8000/docs -->
 
-THINGS TO DO CHECKLIST:
-LOOK INTO CURL CALLS
-/components/
-//module/
-//page/
-/context/
-/pages/
-//auth/
 
-On the production server:
-uv run fastapi dev app/main.py
+<!-- DATABASE -->
+Name: DATABASE_URL
+Value: postgresql://<insightadmin>:<kixxMXTVAiVAASXBBBLRnJxX22E1DJCa>@<dpg-d5i4c3idbo4c73ebsos0-a>:<5432>/<insightdb_603m>
 
+
+<!-- OLD PYTHON DEPENDENCIES -->
 requires-python = ">=3.11"
 dependencies = [
     "aiofiles>=24.1.0",
