@@ -12,6 +12,20 @@
 
 
 
+
+  {/* PROTECTED PAGES */}
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+
+
+          
+
 <!-- OLD PACKAGE.JSON -->
   <!-- "dependencies": {
     "axios": "^1.4.0",
