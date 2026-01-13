@@ -1,25 +1,20 @@
 // frontend/src/pages/Dashboard.jsx
 
-import React, { useState, useEffect } from "react";
-import {
-  Images,
-  ImageUp,
-  LibraryBig,
-  GalleryVerticalEnd,
-} from "lucide-react";
+// =========================
+// DASHBOARD PAGE
+// =========================
 
+// IMPORTS
+import React, { useState, useEffect } from "react";
+import { Images,ImageUp,LibraryBig,GalleryVerticalEnd,} from "lucide-react";
 import Header from "../components/module/Header";
 
 export default function Dashboard() {
-  // =========================
   // STATE (TEMP PLACEHOLDERS)
-  // =========================
   const [imagesCount] = useState(0);
   const [librariesCount] = useState(0);
 
-  // =========================
   // DARK MODE
-  // =========================
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       return JSON.parse(localStorage.getItem("darkMode")) ?? true;
@@ -36,9 +31,7 @@ export default function Dashboard() {
 
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
-  // =========================
   // RENDER
-  // =========================
   return (
     <div
       className={`min-h-screen p-8 transition-colors duration-300 ${

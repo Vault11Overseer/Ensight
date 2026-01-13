@@ -4,9 +4,9 @@
 // IMPORTS
 // =========================
 import React, { useState, useEffect } from "react";
-import API from "../api/axios";
-import { useAuth } from "../context/AuthContext";
-import Header from "../components/module/Header"; // ✅ IMPORT SHARED HEADER COMPONENT
+import API from "../../../OLDFILES/frontend_old/src/api/axios";
+import { useAuth } from "../../../OLDFILES/frontend_old/src/context/AuthContext";
+import Header from "../../../OLDFILES/frontend_old/src/components/module/Header"; // ✅ IMPORT SHARED HEADER COMPONENT
 
 export default function Upload() {
   // =========================

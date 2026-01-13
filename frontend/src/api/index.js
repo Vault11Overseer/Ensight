@@ -21,7 +21,7 @@ const api = axios.create({
  * { status: "OK", db: "Connected" }
  */
 export const healthCheck = async () => {
-  const res = await api.get("/health");
+  const res = await api.get("/");
   return res.data;
 };
 

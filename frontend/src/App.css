@@ -1,7 +1,12 @@
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
+/* APP.CSS */
 
-body {
-  background-color: pink;
+/* TAILWINDS SETUP */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* GLOBAL */
+html, body {
+  margin: 0;
+  padding: 0;
 }

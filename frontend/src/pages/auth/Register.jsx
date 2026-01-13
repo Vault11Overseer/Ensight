@@ -1,8 +1,15 @@
 // frontend/src/pages/auth/Register.jsx
+
+// =========================
+// REGISTER PAGE
+// =========================
+
+// IMPORTS
 import React, { useState, useEffect } from "react";
-// import { Eye, EyeOff, Sun, Moon } from "lucide-react";
+import { Eye, EyeOff, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+// EXPORT
 export default function Register() {
   // ============================
   // STATE

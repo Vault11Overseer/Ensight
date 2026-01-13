@@ -10,9 +10,9 @@
 // =========================
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import API from "../api/axios";
-import Header from "../components/module/Header";
+import { useAuth } from "../../../OLDFILES/frontend_old/src/context/AuthContext";
+import API from "../../../OLDFILES/frontend_old/src/api/axios";
+import Header from "../../../OLDFILES/frontend_old/src/components/module/Header";
 import { Edit2, Trash2, Eye } from "lucide-react";
 
 // =========================
