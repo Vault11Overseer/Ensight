@@ -1,16 +1,13 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import OperationalError
-from .db import engine, SessionLocal, Base
-from .models import Library
+from app.config import DEBUG
 
-app = FastAPI(title="Insight API")
+app = FastAPI(title="Insight API", debug=DEBUG)
 
-# CORS configuration
+# Configure CORS so your frontend can call the API
 origins = [
-    "https://insight-cish.onrender.com",
-    "http://localhost:5173",
+    "http://localhost:5173",                 # local frontend
+    "https://insight-cish.onrender.com",    # deployed frontend
 ]
 
 app.add_middleware(
@@ -21,53 +18,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Create tables if they don’t exist
-Base.metadata.create_all(bind=engine)
-
-# Dependency to get DB session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-# =========================
-# HEALTH CHECK
-# =========================
+# Root endpoint — just confirms backend is running
 @app.get("/")
-def health_check(db: Session = Depends(get_db)):
-    db_status = "connected"
-    try:
-        # Lightweight query to check DB
-        db.execute("SELECT 1")
-    except OperationalError:
-        db_status = "disconnected"
+def root():
+    return {"status": "running", "message": "Backend is up and ready!"}
 
-    return {"status": "ok", "db": db_status}
-
+# Optional: health endpoint
 @app.get("/health")
-def health_check_route(db: Session = Depends(get_db)):
-    db_status = "connected"
-    try:
-        db.execute("SELECT 1")
-    except OperationalError:
-        db_status = "disconnected"
-
-    return {"status": "ok", "db": db_status}
-
-
-# =========================
-# LIBRARY ROUTES
-# =========================
-@app.post("/library")
-def create_library(name: str, description: str = "", db: Session = Depends(get_db)):
-    lib = Library(name=name, description=description)
-    db.add(lib)
-    db.commit()
-    db.refresh(lib)
-    return lib
-
-@app.get("/library")
-def get_library(db: Session = Depends(get_db)):
-    return db.query(Library).all()
+def health():
+    return {"status": "ok", "message": "Backend is healthy"}
