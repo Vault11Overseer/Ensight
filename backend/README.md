@@ -67,3 +67,30 @@ dependencies = [
     "sqlalchemy>=2.0.43",
     "uvicorn>=0.33.0",
 ]
+
+
+backend/
+├─ app/
+│  ├─ main.py
+│  ├─ database/
+│  │  ├─ db.py
+│  │  └─ __init__.py
+│  ├─ models/
+│  │  ├─ user.py
+│  │  ├─ image.py
+│  │  ├─ album.py
+│  │  ├─ gallery.py
+│  │  ├─ image_access.py
+│  │  ├─ share_link.py
+│  │  └─ __init__.py
+│  ├─ schemas/
+│  │  └─ <pydantic schemas here>
+│  ├─ routes/
+│  │  └─ <routes for users, images, albums, galleries>
+│  └─ utils/
+│     └─ auth.py  # placeholder for Cognito integration later
+├─ venv/
+├─ .env
+├─ requirements.txt
+└─ scripts/
+   └─ test_db.py

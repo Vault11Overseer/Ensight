@@ -19,8 +19,8 @@ import ImageDetail from "./components/page/ImageDetail";
 import LibraryDetail from "./components/page/LibraryDetail";
 import Personal from "./pages/Personal.jsx";
 import Settings from "./pages/auth/Settings.jsx";
-import { AuthProvider, useAuth } from "./context/AuthContext";
-import { UserDataProvider } from "./context/UserDataContext";
+import { AuthProvider, useAuth } from "./src/context/AuthContext.jsx";
+import { UserDataProvider } from "./src/context/UserDataContext.jsx";
 
 // =========================
 // PRIVATE ROUTER WRAPPER
