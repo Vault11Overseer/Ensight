@@ -64,14 +64,29 @@ S3 (already good)
 
 
 
+Client (Frontend)
+        ↓
+Routes (API endpoints)
+        ↓
+Schemas (validation + shape of data)
+        ↓
+Models (database tables via ORM)
+        ↓
+PostgreSQL (Render)
 
 
-// TEST API EXTENSION
+Example: Create a library
 
-export const API_BASE = import.meta.env.VITE_API_BASE;
+Frontend sends JSON
 
-export async function healthCheck() {
-  const res = await fetch(`${API_BASE}/`);
-  return res.json();
-}
+FastAPI route receives it
 
+Pydantic schema validates it
+
+SQLAlchemy model creates a row
+
+Postgres stores it
+
+Response schema formats output
+
+Nothing overlaps responsibilities.

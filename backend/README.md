@@ -26,6 +26,25 @@
 Name: DATABASE_URL
 Value: postgresql://<insightadmin>:<kixxMXTVAiVAASXBBBLRnJxX22E1DJCa>@<dpg-d5i4c3idbo4c73ebsos0-a>:<5432>/<insightdb_603m>
 
+<!-- START DB -->
+psql "postgresql://insightadmin:kixxMXTVAiVAASXBBBLRnJxX22E1DJCa@dpg-d5i4c3idbo4c73ebsos0-a.oregon-postgres.render.com:5432/insightdb_603m"
+
+
+
+<!-- POSTGRES -->
+
+<!-- SHOW TABLES -->
+\dt
+
+<!-- SHOW SCHEMS -->
+\dn
+
+<!-- SHOW ALL DATA -->
+SELECT * FROM library
+
+<!-- EXIT -->
+\q
+
 
 <!-- OLD PYTHON DEPENDENCIES -->
 requires-python = ">=3.11"

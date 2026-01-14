@@ -25,12 +25,11 @@ function App() {
   useEffect(() => {
     healthCheck()
       .then((data) => {
+        console.log("HEALTH DATA:", data);
         console.log("✅ Backend health check");
-        console.log("Status:", data.status);
-        console.log("Database:", data.db);
       })
       .catch((err) => {
-        console.error("❌ Health check failed:", err);
+        console.error("❌ HEALTH CHECK ERROR", err.response?.data || err.message);
       });
   }, []);
 

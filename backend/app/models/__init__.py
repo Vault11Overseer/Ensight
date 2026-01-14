@@ -13,6 +13,22 @@
 # KEEP CODE CLEAN, CONSISTENT, AND MAINTAINABLE
 
 # IMPORT ALL MODELS SO THEY ARE REGISTERED WITH BASE.METADATA
-from .user import User
-from .image import Image
-from .library import Library
+# from .user import User
+# from .image import Image
+# from .library import Library
+
+# Conceptually:
+
+# class Library(Base):
+#     id
+#     name
+#     description
+
+
+# This becomes:
+
+# CREATE TABLE library (
+#   id SERIAL PRIMARY KEY,
+#   name TEXT,
+#   description TEXT
+# );
