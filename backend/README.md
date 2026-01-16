@@ -46,51 +46,77 @@ SELECT * FROM library
 \q
 
 
-<!-- OLD PYTHON DEPENDENCIES -->
-requires-python = ">=3.11"
-dependencies = [
-    "aiofiles>=24.1.0",
-    "aiosqlite>=0.20.0",
-    "bcrypt==4.0.1",
-    "boto3>=1.37.38",
-    "email-validator>=2.3.0",
-    "fastapi[all]>=0.116.2",
-    "passlib[bcrypt,bycrypt]>=1.7.4",
-    "pillow>=10.4.0",
-    "pydantic-settings==2.9",
-    "pydantic[email]>=2.10.6",
-    "pyjwt>=2.10.1",
-    "python-dotenv>=1.0.1",
-    "python-jose[cryptography]>=3.4.0",
-    "python-multipart>=0.0.20",
-    "requests>=2.32.5",
-    "sqlalchemy>=2.0.43",
-    "uvicorn>=0.33.0",
-]
 
 
-backend/
-├─ app/
-│  ├─ main.py
-│  ├─ database/
-│  │  ├─ db.py
-│  │  └─ __init__.py
-│  ├─ models/
-│  │  ├─ user.py
-│  │  ├─ image.py
-│  │  ├─ album.py
-│  │  ├─ gallery.py
-│  │  ├─ image_access.py
-│  │  ├─ share_link.py
-│  │  └─ __init__.py
-│  ├─ schemas/
-│  │  └─ <pydantic schemas here>
-│  ├─ routes/
-│  │  └─ <routes for users, images, albums, galleries>
-│  └─ utils/
-│     └─ auth.py  # placeholder for Cognito integration later
-├─ venv/
-├─ .env
-├─ requirements.txt
-└─ scripts/
-   └─ test_db.py
+
+
+
+
+USERS
+-----
+id (PK)
+username
+email
+role (admin/user)
+created_at
+updated_at
+
+IMAGES
+------
+id (PK)
+user_id (FK → USERS.id)
+s3_key (string)
+metadata (JSON)
+created_at
+updated_at
+
+ALBUMS
+------
+id (PK)
+user_id (FK → USERS.id)
+title
+description
+created_at
+updated_at
+
+GALLERY
+-------
+id (PK)
+created_by (FK → USERS.id)
+title
+description
+sort_order (int)
+is_master (bool)          -- true for master gallery
+created_at
+updated_at
+
+ALBUM_IMAGES (many-to-many)
+---------------------------
+album_id (FK → ALBUMS.id)
+image_id (FK → IMAGES.id)
+
+GALLERY_ALBUMS (many-to-many)
+-----------------------------
+gallery_id (FK → GALLERY.id)
+album_id (FK → ALBUMS.id)
+
+IMAGE_ACCESS_RULES
+------------------
+image_id (FK → IMAGES.id)
+watermark_required (bool)
+manual_tags (JSON)        -- tags added by uploader
+rekognition_tags (JSON)   -- tags added by AWS Rekognition
+favorite (bool)           -- optional future feature
+created_at
+updated_at
+
+SHARE_LINKS
+-----------
+id (PK)
+gallery_id (FK → GALLERY.id, nullable)
+album_id (FK → ALBUMS.id, nullable)
+image_id (FK → IMAGES.id, nullable)
+link (string)
+expires_at (datetime)
+created_at
+updated_at
