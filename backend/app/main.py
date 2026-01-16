@@ -93,7 +93,6 @@ from app.routes.share_links import router as share_links_router
 from app.routes.health import router as health_router
 from app.routes.users import router as users_router
 app.include_router(users_router)
-
 app.include_router(albums_router)
 app.include_router(galleries_router)
 app.include_router(images_router)
