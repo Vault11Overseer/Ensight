@@ -21,14 +21,13 @@
 <!-- SWAGGER ENDPOINT -->
 <!-- http://localhost:8000/docs -->
 
+postgresql://<username>:<password>@<host>:<port>/<database>?<options>
 
-<!-- DATABASE -->
-Name: DATABASE_URL
-Value: postgresql://<insightadmin>:<kixxMXTVAiVAASXBBBLRnJxX22E1DJCa>@<dpg-d5i4c3idbo4c73ebsos0-a>:<5432>/<insightdb_603m>
+<!-- NEW DB -->
+DATABASE_URL=postgresql://insight_db_admin:uLV2f6EMAuNtU5eECAsK0YNaubGwHcUl@dpg-d5laodkmrvns73ebk340-a.oregon-postgres.render.com:5432/insight_db_rfy7?sslmode=require
 
-<!-- START DB -->
-psql "postgresql://insightadmin:kixxMXTVAiVAASXBBBLRnJxX22E1DJCa@dpg-d5i4c3idbo4c73ebsos0-a.oregon-postgres.render.com:5432/insightdb_603m"
-
+<!-- NEW START DB -->
+psql "postgresql://insight_db_admin:uLV2f6EMAuNtU5eECAsK0YNaubGwHcUl@dpg-d5laodkmrvns73ebk340-a.oregon-postgres.render.com:5432/insight_db_rfy7"
 
 
 <!-- POSTGRES -->
