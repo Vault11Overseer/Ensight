@@ -6,7 +6,6 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy import text
 
 from app.database.db import get_db
-from app.models import user, gallery, image, album, image_access, share_link
 
 # =========================
 # APP INIT
@@ -30,24 +29,21 @@ app.add_middleware(
 )
 
 # =========================
-# ROOT (NO SIDE EFFECTS)
+# ROOT & HEALTH ENDPOINT
 # =========================
 @app.get("/")
-def root():
-    return {
-        "backend": "running",
-    }
-
-# =========================
-# HEALTH CHECK (DB ONLY)
-# =========================
-@app.get("/health/db")
-def db_health(db: Session = Depends(get_db)):
+def root(db: Session = Depends(get_db)):
+    db_status = "disconnected"
     try:
         db.execute(text("SELECT 1"))
-        return {"database": "connected"}
+        db_status = "connected"
     except OperationalError:
-        return {"database": "disconnected"}
+        pass
+
+    return {
+        "backend": "running",
+        "database": db_status,
+    }
 
 # =========================
 # INCLUDE ROUTERS
@@ -56,6 +52,7 @@ from app.routes.albums import router as albums_router
 from app.routes.galleries import router as galleries_router
 from app.routes.images import router as images_router
 from app.routes.share_links import router as share_links_router
+from app.routes.health import router as health_router
 from app.routes.users import router as users_router
 
 app.include_router(users_router)
@@ -63,3 +60,4 @@ app.include_router(albums_router)
 app.include_router(galleries_router)
 app.include_router(images_router)
 app.include_router(share_links_router)
+app.include_router(health_router)

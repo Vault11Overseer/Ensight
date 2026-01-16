@@ -47,6 +47,8 @@ SELECT * FROM library
 
 
 
+cd backend
+python -m scripts.init_db
 
 
 
