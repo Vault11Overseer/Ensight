@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError
 from sqlalchemy import text
-
 from app.database.db import get_db
 
 # =========================

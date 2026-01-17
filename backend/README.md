@@ -50,6 +50,7 @@ cd backend
 python -m scripts.init_db
 
 
+python -m app.scripts.init_db
 
 
 
