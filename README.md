@@ -74,19 +74,3 @@ Models (database tables via ORM)
         ↓
 PostgreSQL (Render)
 
-
-Example: Create a library
-
-Frontend sends JSON
-
-FastAPI route receives it
-
-Pydantic schema validates it
-
-SQLAlchemy model creates a row
-
-Postgres stores it
-
-Response schema formats output
-
-Nothing overlaps responsibilities.

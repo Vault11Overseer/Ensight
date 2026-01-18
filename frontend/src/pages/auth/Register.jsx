@@ -1,5 +1,3 @@
-// frontend/src/pages/auth/Register.jsx
-
 // =========================
 // REGISTER PAGE
 // =========================
@@ -8,12 +6,9 @@
 import React, { useState, useEffect } from "react";
 import { Eye, EyeOff, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Slideshow from "../../components/module/Slideshow";
 
-// EXPORT
 export default function Register() {
-  // ============================
-  // STATE
-  // ============================
   const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -21,9 +16,6 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // ============================
-  // DARK MODE
-  // ============================
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
       return JSON.parse(localStorage.getItem("darkMode")) ?? true;
@@ -34,108 +26,49 @@ export default function Register() {
   useEffect(() => {
     if (darkMode) document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
-
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
 
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
-  // ============================
-  // SLIDESHOW
-  // ============================
-  const slideshowImages = [
-    "/images/winter-at-the-strater.jpg",
-    "/images/durango_road.jpg",
-    "/images/durango_train.jpg",
-  ];
-
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex(
-        (prevIndex) => (prevIndex + 1) % slideshowImages.length
-      );
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [slideshowImages.length]);
-
-  // ============================
-  // FORM SUBMISSION
-  // ============================
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Wire this to AWS Cognito signup
     console.log({ firstName, lastName, email, password });
     alert("Registration submitted! (Cognito signup pending)");
     navigate("/login");
   };
 
-  // ============================
-  // RENDER
-  // ============================
   return (
-    <div
-      className={`min-h-screen flex w-full items-center justify-center transition-colors duration-500 ${
-        darkMode ? "bg-black text-white" : "bg-white text-black"
-      }`}
-    >
+    <div className={`min-h-screen flex items-center justify-center transition-colors duration-500 ${
+      darkMode ? "bg-black text-white" : "bg-white text-black"
+    }`}>
       <div
         className={`flex w-[900px] max-w-full rounded-2xl shadow-2xl overflow-hidden transition-colors duration-500 ${
           darkMode ? "bg-[#1E1C29]" : "bg-gray-100"
         }`}
-        style={{ height: "70vh" }}
+        style={{ maxHeight: "90vh" }}
       >
-        {/* LEFT IMAGE SLIDESHOW */}
-        <div className="w-1/2 relative hidden md:block">
-          <img
-            src={slideshowImages[currentImageIndex]}
-            alt="register slideshow"
-            className="h-full w-full object-cover transition-opacity duration-1000"
-          />
-          <div
-            className={`absolute top-5 left-5 px-3 py-1 rounded-lg font-bold text-lg ${
-              darkMode ? "bg-black text-[#BDD63B]" : "bg-white text-[#1E1C29]"
-            }`}
-          >
-            Insight
-          </div>
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center">
-            <p
-              className={`px-3 py-1 rounded-lg font-bold text-lg ${
-                darkMode ? "bg-black text-[#BDD63B]" : "bg-white text-[#1E1C29]"
-              }`}
-            >
-              Capturing Moments,
-              <br />
-              Creating Memories
-            </p>
-          </div>
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-            {slideshowImages.map((_, idx) => (
-              <span
-                key={idx}
-                className={`w-2 h-2 rounded-full ${
-                  idx === currentImageIndex
-                    ? darkMode
-                      ? "bg-[#BDD63B]"
-                      : "bg-[#1E1C29]"
-                    : "bg-white/40"
-                }`}
-              ></span>
-            ))}
-          </div>
-        </div>
+        {/* LEFT SLIDESHOW */}
+        <div className="w-1/2 hidden md:block">
+  <Slideshow
+    slides={[
+      { image: "/images/winter-at-the-strater.jpg", title: "Capturing Moments", subtitle: "Creating Memories" },
+      { image: "/images/durango_road.jpg", title: "Adventure Awaits", subtitle: "Hit the Road" },
+      { image: "/images/durango_train.jpg", title: "Historic Journeys", subtitle: "Ride the Rails" }
+    ]}
+    darkMode={darkMode}
+    containerHeight="80vh" // lock height
+  />
+</div>
+
 
         {/* RIGHT FORM */}
-        <div className="w-full md:w-1/2 p-10 flex flex-col justify-center relative">
+        <div className="w-full md:w-1/2 p-10 flex flex-col justify-center overflow-y-auto">
           <div className="flex justify-between items-center mb-2">
             <h2 className={`text-2xl font-bold ${darkMode ? "text-white" : "text-black"}`}>
               Create an account
             </h2>
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-full transition-colors duration-300"
-            >
+            <button onClick={toggleDarkMode} className="p-2 rounded-full transition-colors duration-300">
               {darkMode ? <Sun className="text-[#BDD63B]" size={20} /> : <Moon className="text-[#1E1C29]" size={20} />}
             </button>
           </div>

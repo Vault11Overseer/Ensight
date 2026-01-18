@@ -11,17 +11,25 @@ from sqlalchemy.ext.mutable import MutableDict
 class User(Base):
     __tablename__ = "users"
 
-    # =========================
-    # Core user fields
-    # =========================
-    id = Column(Integer, primary_key=True, index=True)          # user_id
+    id = Column(Integer, primary_key=True, index=True)
+    # Auth / identity
     username = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
-    password_hash = Column(String, nullable=False)             # hashed password
-    role = Column(String, default="user")   
+    # Cognito-ready
+    cognito_sub = Column(String, unique=True, nullable=True)  # <-- ADD THIS
+    # Profile
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    role = Column(String, default="user")
+    # Dev-only (remove later)
+    password_hash = Column(String, nullable=True)
     profile_metadata = Column(MutableDict.as_mutable(JSON), default=dict)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now()
+    )
 
 
     # =========================

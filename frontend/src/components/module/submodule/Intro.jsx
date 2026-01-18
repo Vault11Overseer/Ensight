@@ -14,7 +14,7 @@ import React from "react";
 // INTRO FUNCTION
 // ======================================
 export default function Intro({ user, darkMode }) {
-  const { librariesCount, imagesCount } = useUserData();
+  // const { librariesCount, imagesCount } = useUserData();
 
   // ======================================
   // RETURN
@@ -40,7 +40,7 @@ export default function Intro({ user, darkMode }) {
             darkMode ? "text-[#BDD63B]" : "text-[#1E3A8A]"
           }`}
         >
-          {librariesCount}
+          {/* {librariesCount} */}
         </span>{" "}
         libraries
       </p>
@@ -56,7 +56,7 @@ export default function Intro({ user, darkMode }) {
             darkMode ? "text-[#BDD63B]" : "text-[#1E3A8A]"
           }`}
         >
-          {imagesCount}
+          {/* {imagesCount} */}
         </span>{" "}
         images
       </p>

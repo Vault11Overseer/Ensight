@@ -21,6 +21,7 @@
 <!-- SWAGGER ENDPOINT -->
 <!-- http://localhost:8000/docs -->
 
+<!-- DB TEMPLATE FOR POSTGRES -->
 postgresql://<username>:<password>@<host>:<port>/<database>?<options>
 
 <!-- NEW DB -->
@@ -44,81 +45,116 @@ SELECT * FROM library
 <!-- EXIT -->
 \q
 
+<!-- CHECK USERS IN USER TABLE -->
+SELECT id, username, email, role, profile_metadata
+FROM users;
 
-
-cd backend
-python -m scripts.init_db
-
-
+<!-- RUNNING DB SCRIPT -->
 python -m app.scripts.init_db
 
 
+Database overview (no code yet, just structure)
+This is your correct mental model 👇
 
 USERS
------
-id (PK)
+id
 username
 email
-role (admin/user)
-created_at
-updated_at
-
-IMAGES
-------
-id (PK)
-user_id (FK → USERS.id)
-s3_key (string)
-metadata (JSON)
+cognito_sub (future)
+role (admin / user)
+first_name
+last_name
+profile_metadata
 created_at
 updated_at
 
 ALBUMS
-------
-id (PK)
-user_id (FK → USERS.id)
+One-to-many (User → Albums)
+id
 title
 description
+owner_user_id (FK → users.id)
+is_master (bool, default False)
+share_link
+created_at
+updated_at
+Rules:
+Every user can CRUD their albums
+Admin can CRUD any album
+Albums are public-readable
+
+IMAGES
+One-to-many (User → Images)
+Many-to-many (Images ↔ Albums)
+Many-to-many (Images ↔ Tags)
+id
+uploader_user_id (FK)
+s3_key
+preview_key
+metadata
+aws_tags
+user_tags
+watermark_enabled
 created_at
 updated_at
 
-GALLERY
--------
-id (PK)
-created_by (FK → USERS.id)
-title
-description
-sort_order (int)
-is_master (bool)          -- true for master gallery
+TAGS
+Reusable and normalized:
+id
+name
+source (user | aws)
 created_at
-updated_at
 
-ALBUM_IMAGES (many-to-many)
----------------------------
-album_id (FK → ALBUMS.id)
-image_id (FK → IMAGES.id)
+IMAGE_ALBUMS (join table)
+image_id
+album_id
 
-GALLERY_ALBUMS (many-to-many)
------------------------------
-gallery_id (FK → GALLERY.id)
-album_id (FK → ALBUMS.id)
-
-IMAGE_ACCESS_RULES
-------------------
-image_id (FK → IMAGES.id)
-watermark_required (bool)
-manual_tags (JSON)        -- tags added by uploader
-rekognition_tags (JSON)   -- tags added by AWS Rekognition
-favorite (bool)           -- optional future feature
+IMAGE_FAVORITES (per-user)
+user_id
+image_id
 created_at
-updated_at
 
 SHARE_LINKS
------------
-id (PK)
-gallery_id (FK → GALLERY.id, nullable)
-album_id (FK → ALBUMS.id, nullable)
-image_id (FK → IMAGES.id, nullable)
-link (string)
-expires_at (datetime)
+Reusable for albums and images:
+id
+resource_type (album | image)
+resource_id
+owner_user_id
+token
+expires_at
 created_at
 updated_at
+
+
+
+
+
+
+
+Step 2
+Create Album model + schema
+No image logic yet
+Just ownership + permissions
+
+✅ Step 3
+Create Image model
+Without AWS integration at first
+Just metadata + ownership
+
+✅ Step 4
+Add many-to-many tables
+image_albums
+image_tags
+image_favorites
+
+✅ Step 5
+Only then:
+S3 upload
+AWS Rekognition
+Share links
+✅ Step 6 (LAST)
+Replace dev auth with Cognito
+Remove password_hash
+Use cognito_sub
+Verify JWTs
+
