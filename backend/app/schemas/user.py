@@ -22,14 +22,14 @@ class UserRead(BaseModel):
     username: str
     email: EmailStr
     role: str
-    first_name: str                # NEW
-    last_name: str                 # NEW
+    first_name: str
+    last_name: str
     profile_metadata: Optional[Dict] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 
     class Config:
-        orm_mode = True  # allows reading from SQLAlchemy models
+        orm_mode = True
 
 # =========================
 # UPDATE USER
@@ -37,8 +37,9 @@ class UserRead(BaseModel):
 class UserUpdate(BaseModel):
     username: Optional[str] = None
     email: Optional[EmailStr] = None
-    password: Optional[str] = None          # for password change
-    role: Optional[str] = None              # admin-only
-    first_name: Optional[str] = None        # NEW
-    last_name: Optional[str] = None         # NEW
+    password: Optional[str] = None
+    role: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     profile_metadata: Optional[Dict] = None
+
