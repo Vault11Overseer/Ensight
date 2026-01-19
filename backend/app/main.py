@@ -45,21 +45,28 @@ def root(db: Session = Depends(get_db)):
     }
 
 # =========================
-# INCLUDE ROUTERS
+# IMPORT ROUTERS
 # =========================
-# from app.routes.albums import router as albums_router
-# from app.routes.galleries import router as galleries_router
-# from app.routes.images import router as images_router
-# from app.routes.share_links import router as share_links_router
+from app.routes.albums import router as albums_router
+from app.routes.gallery import router as gallery_router
 from app.routes.health import router as health_router
 from app.routes.users import router as users_router
 from app.auth import dev_auth
 
-
+# =========================
+# INCLUDE ROUTERS
+# =========================
 app.include_router(dev_auth.router)
 app.include_router(users_router)
-# app.include_router(albums_router)
-# app.include_router(galleries_router)
-# app.include_router(images_router)
-# app.include_router(share_links_router)
+app.include_router(albums_router)
+app.include_router(gallery_router)  # Step 3: /gallery alias
 app.include_router(health_router)
+
+# =========================
+# STARTUP EVENT
+# =========================
+from app.utils.startup import ensure_gallery_exists
+
+@app.on_event("startup")
+def startup_event():
+    ensure_gallery_exists()

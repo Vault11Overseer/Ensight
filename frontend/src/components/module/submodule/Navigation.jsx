@@ -1,12 +1,5 @@
 // /src/components/Navigation.jsx
 
-// ======================================
-// NAVIGATION
-// ======================================
-
-// ======================================
-// IMPORTS
-// ======================================
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Settings, Sun, Moon, ArrowLeft } from "lucide-react";
@@ -14,10 +7,7 @@ import { Settings, Sun, Moon, ArrowLeft } from "lucide-react";
 // ======================================
 // NAVIGATION FUNCTION
 // ======================================
-export default function Navigation({ darkMode, toggleDarkMode, logout }) {
-  // ======================================
-  // STATE
-  // ======================================
+export default function Navigation({ darkMode, toggleDarkMode }) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -25,7 +15,34 @@ export default function Navigation({ darkMode, toggleDarkMode, logout }) {
   const darkBlue = "#212B3E";
 
   // CHECK IF THE USER IS ON THE DASHBOARD
-  const isDashboard = location.pathname === "/" || location.pathname === "/";
+  const isDashboard = location.pathname === "/dashboard";
+
+  // ======================================
+  // LOGOUT (DEV NOW, COGNITO LATER)
+  // ======================================
+  const handleLogout = async () => {
+    try {
+      // ----------------------------------
+      // FUTURE: Cognito logout goes here
+      // ----------------------------------
+      // Example (later):
+      // await Auth.signOut({ global: true });
+
+      // ----------------------------------
+      // DEV AUTH CLEANUP
+      // ----------------------------------
+      localStorage.removeItem("user");
+      localStorage.removeItem("darkMode");
+
+      // ----------------------------------
+      // REDIRECT TO LOGIN
+      // ----------------------------------
+      navigate("/login", { replace: true });
+    } catch (err) {
+      console.error("Logout failed:", err);
+      alert("Failed to log out");
+    }
+  };
 
   // ======================================
   // RETURN
@@ -34,8 +51,10 @@ export default function Navigation({ darkMode, toggleDarkMode, logout }) {
     <div className="flex flex-wrap items-center gap-3 mb-8 justify-end">
       {/* USER SETTINGS / BACK BUTTON */}
       <button
-        onClick={() => (isDashboard ? navigate("/settings") : navigate("/"))}
-        className={`group flex flex-row-reverse items-center rounded-full transition-all duration-300 overflow-hidden `}
+        onClick={() =>
+          isDashboard ? navigate("/settings") : navigate("/dashboard")
+        }
+        className="group flex flex-row-reverse items-center rounded-full transition-all duration-300 overflow-hidden"
         style={{
           backgroundColor: green,
           color: "black",
@@ -43,18 +62,16 @@ export default function Navigation({ darkMode, toggleDarkMode, logout }) {
           padding: "6px 10px",
         }}
       >
-        {/* ICON CHANGES BASED ON PAGE */}
         {isDashboard ? <Settings size={28} /> : <ArrowLeft size={28} />}
 
-        {/* TEXT FILES IN FROM LEFT ON HOVER */}
-        <span className="font-semibold whitespace-nowrap max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[180px] mr-2 text-left ">
+        <span className="font-semibold whitespace-nowrap max-w-0 overflow-hidden transition-all duration-300 group-hover:max-w-[180px] mr-2 text-left">
           {isDashboard ? "User Settings" : "Back To Dashboard"}
         </span>
       </button>
 
-      {/* LOGUT BUTTON */}
+      {/* LOGOUT BUTTON */}
       <button
-        onClick={logout}
+        onClick={handleLogout}
         className="px-4 py-2 rounded-lg bg-red-500 text-white transition-colors duration-300 hover:bg-red-700"
       >
         Logout

@@ -64,13 +64,12 @@ S3 (already good)
 
 
 
-Client (Frontend)
-        ↓
-Routes (API endpoints)
-        ↓
-Schemas (validation + shape of data)
-        ↓
-Models (database tables via ORM)
-        ↓
-PostgreSQL (Render)
+
+
+<!-- THINGS 2 DO -->
+
+
+Add album detail page
+
+Wire images → albums → master gallery
 

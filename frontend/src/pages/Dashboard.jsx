@@ -10,6 +10,9 @@
 import React, { useState, useEffect } from "react";
 import { Images, ImageUp, LibraryBig, GalleryVerticalEnd } from "lucide-react";
 import Header from "../components/module/Header";
+import { Link } from "react-router-dom"
+
+
 
 export default function Dashboard() {
   // =========================
@@ -53,11 +56,12 @@ export default function Dashboard() {
         introProps={{
           user,        // <-- pass the dev user here
           darkMode,
+          albumsCount:0,
+          imagesCount: 0,
         }}
         navigationProps={{
           darkMode,
           toggleDarkMode,
-          logout: null, // Cognito logout handled elsewhere
         }}
       />
 
@@ -78,8 +82,8 @@ export default function Dashboard() {
           <p>Upload your very own images. Add them to your albums, but they all end up in the Main Gallery.</p>
         </a>
 
-        <a
-          href="/libraries"
+        <Link
+          to="/albums"
           className={`p-6 rounded-2xl shadow transition ${
             darkMode
               ? "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"
@@ -91,7 +95,7 @@ export default function Dashboard() {
           </h2>
           <hr className="my-4 border-black w-full" />
           <p>Create, View, Update, and Delete your own personal albums, and view others' albums.</p>
-        </a>
+        </Link>
 
         <a
           href="/personal"
@@ -102,17 +106,17 @@ export default function Dashboard() {
           }`}
         >
           <h2 className="flex items-center gap-2 text-xl font-semibold">
-            <Images size={18} /> Personal
+            <Images size={18} /> Personal Images
           </h2>
           <hr className="my-4 border-black w-full" />
-          <p>View and manage your uploaded images.</p>
+          <p>View, Update, and Delete your personal images.</p>
         </a>
       </div>
 
       {/* GALLERY */}
       <div className="w-full">
-        <a
-          href="/gallery"
+        <Link
+          to="/gallery"
           className={`w-full flex flex-col items-center p-6 rounded-2xl shadow transition ${
             darkMode
               ? "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"
@@ -124,7 +128,7 @@ export default function Dashboard() {
           </h2>
           <hr className="my-4 border-black w-full" />
           <p>Browse, Download, or Share all images uploaded to Insight.</p>
-        </a>
+        </Link>
       </div>
     </div>
   );

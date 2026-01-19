@@ -4,17 +4,14 @@
 
 // IMPORTS
 import { useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate,} from "react-router-dom";
 
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import PrivateRoute from "./pages/auth/PrivateRoute";
 import Dashboard from "./pages/Dashboard";
+import Albums from "./pages/Album";
+import Gallery from "./pages/Gallery";
 import { healthCheck } from "./api";
 
 // APP
@@ -38,28 +35,47 @@ function App() {
   // =========================
   return (
     <Router>
-      <Routes>
-        {/* ROOT */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+    <Routes>
+      {/* ROOT */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+  
+      {/* PUBLIC AUTH ROUTES */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+  
+      {/* PROTECTED ROUTES */}
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        }
+      />
 
-        {/* PUBLIC AUTH ROUTES */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+      <Route
+        path="/albums"
+        element={
+          <PrivateRoute>
+            <Albums />
+          </PrivateRoute>
+        }
+      />
 
-        {/* PROTECTED ROUTES */}
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
-
-        {/* CATCH-ALL */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </Router>
+       <Route
+        path="/gallery"
+        element={
+          <PrivateRoute>
+            <Gallery />
+          </PrivateRoute>
+        }
+      />
+  
+      {/* CATCH-ALL */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
+  </Router>
+  
   );
 }
 
