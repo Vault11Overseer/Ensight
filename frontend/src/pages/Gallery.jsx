@@ -1,5 +1,6 @@
 // frontend/src/pages/Gallery.jsx
 import React, { useEffect, useState } from "react";
+import { API_BASE_URL } from "../api";
 
 export default function Gallery() {
   const [search, setSearch] = useState("");
@@ -8,13 +9,14 @@ export default function Gallery() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch albums and images (replace with real API)
-    fetch("http://localhost:8000/albums/")
+    // Fetch albums
+    fetch(`${API_BASE_URL}/albums/`)
       .then((res) => res.json())
       .then((data) => setAlbums(Array.isArray(data) ? data : []))
       .catch(() => setAlbums([]));
 
-    fetch("http://localhost:8000/images/")
+    // Fetch images
+    fetch(`${API_BASE_URL}/images/`)
       .then((res) => res.json())
       .then((data) => setImages(Array.isArray(data) ? data : []))
       .catch(() => setImages([]))

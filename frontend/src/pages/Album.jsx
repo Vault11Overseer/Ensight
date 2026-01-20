@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/module/Header";
 import AlbumCard from "../components/module/AlbumCard";
 import { format } from "date-fns";
+import { API_BASE_URL } from "../api";
 
 export default function Albums() {
   const [albums, setAlbums] = useState([]);
@@ -13,12 +14,19 @@ export default function Albums() {
   const currentUser = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    fetch("http://localhost:8000/albums/")
-      .then(res => res.json())
-      .then(data => {
+    const fetchAlbums = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/albums/`);
+        const data = await res.json();
         setAlbums(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Error fetching albums:", err);
+        setAlbums([]);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchAlbums();
   }, []);
 
   const canEdit = (album) =>
@@ -35,13 +43,17 @@ export default function Albums() {
       "Delete all images inside this album?\n\nCancel = images stay in Gallery"
     );
 
-    await fetch(`http://localhost:8000/albums/${album.id}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ delete_images: deleteImages }),
-    });
-
-    setAlbums(prev => prev.filter(a => a.id !== album.id));
+    try {
+      await fetch(`${API_BASE_URL}/albums/${album.id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ delete_images: deleteImages }),
+      });
+      setAlbums(prev => prev.filter(a => a.id !== album.id));
+    } catch (err) {
+      console.error("Error deleting album:", err);
+      alert("Failed to delete album.");
+    }
   };
 
   if (loading) return <p className="p-8">Loading albums…</p>;
