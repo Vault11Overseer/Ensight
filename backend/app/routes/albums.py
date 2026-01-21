@@ -6,17 +6,25 @@ from app.database.db import get_db
 from app.models.album import Album
 from app.models.user import User
 from app.schemas.album import AlbumCreate, AlbumRead, AlbumUpdate
-from app.auth.dev_auth import get_current_user  # DEV auth dependency
+from app.auth.dev_auth import get_current_user
 
 router = APIRouter(prefix="/albums", tags=["Albums"])
+
 
 # =========================
 # LIST ALBUMS (PUBLIC)
 # =========================
 @router.get("/", response_model=List[AlbumRead])
 def list_albums(db: Session = Depends(get_db)):
-    """Public-readable: anyone can view albums (excluding the Gallery if needed)"""
-    return db.query(Album).all()
+    """
+    Public-readable albums.
+    The Master Gallery is system-owned and excluded.
+    """
+    return (
+        db.query(Album)
+        .filter(Album.is_master.is_(False))  # ✅ KEY FIX
+        .all()
+    )
 
 
 # =========================
@@ -32,7 +40,7 @@ def create_album(
         title=data.title,
         description=data.description,
         owner_user_id=current_user.id,
-        is_master=False,  # Regular albums only
+        is_master=False,  # Explicitly prevent gallery creation
     )
     db.add(album)
     db.commit()
@@ -48,6 +56,11 @@ def get_album(album_id: int, db: Session = Depends(get_db)):
     album = db.get(Album, album_id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
+
+    # Prevent navigating directly to the Master Gallery
+    if album.is_master:
+        raise HTTPException(status_code=404, detail="Album not found")
+
     return album
 
 
@@ -65,9 +78,9 @@ def update_album(
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
 
-    # Regular users cannot edit the Gallery
-    if album.is_master and current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Cannot edit Gallery")
+    # Protect the gallery
+    if album.is_master:
+        raise HTTPException(status_code=403, detail="Gallery cannot be edited")
 
     if current_user.role != "admin" and album.owner_user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized")

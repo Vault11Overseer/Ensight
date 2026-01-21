@@ -79,7 +79,7 @@ export default function Dashboard() {
             <ImageUp size={18} /> Upload
           </h2>
           <hr className="my-4 border-black w-full" />
-          <p>Upload your very own images. Add them to your albums, but they all end up in the Main Gallery.</p>
+          <p>Upload your very own images. Add them to your albums, but they all end up in the Gallery.</p>
         </a>
 
         <Link
@@ -124,7 +124,7 @@ export default function Dashboard() {
           }`}
         >
           <h2 className="flex items-center gap-2 text-xl font-semibold">
-            <GalleryVerticalEnd size={18} />Main Gallery
+            <GalleryVerticalEnd size={30} />Gallery
           </h2>
           <hr className="my-4 border-black w-full" />
           <p>Browse, Download, or Share all images uploaded to Insight.</p>

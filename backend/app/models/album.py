@@ -1,6 +1,6 @@
 # backend/app/models/album.py
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Index
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -42,3 +42,13 @@ class Album(Base):
 
     # Relationships
     owner = relationship("User", backref="albums")
+
+    # Enforce ONE master gallery at the DB level
+    __table_args__ = (
+        Index(
+            "unique_master_album",
+            "is_master",
+            unique=True,
+            postgresql_where=is_master.is_(True),
+        ),
+    )
