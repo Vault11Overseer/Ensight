@@ -36,30 +36,7 @@ class User(Base):
     # =========================
     # Relationships
     # =========================
-    # Albums: One-to-many relationship
-    # Note: The relationship is defined via backref in Album model
-    # Access via: user.albums (returns list of Album objects)
-    
-    # Images: One-to-many relationship (when Image model is created)
-    # images = relationship(
-    #     "Image",
-    #     foreign_keys="Image.owner_user_id",
-    #     back_populates="owner",
-    #     cascade="all, delete-orphan"
-    # )
-    
-    # Share Links: One-to-many relationship (when ShareLink model is created)
-    # share_links = relationship(
-    #     "ShareLink",
-    #     foreign_keys="ShareLink.user_id",
-    #     back_populates="user",
-    #     cascade="all, delete-orphan"
-    # )
-    
-    # Image Favorites: One-to-many relationship (when ImageFavorite model is created)
-    # image_favorites = relationship(
-    #     "ImageFavorite",
-    #     foreign_keys="ImageFavorite.user_id",
-    #     back_populates="user",
-    #     cascade="all, delete-orphan"
-    # )
+    # Albums: One-to-many relationship (defined via backref in Album model)
+    # Images: One-to-many relationship (defined via backref in Image model)
+    # Share Links: One-to-many relationship (defined via backref in ShareLink model)
+    # Image Favorites: One-to-many relationship (defined via backref in ImageFavorite model)

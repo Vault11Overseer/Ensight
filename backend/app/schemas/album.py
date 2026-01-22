@@ -1,7 +1,7 @@
 # backend/app/schemas/album.py
 
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 
@@ -22,12 +22,11 @@ class AlbumRead(BaseModel):
     description: Optional[str]
     owner_user_id: int
     is_master: bool
-    share_link: Optional[str]
     created_at: datetime
     updated_at: datetime
+    image_ids: Optional[List[int]] = None  # IDs of images in this album
 
     class Config:
-        # orm_mode = True
         from_attributes = True
 
 

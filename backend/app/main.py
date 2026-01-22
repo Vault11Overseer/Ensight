@@ -51,6 +51,9 @@ from app.routes.albums import router as albums_router
 from app.routes.gallery import router as gallery_router
 from app.routes.health import router as health_router
 from app.routes.users import router as users_router
+from app.routes.images import router as images_router
+from app.routes.share_links import router as share_links_router
+from app.routes.favorites import router as favorites_router
 from app.auth import dev_auth
 
 # =========================
@@ -59,7 +62,10 @@ from app.auth import dev_auth
 app.include_router(dev_auth.router)
 app.include_router(users_router)
 app.include_router(albums_router)
-app.include_router(gallery_router)  # Step 3: /gallery alias
+app.include_router(gallery_router)
+app.include_router(images_router)
+app.include_router(share_links_router)
+app.include_router(favorites_router)
 app.include_router(health_router)
 
 # =========================

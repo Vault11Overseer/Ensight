@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Eye, EyeOff, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Slideshow from "../../components/module/Slideshow";
-import { API_BASE_URL } from "../../api";
+import { API_BASE_URL } from "../../services/api";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);

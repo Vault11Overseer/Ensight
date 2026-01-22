@@ -12,7 +12,7 @@ import PrivateRoute from "./pages/auth/PrivateRoute";
 import Dashboard from "./pages/Dashboard";
 import Albums from "./pages/Album";
 import Gallery from "./pages/Gallery";
-import { API_BASE_URL,healthCheck } from "./api";
+import { API_BASE_URL,healthCheck } from "./services/api";
 
 
 // APP

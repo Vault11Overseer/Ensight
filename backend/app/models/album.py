@@ -1,6 +1,6 @@
 # backend/app/models/album.py
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Index
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -22,11 +22,8 @@ class Album(Base):
         index=True
     )
 
-    # Master gallery flag (only ONE album should have this = True)
+    # Reserved for system use if needed (not used for Gallery anymore)
     is_master = Column(Boolean, default=False, nullable=False)
-
-    # Temporary share link string (real ShareLinks table later)
-    share_link = Column(String, nullable=True)
 
     created_at = Column(
         DateTime(timezone=True),
@@ -42,13 +39,10 @@ class Album(Base):
 
     # Relationships
     owner = relationship("User", backref="albums")
-
-    # Enforce ONE master gallery at the DB level
-    __table_args__ = (
-        Index(
-            "unique_master_album",
-            "is_master",
-            unique=True,
-            postgresql_where=is_master.is_(True),
-        ),
+    
+    # Many-to-many with Images
+    images = relationship(
+        "Image",
+        secondary="image_albums",
+        back_populates="albums"
     )

@@ -66,29 +66,7 @@ export default function Gallery() {
         <h1 className="text-2xl font-semibold">Gallery</h1>
       </div>
 
-      {/* SEARCH BAR */}
-      {/* <div className="w-full max-w-2xl mb-10">
-        <div
-          className={`flex items-center gap-3 px-4 py-3 rounded-2xl border transition ${
-            darkMode
-              ? "bg-neutral-900 border-neutral-700 focus-within:border-[#BDD63B]"
-              : "bg-neutral-100 border-neutral-300 focus-within:border-[#263248]"
-          }`}
-        >
-          <Search size={18} className="opacity-70" />
-          <input
-            type="text"
-            placeholder="Search images, albums, or tags..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className={`w-full bg-transparent outline-none text-sm ${
-              darkMode ? "placeholder-neutral-400" : "placeholder-neutral-500"
-            }`}
-          />
-        </div>
-      </div> */}
-
-      <Search size={18} className="opacity-70" />
+  
       <Searchbar />
 
       {/* GALLERY GRID */}

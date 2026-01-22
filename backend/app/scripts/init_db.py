@@ -1,6 +1,7 @@
 from app.database.db import Base, engine, SessionLocal
-from app.models.user import User
-from app.models.album import Album
+from app.models import User, Album, Image, Tag, ImageFavorite, ShareLink
+from app.models.image_album import image_albums
+from app.models.image_tag import image_tags
 from app.utils.auth import hash_password
 
 # =========================
@@ -31,21 +32,12 @@ db.refresh(dev_user)
 print("✅ Dev user created:", dev_user.username)
 
 # =========================
-# CREATE MASTER GALLERY ALBUM
+# NOTE: Gallery is now a virtual collection
+# All images are automatically in the Gallery
+# No need to create a special album for it
 # =========================
-master_album = Album(
-    title="Master Gallery",
-    description="All uploaded images live here",
-    owner_user_id=dev_user.id,
-    is_master=True,
-)
-
-db.add(master_album)
-db.commit()
-db.refresh(master_album)
-
-print("✅ Master Gallery created (album_id =", master_album.id, ")")
 
 db.close()
+print("✅ Database initialized successfully")
 
 

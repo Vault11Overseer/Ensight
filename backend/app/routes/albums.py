@@ -1,3 +1,5 @@
+# backend/app/routes/albums.py
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
@@ -5,10 +7,31 @@ from typing import List
 from app.database.db import get_db
 from app.models.album import Album
 from app.models.user import User
+from app.models.image import Image
 from app.schemas.album import AlbumCreate, AlbumRead, AlbumUpdate
+from app.schemas.image import ImageRead
 from app.auth.dev_auth import get_current_user
+from app.routes.images import _format_images_response
 
 router = APIRouter(prefix="/albums", tags=["Albums"])
+
+
+# =========================
+# HELPER FUNCTION
+# =========================
+def _format_album_response(album: Album) -> dict:
+    """Format album for response with image_ids"""
+    image_ids = [img.id for img in album.images]
+    return AlbumRead(
+        id=album.id,
+        title=album.title,
+        description=album.description,
+        owner_user_id=album.owner_user_id,
+        is_master=album.is_master,
+        created_at=album.created_at,
+        updated_at=album.updated_at,
+        image_ids=image_ids,
+    )
 
 
 # =========================
@@ -19,13 +42,9 @@ def list_albums(db: Session = Depends(get_db)):
     """
     Public-readable albums.
     Users can view all albums created by other users.
-    The Master Gallery is system-owned and excluded.
     """
-    return (
-        db.query(Album)
-        .filter(Album.is_master.is_(False))  # ✅ KEY FIX
-        .all()
-    )
+    albums = db.query(Album).all()
+    return [_format_album_response(album) for album in albums]
 
 
 # =========================
@@ -50,7 +69,7 @@ def create_album(
     db.add(album)
     db.commit()
     db.refresh(album)
-    return album
+    return _format_album_response(album)
 
 
 # =========================
@@ -60,17 +79,33 @@ def create_album(
 def get_album(album_id: int, db: Session = Depends(get_db)):
     """
     Users can view albums created by other users.
-    The Master Gallery is system-owned and excluded.
     """
     album = db.get(Album, album_id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
 
-    # Prevent navigating directly to the Master Gallery
-    if album.is_master:
+    return album
+
+
+# =========================
+# GET ALBUM IMAGES
+# =========================
+@router.get("/{album_id}/images", response_model=List[ImageRead])
+def get_album_images(
+    album_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Get all images in an album.
+    All authenticated users can view images in any album.
+    """
+    album = db.get(Album, album_id)
+    if not album:
         raise HTTPException(status_code=404, detail="Album not found")
 
-    return album
+    images = album.images
+    return _format_images_response(images, db)
 
 
 # =========================
@@ -85,15 +120,11 @@ def update_album(
 ):
     """
     Users can only update their own albums.
-    Admins can update any album (except the Master Gallery).
+    Admins can update any album.
     """
     album = db.get(Album, album_id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
-
-    # Protect the gallery
-    if album.is_master:
-        raise HTTPException(status_code=403, detail="Gallery cannot be edited")
 
     # Admin can update any album, users can only update their own
     if current_user.role != "admin" and album.owner_user_id != current_user.id:
@@ -106,7 +137,7 @@ def update_album(
 
     db.commit()
     db.refresh(album)
-    return album
+    return _format_album_response(album)
 
 
 # =========================
@@ -120,14 +151,12 @@ def delete_album(
 ):
     """
     Users can only delete their own albums.
-    Admins can delete any album (except the Master Gallery).
+    Admins can delete any album.
+    Note: Deleting an album does not delete the images, only the album-image associations.
     """
     album = db.get(Album, album_id)
     if not album:
         raise HTTPException(status_code=404, detail="Album not found")
-
-    if album.is_master:
-        raise HTTPException(status_code=400, detail="Gallery cannot be deleted")
 
     # Admin can delete any album, users can only delete their own
     if current_user.role != "admin" and album.owner_user_id != current_user.id:

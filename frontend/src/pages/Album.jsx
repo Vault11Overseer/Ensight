@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/module/Header";
 import AlbumCard from "../components/module/AlbumCard";
-import { API_BASE_URL } from "../api";
+import { API_BASE_URL } from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { Image, User, Trash2, Pencil, LibraryBig } from "lucide-react";
+
 
 export default function Albums() {
   // =========================
@@ -127,8 +129,9 @@ export default function Albums() {
 
       {/* PAGE HEADER */}
       <section className="my-10">
-        <h1 className="text-4xl font-bold">Albums</h1>
+        <h1 className="text-4xl font-bold"><LibraryBig size={18} />Albums</h1>
         <p className="opacity-80 mt-2">
+        <User size={16} />
           Manage your personal albums. The Main Gallery is system-controlled.
         </p>
       </section>

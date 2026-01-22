@@ -65,6 +65,7 @@ export default function AlbumCard({
       }`}
     >
         <h3 className="font-semibold truncate">{album.title}</h3>
+        <p className="truncate">{album.description}</p>
       </div>
     </div>
   );
