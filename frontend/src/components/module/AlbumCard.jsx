@@ -7,9 +7,15 @@ export default function AlbumCard({
   canEdit,
   onOpen,
   onDelete,
+  darkMode,
 }) {
   return (
-    <div className="relative rounded-2xl overflow-hidden shadow group bg-white dark:bg-gray-800">
+    <div className={`relative rounded-2xl overflow-hidden shadow group bg-white dark:bg-gray-800  ${
+      darkMode
+        ? "border border-[#BDD63B]"
+        : "border border-[#263248]"
+    }`}
+    >
       {/* IMAGE */}
       <div className="relative h-48 w-full">
         <img
@@ -20,7 +26,7 @@ export default function AlbumCard({
 
         {/* OWNER ICON */}
         {album.owner_user_id && (
-          <div className="absolute top-2 left-2 bg-white rounded-full p-1 shadow">
+          <div className="absolute top-2 left-2 bg-white text-red-500 rounded-full p-1 shadow">
             <User size={16} />
           </div>
         )}
@@ -50,7 +56,14 @@ export default function AlbumCard({
       </div>
 
       {/* TITLE */}
-      <div className="p-3">
+      {/* <div className="p-3 "> */}
+      <div
+      className={`p-5  ${
+        darkMode
+          ? "bg-[#BDD63B] text-black"
+          : "bg-[#263248] text-white"
+      }`}
+    >
         <h3 className="font-semibold truncate">{album.title}</h3>
       </div>
     </div>

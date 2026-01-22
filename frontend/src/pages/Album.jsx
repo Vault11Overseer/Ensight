@@ -137,10 +137,10 @@ export default function Albums() {
       <section className="my-10 max-w-2xl">
         <form
           onSubmit={handleCreateAlbum}
-          className={`p-6 rounded-2xl border-2 shadow space-y-4 ${
+          className={`p-6 rounded-2xl shadow space-y-4 ${
             darkMode
-              ? "bg-[#1E1C29] border-[#BDD63B]"
-              : "bg-gray-100 border-[#263248]"
+              ? "bg-[#BDD63B] text-black"
+              : "bg-[#263248] text-white"
           }`}
         >
           <h2 className="text-xl font-semibold">Create New Album</h2>
@@ -166,8 +166,9 @@ export default function Albums() {
             type="submit"
             className={`px-6 py-2 rounded-full font-semibold transition ${
               darkMode
-                ? "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"
-                : "bg-[#263248] text-white hover:bg-[#122342]"
+                ? "bg-[#263248] text-white hover:bg-[#122342]"
+                : "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"
+
             }`}
           >
             Create Album
@@ -193,6 +194,7 @@ export default function Albums() {
                   canEdit={canEdit(album)}
                   onOpen={handleOpenAlbum}
                   onDelete={handleDeleteAlbum}
+                  darkMode={darkMode}
                 />
               ))}
           </div>
