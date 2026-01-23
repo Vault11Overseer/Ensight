@@ -10,7 +10,8 @@
 import React, { useState, useEffect } from "react";
 import { Images, ImageUp, LibraryBig, GalleryVerticalEnd } from "lucide-react";
 import Header from "../components/module/Header";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import { useUserData } from "../services/UserDataContext";
 
 
 
@@ -18,29 +19,28 @@ export default function Dashboard() {
   // =========================
   // STATE
   // =========================
-  const [user, setUser] = useState(null); // <-- store user info here
+
+  const {
+    user,
+    albumsCount,
+    imagesCount,
+    darkMode,
+    setDarkMode,
+  } = useUserData();
+  
 
   // DARK MODE
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== "undefined") {
-      return JSON.parse(localStorage.getItem("darkMode")) ?? true;
-    }
-    return true;
-  });
+  // const [darkMode, setDarkMode] = useState(() => {
+  //   if (typeof window !== "undefined") {
+  //     return JSON.parse(localStorage.getItem("darkMode")) ?? true;
+  //   }
+  //   return true;
+  // });
 
-  useEffect(() => {
-    // Load dev / logged-in user from localStorage
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
+ 
 
-    // Apply dark mode
-    if (darkMode) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
-
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-  }, [darkMode]);
-
-  const toggleDarkMode = () => setDarkMode((prev) => !prev);
+  // const toggleDarkMode = () => setDarkMode((prev) => !prev);
+  // const currentUser = JSON.parse(localStorage.getItem("user"));
 
   // =========================
   // RENDER
@@ -51,19 +51,16 @@ export default function Dashboard() {
         darkMode ? "bg-black text-white" : "bg-white text-black"
       }`}
     >
-      {/* HEADER */}
-      <Header
-        introProps={{
-          user,        // <-- pass the dev user here
-          darkMode,
-          albumsCount:0,
-          imagesCount: 0,
-        }}
-        navigationProps={{
-          darkMode,
-          toggleDarkMode,
-        }}
-      />
+  
+
+
+        {/* HEADER */}
+        <Header
+          navigationProps={{
+            toggleDarkMode: () => setDarkMode((prev) => !prev),
+          }}
+        />
+
 
       {/* MAIN ACTIONS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-10">

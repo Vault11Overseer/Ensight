@@ -3,18 +3,15 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Settings, Sun, Moon, ArrowLeft } from "lucide-react";
+import { useUserData } from "../../../services/UserDataContext";
 
 // ======================================
 // NAVIGATION FUNCTION
 // ======================================
-export default function Navigation({ darkMode, toggleDarkMode }) {
+export default function Navigation({ toggleDarkMode }) {
+  const { darkMode } = useUserData();
   const location = useLocation();
   const navigate = useNavigate();
-
-  const green = "#BDD63B";
-  const darkBlue = "#212B3E";
-
-  // CHECK IF THE USER IS ON THE DASHBOARD
   const isDashboard = location.pathname === "/dashboard";
 
   // ======================================
@@ -28,15 +25,11 @@ export default function Navigation({ darkMode, toggleDarkMode }) {
       // Example (later):
       // await Auth.signOut({ global: true });
 
-      // ----------------------------------
       // DEV AUTH CLEANUP
-      // ----------------------------------
       localStorage.removeItem("user");
       localStorage.removeItem("darkMode");
 
-      // ----------------------------------
       // REDIRECT TO LOGIN
-      // ----------------------------------
       navigate("/login", { replace: true });
     } catch (err) {
       console.error("Logout failed:", err);
@@ -56,7 +49,7 @@ export default function Navigation({ darkMode, toggleDarkMode }) {
         }
         className="group flex flex-row-reverse items-center rounded-full transition-all duration-300 overflow-hidden"
         style={{
-          backgroundColor: green,
+          backgroundColor: "#BDD63B",
           color: "black",
           minWidth: "48px",
           padding: "6px 10px",
@@ -82,7 +75,7 @@ export default function Navigation({ darkMode, toggleDarkMode }) {
         onClick={toggleDarkMode}
         className="p-2 rounded-lg transition"
         style={{
-          backgroundColor: darkMode ? "white" : darkBlue,
+          backgroundColor: darkMode ? "white" : "#263248",
         }}
       >
         {darkMode ? (

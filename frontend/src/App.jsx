@@ -13,7 +13,8 @@ import Dashboard from "./pages/Dashboard";
 import Albums from "./pages/Album";
 import Gallery from "./pages/Gallery";
 import { API_BASE_URL,healthCheck } from "./services/api";
-
+import AlbumView from "./components/page/AlbumView"
+import Upload from "./pages/Upload"
 
 // APP
 function App() {
@@ -35,47 +36,78 @@ function App() {
   // ROUTING
   // =========================
   return (
-    <Router>
-    <Routes>
-      {/* ROOT */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
-  
-      {/* PUBLIC AUTH ROUTES */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-  
-      {/* PROTECTED ROUTES */}
-      <Route
-        path="/dashboard"
-        element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        }
-      />
 
-      <Route
-        path="/albums"
-        element={
-          <PrivateRoute>
-            <Albums />
-          </PrivateRoute>
-        }
-      />
 
-       <Route
-        path="/gallery"
-        element={
-          <PrivateRoute>
-            <Gallery />
-          </PrivateRoute>
-        }
-      />
-  
-      {/* CATCH-ALL */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
-  </Router>
+<Router>
+<Routes>
+  {/* ROOT */}
+  <Route path="/" element={<Navigate to="/login" replace />} />
+
+  {/* PUBLIC */}
+  <Route path="/login" element={<Login />} />
+  <Route path="/register" element={<Register />} />
+
+  {/* PROTECTED */}
+  <Route
+    path="/dashboard"
+    element={
+      <PrivateRoute>
+        <Dashboard />
+      </PrivateRoute>
+    }
+  />
+
+  <Route
+    path="/albums"
+    element={
+      <PrivateRoute>
+        <Albums />
+      </PrivateRoute>
+    }
+  />
+
+  <Route
+    path="/albums/:albumId"
+    element={
+      <PrivateRoute>
+        <AlbumView />
+      </PrivateRoute>
+    }
+  />
+
+  <Route
+    path="/gallery"
+    element={
+      <PrivateRoute>
+        <Gallery />
+      </PrivateRoute>
+    }
+  />
+
+<Route
+    path="/upload"
+    element={
+      <PrivateRoute>
+        <Upload />
+      </PrivateRoute>
+    }
+  />
+
+  {/* FALLBACK */}
+  <Route path="*" element={<Navigate to="/login" replace />} />
+</Routes>
+</Router>
+
+
+
+
+
+
+
+
+
+
+
   
   );
 }

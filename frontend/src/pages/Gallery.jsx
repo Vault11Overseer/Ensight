@@ -5,37 +5,18 @@
 // =========================
 
 // IMPORTS
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Search, GalleryVerticalEnd } from "lucide-react";
 import Header from "../components/module/Header";
-import Searchbar from "../components/module/submodule/SearchBar"
+import SearchBar from "../components/module/submodule/SearchBar";
+import { useUserData } from "../services/UserDataContext";
 
 export default function Gallery() {
   // =========================
   // STATE
   // =========================
-  const [user, setUser] = useState(null);
   const [search, setSearch] = useState("");
-
-  // DARK MODE
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== "undefined") {
-      return JSON.parse(localStorage.getItem("darkMode")) ?? true;
-    }
-    return true;
-  });
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
-
-    if (darkMode) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
-
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-  }, [darkMode]);
-
-  const toggleDarkMode = () => setDarkMode((prev) => !prev);
+  const { darkMode, setDarkMode } = useUserData();
 
   // =========================
   // RENDER
@@ -48,15 +29,8 @@ export default function Gallery() {
     >
       {/* HEADER */}
       <Header
-        introProps={{
-          user,
-          darkMode,
-          albumsCount: 0,
-          imagesCount: 0,
-        }}
         navigationProps={{
-          darkMode,
-          toggleDarkMode,
+          toggleDarkMode: () => setDarkMode((prev) => !prev),
         }}
       />
 
@@ -67,7 +41,7 @@ export default function Gallery() {
       </div>
 
   
-      <Searchbar />
+      <SearchBar />
 
       {/* GALLERY GRID */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">

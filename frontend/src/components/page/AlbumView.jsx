@@ -1,8 +1,10 @@
+// frontend/src/pages/AlbumView.jsx
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Header from "../components/module/Header";
-import Search from "../components/module/submodule/Search";
-import { API_BASE_URL } from "../api";
+import Header from "../../components/module/Header";
+import { API_BASE_URL } from "../../services/api";
+import defaultAlbumImage from "/default_album_image.png";
 import { format } from "date-fns";
 
 export default function AlbumView() {
@@ -13,12 +15,11 @@ export default function AlbumView() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [coverImage, setCoverImage] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
 
   const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== "undefined") {
-      return JSON.parse(localStorage.getItem("darkMode")) ?? true;
-    }
-    return true;
+    return JSON.parse(localStorage.getItem("darkMode")) ?? true;
   });
 
   const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -36,14 +37,18 @@ export default function AlbumView() {
   useEffect(() => {
     const fetchAlbum = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/albums/${albumId}`);
-        const data = await res.json();
+        const res = await fetch(`${API_BASE_URL}/albums/${albumId}`, {
+          credentials: "include",
+        });
 
+        if (!res.ok) throw new Error("Album not found");
+
+        const data = await res.json();
         setAlbum(data);
         setTitle(data.title);
         setDescription(data.description || "");
       } catch (err) {
-        console.error("Error loading album:", err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -60,20 +65,49 @@ export default function AlbumView() {
     (album.owner_user_id === currentUser?.id ||
       currentUser?.role === "admin");
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setCoverImage(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setCoverPreview(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = () => {
+    setCoverImage(null);
+    setCoverPreview(null);
+    const input = document.getElementById("cover-image-input");
+    if (input) input.value = "";
+  };
+
   const handleUpdateAlbum = async (e) => {
     e.preventDefault();
 
     try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description || "");
+
+      if (coverImage) {
+        formData.append("default_image", coverImage);
+      }
+
       const res = await fetch(`${API_BASE_URL}/albums/${album.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description }),
+        body: formData,
+        credentials: "include",
       });
+
+      if (!res.ok) throw new Error("Failed to update album");
 
       const updated = await res.json();
       setAlbum(updated);
+      setCoverImage(null);
+      setCoverPreview(null);
     } catch (err) {
-      console.error("Failed to update album:", err);
+      console.error(err);
       alert("Failed to update album.");
     }
   };
@@ -86,7 +120,7 @@ export default function AlbumView() {
   // =========================
   return (
     <div
-      className={`min-h-screen p-8 transition-colors duration-300 ${
+      className={`min-h-screen p-8 transition-colors ${
         darkMode ? "bg-black text-white" : "bg-white text-black"
       }`}
     >
@@ -104,39 +138,39 @@ export default function AlbumView() {
         }}
       />
 
-      {/* ALBUM INFO */}
-      <section
-        className={`my-10 p-6 rounded-2xl border-2 shadow max-w-3xl ${
-          darkMode
-            ? "bg-[#1E1C29] border-[#BDD63B]"
-            : "bg-gray-100 border-[#263248]"
-        }`}
-      >
-        <h1 className="text-3xl font-bold mb-2">{album.title}</h1>
-
-        <p className="opacity-80 mb-4">
-          {album.description || "No description provided."}
-        </p>
-
-        <div className="text-sm opacity-70 space-y-1">
-          <p>
-            Created on{" "}
-            {format(new Date(album.created_at), "PPP")}
+      {/* ALBUM HEADER */}
+      <section className="my-10 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+        <div className="md:col-span-2 space-y-3">
+          <h1 className="text-4xl font-bold">{album.title}</h1>
+          <p className="opacity-80">
+            {album.description || "No description provided."}
           </p>
-          <p>Album ID: {album.id}</p>
-          <p>Images: {album.image_count ?? 0}</p>
+
+          <div className="text-sm opacity-70 space-y-1">
+            <p>Created by {album.owner_user?.username}</p>
+            <p>{album.image_count ?? 0} images</p>
+            <p>
+              Created on {format(new Date(album.created_at), "PPP")}
+            </p>
+          </div>
         </div>
+
+        <img
+          src={album.cover_image_url || defaultAlbumImage}
+          alt="Album cover"
+          className="w-full h-48 object-contain rounded-xl border"
+        />
       </section>
 
       {/* EDIT FORM */}
       {canEdit && (
-        <section className="my-10 max-w-3xl">
+        <section className="my-10 max-w-2xl">
           <form
             onSubmit={handleUpdateAlbum}
-            className={`p-6 rounded-2xl border-2 shadow space-y-4 ${
+            className={`p-6 rounded-2xl shadow space-y-4 ${
               darkMode
-                ? "bg-[#1E1C29] border-[#BDD63B]"
-                : "bg-gray-100 border-[#263248]"
+                ? "bg-[#BDD63B] text-black"
+                : "bg-[#263248] text-white"
             }`}
           >
             <h2 className="text-xl font-semibold">Edit Album</h2>
@@ -156,12 +190,40 @@ export default function AlbumView() {
               rows={3}
             />
 
+            {/* COVER IMAGE */}
+            <div className="space-y-2">
+              <p className="font-medium">Album Cover Image</p>
+
+              {coverPreview ? (
+                <div className="relative">
+                  <img
+                    src={coverPreview}
+                    className="w-full h-48 object-contain rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <input
+                  id="cover-image-input"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              )}
+            </div>
+
             <button
               type="submit"
-              className={`px-6 py-2 rounded-full font-semibold transition ${
+              className={`px-6 py-2 rounded-full font-semibold ${
                 darkMode
-                  ? "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"
-                  : "bg-[#263248] text-white hover:bg-[#122342]"
+                  ? "bg-[#263248] text-white hover:bg-[#122342]"
+                  : "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"
               }`}
             >
               Save Changes
@@ -169,20 +231,6 @@ export default function AlbumView() {
           </form>
         </section>
       )}
-
-      {/* SEARCH */}
-      <section className="my-10 max-w-3xl">
-        <Search placeholder="Search images in this album…" />
-      </section>
-
-      {/* IMAGE GRID PLACEHOLDER */}
-      <section className="my-10">
-        <h2 className="text-2xl font-semibold mb-6">Images</h2>
-
-        <div className="opacity-60">
-          ImageCard grid will live here.
-        </div>
-      </section>
     </div>
   );
 }

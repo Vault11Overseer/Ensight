@@ -160,3 +160,29 @@ def delete_s3_object(s3_key: str):
         get_s3_client().delete_object(Bucket=bucket, Key=s3_key)
     except ClientError as e:
         print(f"❌ Error deleting S3 object: {e}")
+
+
+# ======================================
+# SIGNED URLS (PRIVATE BUCKET SUPPORT)
+# ======================================
+def generate_signed_url(s3_key: str, expires_in: int = 3600) -> Optional[str]:
+    """
+    Generate a temporary signed URL for a private S3 object.
+    """
+    if not s3_key:
+        return None
+
+    _, bucket = _get_aws_config()
+
+    try:
+        return get_s3_client().generate_presigned_url(
+            "get_object",
+            Params={
+                "Bucket": bucket,
+                "Key": s3_key,
+            },
+            ExpiresIn=expires_in,
+        )
+    except ClientError as e:
+        print(f"❌ Failed to generate signed URL: {e}")
+        return None

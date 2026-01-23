@@ -1,6 +1,7 @@
 import React from "react";
 import { Image, User, Trash2, Pencil } from "lucide-react";
 import defaultImage from "/default_album_image.png";
+import { useNavigate } from "react-router-dom";
 
 export default function AlbumCard({
   album,
@@ -9,6 +10,9 @@ export default function AlbumCard({
   onDelete,
   darkMode,
 }) {
+
+
+  const navigate = useNavigate();
   return (
     <div className={`relative rounded-2xl overflow-hidden shadow group bg-white dark:bg-gray-800  ${
       darkMode
@@ -19,7 +23,9 @@ export default function AlbumCard({
       {/* IMAGE */}
       <div className="relative h-48 w-full">
         <img
-          src={album.cover_image || defaultImage}
+          // src={album.cover_image_url || defaultImage}
+          src={album.cover_image_url?.trim() ? album.cover_image_url : defaultImage}
+
           alt={album.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
         />
@@ -36,10 +42,10 @@ export default function AlbumCard({
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4">
             {/* VIEW / EDIT */}
             <button
-              onClick={() => onOpen(album)}
-              className="bg-green-500 hover:bg-green-600 p-3 rounded-full text-white"
-              title="View / Edit Album"
-            >
+          onClick={() => navigate(`/albums/${album.id}`)}
+          className="bg-green-500 hover:bg-green-600 p-3 rounded-full text-white"
+          title="View / Edit Album"
+        >
               <Pencil size={18} />
             </button>
 

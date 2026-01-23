@@ -1,20 +1,12 @@
 // frontend/src/components/module/submodule/Intro.jsx
-
-// ======================================
-// INTRO
-// ======================================
-
-// ======================================
-// IMPORTS
-// ======================================
 import React from "react";
-// import { useUserData } from "../../../context/UserDataContext";
+import { useUserData } from "../../../services/UserDataContext";
 
 // ======================================
 // INTRO FUNCTION
 // ======================================
-export default function Intro({ user, darkMode, albumsCount=0, imagesCount=0 }) {
-  // const { librariesCount, imagesCount } = useUserData();
+export default function Intro() {
+  const { user, darkMode, albumsCount, imagesCount } = useUserData();
 
   // ======================================
   // RETURN
