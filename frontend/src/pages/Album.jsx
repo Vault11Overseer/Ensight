@@ -7,7 +7,7 @@ import { LibraryBig } from "lucide-react";
 import defaultAlbumImage from "/default_album_image.png";
 import { useUserData } from "../services/UserDataContext";
 
-export default function Albums() {
+export default function Albums() {Yes
   // =========================
   // STATE
   // =========================
