@@ -28,7 +28,7 @@ export default function Login() {
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
   const slides = [
-    { image: "/images/winter-at-the-strater.jpg", title: "Photo Gallery Platform", subtitle: "For all BCI users" },
+    { image: "/images/winter-at-the-strater.jpg", title: "Photo Gallery App", subtitle: "For all BCI users" },
     { image: "/images/durango_road.jpg", title: "Share Images", subtitle: "Stay connected" },
     { image: "/images/durango_train.jpg", title: "Data Insights", subtitle: "Drive decisions" },
   ];

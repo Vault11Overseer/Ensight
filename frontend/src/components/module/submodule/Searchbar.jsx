@@ -7,10 +7,10 @@ export default function SearchBar({
   placeholder = "Search…",
 }) {
   return (
-    <div className="relative w-full">
+    <div className="relative w-full ">
       <SearchIcon
         size={18}
-        className="absolute left-4 top-1/2 -translate-y-1/2 opacity-60"
+        className="absolute left-4 top-1/2 -translate-y-1/2 opacity-60 text-black"
       />
 
       <input

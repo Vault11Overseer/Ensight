@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/module/Header";
 import ImageCard from "../components/module/ImageCard";
-// import SearchBar from "../components/module/submodule/Searchbar";
+import SearchBar from "../components/module/submodule/Searchbar";
 import { API_BASE_URL } from "../services/api";
 import { Images as ImagesIcon } from "lucide-react";
 import { useUserData } from "../services/UserDataContext";
@@ -72,6 +72,8 @@ export default function Images() {
         darkMode ? "bg-black text-white" : "bg-white text-black"
       }`}
     >
+
+      
       {/* HEADER */}
       <Header
         navigationProps={{
@@ -79,16 +81,20 @@ export default function Images() {
         }}
       />
 
+
       {/* PAGE HEADER */}
       <div className="flex items-center gap-2 mt-10 mb-6">
         <ImagesIcon size={32} />
-        <h1 className="text-4xl font-semibold">Your Images</h1>
+        <h1 className="text-4xl font-semibold">Imgaes</h1>
+        <p className="text-1xl opacity-80 mt-2">
+          Manage your own personal images.
+        </p>
       </div>
 
       {/* SEARCH BAR */}
-      {/* <div className="mb-8 max-w-xl">
-        <SearchBar onSearch={handleSearch} />
-      </div> */}
+      <div className="mb-8 w-full">
+        <SearchBar  />
+      </div>
 
       {/* EMPTY STATE */}
       {filteredImages.length === 0 ? (

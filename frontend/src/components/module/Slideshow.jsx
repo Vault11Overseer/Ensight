@@ -32,7 +32,7 @@ export default function Slideshow({ slides = [], darkMode = true, containerHeigh
           darkMode ? "bg-black text-[#BDD63B]" : "bg-white text-[#1E1C29]"
         }`}
       >
-        Insight - By BCI Media
+        Insight - by BCI Media.
       </div>
 
       {/* Caption */}

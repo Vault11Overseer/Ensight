@@ -5,11 +5,12 @@
 // =========================
 
 // IMPORTS
-import React, { useState, useEffect } from "react";
+// import React, { useState, useEffect } from "react";
 import { Images, ImageUp, LibraryBig, GalleryVerticalEnd } from "lucide-react";
 import Header from "../components/module/Header";
 import { Link } from "react-router-dom";
 import { useUserData } from "../services/UserDataContext";
+import SearchBar from "../components/module/submodule/Searchbar";
 
 
 
@@ -34,18 +35,17 @@ export default function Dashboard() {
         darkMode ? "bg-black text-white" : "bg-white text-black"
       }`}
     >
-  
+
+      {/* HEADER */}
+      <Header
+        navigationProps={{
+          toggleDarkMode: () => setDarkMode((prev) => !prev),
+        }}
+      />
 
 
-        {/* HEADER */}
-        <Header
-          navigationProps={{
-            toggleDarkMode: () => setDarkMode((prev) => !prev),
-          }}
-        />
-
-{/* UPLOAD */}
-<div className="w-full">
+        {/* UPLOAD */}
+        <div className="w-full">
         <Link
           to="/upload"
           className={`w-full flex flex-col items-center p-6 rounded-2xl shadow transition ${
@@ -85,7 +85,7 @@ export default function Dashboard() {
 
           {/* PERSONAL IMAGES */}
         <Link
-          to="/imagesIs the intrude"
+          to="/images"
           className={`p-6 rounded-2xl shadow transition ${
             darkMode
               ? "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"

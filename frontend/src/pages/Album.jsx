@@ -198,7 +198,7 @@ export default function Albums() {
           />
 
           {/* COVER IMAGE UPLOAD */}
-          <div className="space-y-2">
+          <div className="space-y-2 ">
             <p className="block text-l font-medium">
               Album Cover Image (optional)
             </p>
@@ -209,7 +209,7 @@ export default function Albums() {
             </p>
 
             {coverImagePreview ? (
-              <div className="relative">
+              <div className="relative ">
                 <img
                   src={coverImagePreview}
                   alt="Cover preview"
