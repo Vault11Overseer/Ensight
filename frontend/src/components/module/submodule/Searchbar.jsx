@@ -1,7 +1,7 @@
 import React from "react";
 import { Search as SearchIcon } from "lucide-react";
 
-export default function Searchbar({
+export default function SearchBar({
   value,
   onChange,
   placeholder = "Search…",

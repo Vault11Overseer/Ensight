@@ -15,6 +15,8 @@ import Gallery from "./pages/Gallery";
 import { API_BASE_URL,healthCheck } from "./services/api";
 import AlbumView from "./components/page/AlbumView"
 import Upload from "./pages/Upload"
+import Settings from "./pages/Settings"
+import Images from "./pages/Images"
 
 // APP
 function App() {
@@ -92,6 +94,33 @@ function App() {
       </PrivateRoute>
     }
   />
+
+<Route
+    path="/settings"
+    element={
+      <PrivateRoute>
+        <Settings />
+      </PrivateRoute>
+    }
+  />
+
+  <Route
+    path="/images"
+    element={
+      <PrivateRoute>
+        <Images />
+      </PrivateRoute>
+    }
+  />
+
+  {/* <Route
+    path="/imagedetail"
+    element={
+      <PrivateRoute>
+        <ImageDetail />
+      </PrivateRoute>
+    }
+  /> */}
 
   {/* FALLBACK */}
   <Route path="*" element={<Navigate to="/login" replace />} />

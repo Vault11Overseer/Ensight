@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Header from "../components/module/Header";
-import { API_BASE_URL } from "../api";
+import Header from "../../components/module/Header";
+import { API_BASE_URL } from "../../services/api";
 import { format } from "date-fns";
 
 export default function ImageView() {

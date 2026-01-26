@@ -47,13 +47,12 @@ export default function Navigation({ toggleDarkMode }) {
         onClick={() =>
           isDashboard ? navigate("/settings") : navigate("/dashboard")
         }
-        className="group flex flex-row-reverse items-center rounded-full transition-all duration-300 overflow-hidden"
-        style={{
-          backgroundColor: "#BDD63B",
-          color: "black",
-          minWidth: "48px",
-          padding: "6px 10px",
-        }}
+        className={`pl-3 pr-5 py-1.5 group flex flex-row-reverse items-center rounded-full transition-all duration-300 overflow-hidden ${
+          darkMode
+            ? "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"
+            : "bg-[#263248] text-white hover:bg-[#122342]"
+        }`}
+      
       >
         {isDashboard ? <Settings size={28} /> : <ArrowLeft size={28} />}
 

@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import { Eye, EyeOff, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Slideshow from "../../components/module/Slideshow";
+import {Link} from "react-router-dom";
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -75,9 +76,9 @@ export default function Register() {
 
           <p className={`text-sm mb-6 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
             Already have an account?{" "}
-            <a href="/login" className={`font-medium hover:underline ${darkMode ? "text-[#BDD63B]" : "text-[#1E1C29]"}`}>
+            <Link to="/login" className={`font-medium hover:underline ${darkMode ? "text-[#BDD63B]" : "text-[#1E1C29]"}`}>
               Log in
-            </a>
+            </Link>
           </p>
 
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -134,9 +135,9 @@ export default function Register() {
             <label className={`flex items-center text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
               <input type="checkbox" className="mr-2 accent-[#BDD63B] cursor-pointer" />
               I agree to the{" "}
-              <a href="#" className={`ml-1 hover:underline ${darkMode ? "text-[#BDD63B]" : "text-[#1E1C29]"}`}>
+              <Link to="#" className={`ml-1 hover:underline ${darkMode ? "text-[#BDD63B]" : "text-[#1E1C29]"}`}>
                 Terms & Conditions
-              </a>
+              </Link>
             </label>
 
             <button type="submit" className="bg-[#BDD63B] hover:bg-[#A4C22F] text-black font-semibold p-3 rounded-lg transition-colors duration-300">

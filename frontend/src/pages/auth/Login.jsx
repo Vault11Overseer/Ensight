@@ -4,6 +4,7 @@ import { Eye, EyeOff, Sun, Moon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Slideshow from "../../components/module/Slideshow";
 import { API_BASE_URL } from "../../services/api";
+import {Link} from "react-router-dom";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,9 +28,9 @@ export default function Login() {
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
   const slides = [
-    { image: "/images/winter-at-the-strater.jpg", title: "Secure access", subtitle: "Internal use only" },
-    { image: "/images/durango_road.jpg", title: "Team collaboration", subtitle: "Stay connected" },
-    { image: "/images/durango_train.jpg", title: "Data insights", subtitle: "Drive decisions" },
+    { image: "/images/winter-at-the-strater.jpg", title: "Photo Gallery Platform", subtitle: "For all BCI users" },
+    { image: "/images/durango_road.jpg", title: "Share Images", subtitle: "Stay connected" },
+    { image: "/images/durango_train.jpg", title: "Data Insights", subtitle: "Drive decisions" },
   ];
 
   // ============================
@@ -140,9 +141,9 @@ export default function Login() {
 
           <p className={`text-sm mt-4 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
             Don't have an account?{" "}
-            <a href="/register" className={`font-medium hover:underline ${darkMode ? "text-[#BDD63B]" : "text-[#1E1C29]"}`}>
+            <Link to="/register" className={`font-medium hover:underline ${darkMode ? "text-[#BDD63B]" : "text-[#1E1C29]"}`}>
               Register
-            </a>
+            </Link>
           </p>
         </div>
       </div>

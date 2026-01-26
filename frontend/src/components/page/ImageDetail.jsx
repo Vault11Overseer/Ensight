@@ -9,9 +9,11 @@
 // =========================
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import API from "../../api/axios";
-import { useAuth } from "../../context/AuthContext";
-import Header from "../module/Header"; // ✅ HEADER COMPONENT
+// import API from "../../services/api";
+// import { useAuth } from "../../context/AuthContext";
+import Header from "../../components/module/Header";
+import { Link } from "react-router-dom";
+
 
 // =========================
 // IMAGE DETAIL COMPONENT
@@ -190,8 +192,8 @@ export default function ImageDetail() {
           </p>
           <p className="mb-2">
             <strong>Uploaded URL:</strong>{" "}
-            <a
-              href={image.url}
+            <Link
+              to={image.url}
               target="_blank"
               rel="noopener noreferrer"
               className={`underline ${
@@ -199,7 +201,7 @@ export default function ImageDetail() {
               }`}
             >
               {image.url}
-            </a>
+            </Link>
           </p>
           <p className="mb-2">
             <strong>Uploaded At:</strong> {image.uploadedAt || "N/A"}

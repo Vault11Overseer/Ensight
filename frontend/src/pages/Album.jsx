@@ -169,7 +169,7 @@ export default function Albums() {
       </div>
 
       {/* CREATE ALBUM FORM */}
-      <section className="my-10 max-w-2xl">
+      <section className="my-10 w-full">
         <form
           onSubmit={handleCreateAlbum}
           className={`p-6 rounded-2xl shadow space-y-4 ${

@@ -5,6 +5,7 @@ import Header from "../components/module/Header";
 import { API_BASE_URL } from "../services/api";
 import defaultImage from "/default_album_image.png";
 import { useUserData } from "../services/UserDataContext";
+import {ImageUp} from "lucide-react"
 
 export default function Upload() {
   const { user: currentUser, darkMode, setDarkMode } = useUserData();
@@ -146,8 +147,18 @@ export default function Upload() {
         navigationProps={{ toggleDarkMode: () => setDarkMode((prev) => !prev) }}
       />
 
+      {/* PAGE HEADER */}
+      <div className="flex items-center gap-2 mt-10 mb-6">
+      <ImageUp size={30} />
+        <h1 className="text-4xl font-semibold">Uploads</h1>
+        <p className="text-1xl opacity-80 mt-2">
+          Upload your very own images.<br />
+          Add them to your albums now or later but they all end up in the Gallery.
+        </p>
+      </div>
+
       {/* UPLOAD FORM */}
-      <section className="my-10 max-w-2xl">
+      <section className="my-10 w-full">
         <form
           onSubmit={handleUpload}
           className={`p-6 rounded-2xl shadow space-y-4 ${darkMode ? "bg-[#BDD63B] text-black" : "bg-[#263248] text-white"}`}
@@ -195,22 +206,23 @@ export default function Upload() {
           </select>
 
           {/* Image file */}
-          <div className="space-y-2">
+          <div className="space-y-2 bg-white">
             {imagePreview ? (
-              <div className="relative">
+              <div className="relative bg-white">
                 <img src={imagePreview} alt="Preview" className="w-full h-48 object-contain rounded-lg border-2 border-gray-300" />
                 <button type="button" onClick={handleRemoveImage} className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Remove</button>
               </div>
             ) : (
               <label htmlFor="image-input" className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer ${darkMode ? "border-gray-600 hover:border-gray-500 bg-gray-800" : "border-gray-300 hover:border-gray-400 bg-gray-50"}`}>
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <p className="mb-2 text-sm text-xl opacity-70">Click to upload or drag & drop</p>
+                <div className="flex flex-col items-center justify-center pt-5 pb-6 bg-white">
+                  <p className="mb-2 text-black text-sm text-xl opacity-70">Click to upload or drag & drop</p>
                 </div>
                 <input id="image-input" type="file" accept="image/*" onChange={handleImageChange} className="hidden" required />
               </label>
             )}
           </div>
 
+{/* BUTTON */}
           <button type="submit" className={`px-6 py-2 rounded-full font-semibold ${darkMode ? "bg-[#263248] text-white hover:bg-[#122342]" : "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"}`}>
             Upload Image
           </button>

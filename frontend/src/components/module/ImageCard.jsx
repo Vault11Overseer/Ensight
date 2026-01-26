@@ -1,6 +1,5 @@
-import React from "react";
+// import React from "react";
 import { Eye } from "lucide-react";
-import defaultImage from "/default_image.png";
 
 export default function ImageCard({ image, onOpen }) {
   return (
@@ -8,7 +7,7 @@ export default function ImageCard({ image, onOpen }) {
       {/* IMAGE */}
       <div className="relative h-48 w-full">
         <img
-          src={image.url || defaultImage}
+          src={image.url}
           alt={image.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
         />
