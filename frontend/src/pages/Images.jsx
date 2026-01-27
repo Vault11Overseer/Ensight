@@ -85,7 +85,7 @@ export default function Images() {
       {/* PAGE HEADER */}
       <div className="flex items-center gap-2 mt-10 mb-6">
         <ImagesIcon size={32} />
-        <h1 className="text-4xl font-semibold">Imgaes</h1>
+        <h1 className="text-4xl font-semibold">Images</h1>
         <p className="text-1xl opacity-80 mt-2">
           Manage your own personal images.
         </p>
@@ -121,7 +121,7 @@ export default function Images() {
               image={image}
               darkMode={darkMode}
               canEdit={
-                image.owner_user_id === currentUser?.id ||
+                image.uploader_user_id === currentUser?.id ||
                 currentUser?.role === "admin"
               }
             />

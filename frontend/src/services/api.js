@@ -85,7 +85,8 @@ export const uploadImage = async (file, title, description, albumIds = [], userT
 
   const res = await fetch(`${API_BASE_URL}/images/`, {
     method: "POST",
-    headers: getAuthHeaders(),
+    // Multipart/form-data; let the browser set Content-Type and boundary
+    credentials: "include",
     body: formData,
   });
   if (!res.ok) {

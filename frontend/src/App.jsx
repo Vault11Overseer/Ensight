@@ -5,7 +5,6 @@
 // IMPORTS
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate,} from "react-router-dom";
-
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import PrivateRoute from "./pages/auth/PrivateRoute";
@@ -17,12 +16,11 @@ import AlbumView from "./components/page/AlbumView"
 import Upload from "./pages/Upload"
 import Settings from "./pages/Settings"
 import Images from "./pages/Images"
-
+import ImageDetail from "./components/page/ImageDetail"
 // APP
 function App() {
-  // =========================
+
   // BACKEND / DB HEALTH CHECK
-  // =========================
   useEffect(() => {
     healthCheck()
       .then((data) => {
@@ -34,9 +32,7 @@ function App() {
       });
   }, []);
 
-  // =========================
-  // ROUTING
-  // =========================
+  // RETURN
   return (
 
 
@@ -58,7 +54,7 @@ function App() {
       </PrivateRoute>
     }
   />
-
+{/* ALBUMS */}
   <Route
     path="/albums"
     element={
@@ -68,6 +64,7 @@ function App() {
     }
   />
 
+{/* SINGLE ALBUM */}
   <Route
     path="/albums/:albumId"
     element={
@@ -76,7 +73,7 @@ function App() {
       </PrivateRoute>
     }
   />
-
+{/* GALLERY */}
   <Route
     path="/gallery"
     element={
@@ -85,7 +82,7 @@ function App() {
       </PrivateRoute>
     }
   />
-
+{/* UPLOAD */}
 <Route
     path="/upload"
     element={
@@ -94,7 +91,7 @@ function App() {
       </PrivateRoute>
     }
   />
-
+{/* SETTINGS */}
 <Route
     path="/settings"
     element={
@@ -103,7 +100,7 @@ function App() {
       </PrivateRoute>
     }
   />
-
+{/* IMAGES */}
   <Route
     path="/images"
     element={
@@ -113,14 +110,15 @@ function App() {
     }
   />
 
-  {/* <Route
+  {/* SINGLE IMAGE */}
+  <Route
     path="/imagedetail"
     element={
       <PrivateRoute>
         <ImageDetail />
       </PrivateRoute>
     }
-  /> */}
+  />
 
   {/* FALLBACK */}
   <Route path="*" element={<Navigate to="/login" replace />} />

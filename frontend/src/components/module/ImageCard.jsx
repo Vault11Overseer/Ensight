@@ -7,7 +7,7 @@ export default function ImageCard({ image, onOpen }) {
       {/* IMAGE */}
       <div className="relative h-48 w-full">
         <img
-          src={image.url}
+          src={image.preview_url || image.s3_url || image.url}
           alt={image.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
         />

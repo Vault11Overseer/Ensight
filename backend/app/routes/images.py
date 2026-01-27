@@ -38,6 +38,29 @@ def list_images(
 
 
 # =========================
+# LIST IMAGES FOR CURRENT USER
+# =========================
+@router.get("/user", response_model=List[ImageRead])
+def list_user_images(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    skip: int = 0,
+    limit: int = 100,
+):
+    """
+    Returns images uploaded by the current authenticated user.
+    """
+    images = (
+        db.query(Image)
+        .filter(Image.uploader_user_id == current_user.id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+    return _format_images_response(images, db)
+
+
+# =========================
 # GET SINGLE IMAGE (All users can view)
 # =========================
 @router.get("/{image_id}", response_model=ImageRead)
@@ -74,8 +97,16 @@ async def create_image(
     Images are automatically added to the Gallery.
     """
     # Upload to S3
+    # Build a user folder using the user's full name. Sanitize to avoid unsafe characters.
+    def _sanitize_name(name: str) -> str:
+        return "".join(c for c in name.strip().lower() if c.isalnum() or c in ("-", "_", " ")).replace(" ", "_")
+
+    first = current_user.first_name or "user"
+    last = current_user.last_name or str(current_user.id)
+    user_folder = f"uploads/{_sanitize_name(first)}_{_sanitize_name(last)}/"
+
     try:
-        s3_key, s3_url = upload_file_to_s3(file, current_user.id)
+        s3_key, s3_url = upload_file_to_s3(file, current_user.id, folder=user_folder)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
 

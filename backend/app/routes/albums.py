@@ -77,7 +77,7 @@ async def create_album(
     # Create folder path: insight-render/default_album_images/{first_name}_{last_name}/album_name/
     user_folder = f"{current_user.first_name}_{current_user.last_name}".replace(" ", "_")
     album_folder = title.replace(" ", "_").replace("/", "_")  # Sanitize album name
-    s3_folder = f"insight-render/default_album_images/{user_folder}/{album_folder}/"
+    s3_folder = f"album_images/{user_folder}/{album_folder}/"
     
     if default_image and default_image.filename:
         # User provided a custom image
@@ -215,7 +215,7 @@ async def update_album(
         # Upload new cover image
         user_folder = f"{current_user.first_name}_{current_user.last_name}".replace(" ", "_")
         album_folder = (album.title or title or "untitled").replace(" ", "_").replace("/", "_")
-        s3_folder = f"insight-render/default_album_images/{user_folder}/{album_folder}/"
+        s3_folder = f"album_images/{user_folder}/{album_folder}/"
         
         try:
             cover_image_s3_key, _ = upload_file_to_s3(

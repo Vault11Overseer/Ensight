@@ -64,82 +64,94 @@ export default function Upload() {
   // Upload image handler
   // =========================
   const handleUpload = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Validation
-    if (!title.trim()) return alert("Title is required");
-    if (!description.trim()) return alert("Description is required");
-    if (!imageFile) return alert("Image file is required");
-    if (!userTags.trim()) return alert("Please provide at least one tag");
+  // 🚨 USER GUARD (this fixes the crash)
+  if (!currentUser) {
+    alert("You must be logged in to upload images.");
+    return;
+  }
 
-    setLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("description", description);
-      formData.append("image", imageFile);
-      formData.append("user_tags", userTags);
-      formData.append("username", currentUser.username); // backend uses this to create folder
-      if (albumId) formData.append("album_id", albumId);
+  // Validation
+  if (!title.trim()) return alert("Title is required");
+  if (!description.trim()) return alert("Description is required");
+  if (!imageFile) return alert("Image file is required");
+  if (!userTags.trim()) return alert("Please provide at least one tag");
 
-      const res = await fetch(`${API_BASE_URL}/images/`, {
-        method: "POST",
-        body: formData,
-      });
+  setLoading(true);
 
-      if (!res.ok) throw new Error("Failed to upload image");
+  try {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    // backend expects the file field to be named `file`
+    formData.append("file", imageFile);
+    formData.append("user_tags", userTags);
 
-      const newImage = await res.json();
-
-      setRecentUploads([newImage, ...recentUploads]);
-      // Reset form
-      setTitle("");
-      setDescription("");
-      setImageFile(null);
-      setImagePreview(null);
-      setUserTags("");
-      setAlbumId("");
-      const input = document.getElementById("image-input");
-      if (input) input.value = "";
-    } catch (err) {
-      console.error(err);
-      alert(err.message || "Upload failed");
-    } finally {
-      setLoading(false);
+    // backend expects comma-separated album IDs in `album_ids`
+    if (albumId) {
+      formData.append("album_ids", albumId);
     }
-  };
 
-  // =========================
-  // Update existing image
-  // =========================
+    const res = await fetch(`${API_BASE_URL}/images/`, {
+      method: "POST",
+      credentials: "include", // ✅ IMPORTANT
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || "Failed to upload image");
+    }
+
+    const newImage = await res.json();
+
+    setRecentUploads((prev) => [newImage, ...prev]);
+
+    // Reset form
+    setTitle("");
+    setDescription("");
+    setImageFile(null);
+    setImagePreview(null);
+    setUserTags("");
+    setAlbumId("");
+
+    const input = document.getElementById("image-input");
+    if (input) input.value = "";
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Upload failed");
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // UPDATE EXISTING IMAGE
   const handleUpdateImage = async (imageId, updates) => {
     try {
-      const formData = new FormData();
-      if (updates.title) formData.append("title", updates.title);
-      if (updates.description) formData.append("description", updates.description);
-      if (updates.user_tags !== undefined) formData.append("user_tags", updates.user_tags);
-      if (updates.image_file) formData.append("image", updates.image_file);
+      // The backend `PUT /images/{id}` expects JSON body (ImageUpdate schema).
+      const payload = {};
+      if (updates.title) payload.title = updates.title;
+      if (updates.description) payload.description = updates.description;
+      if (updates.user_tags !== undefined) payload.user_tags = updates.user_tags;
 
       const res = await fetch(`${API_BASE_URL}/images/${imageId}`, {
         method: "PUT",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) throw new Error("Failed to update image");
 
       const updated = await res.json();
-      setRecentUploads((prev) =>
-        prev.map((img) => (img.id === updated.id ? updated : img))
-      );
+      setRecentUploads((prev) => prev.map((img) => (img.id === updated.id ? updated : img)));
     } catch (err) {
       console.error(err);
       alert(err.message || "Update failed");
     }
   };
 
-  // =========================
   // RENDER
-  // =========================
   return (
     <div className={`min-h-screen p-8 transition-colors ${darkMode ? "bg-black text-white" : "bg-white text-black"}`}>
       {/* HEADER */}
