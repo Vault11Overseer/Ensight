@@ -1,40 +1,21 @@
 // frontend/src/pages/Dashboard.jsx
+// DONE
 
-// =========================
-// DASHBOARD PAGE
-// =========================
-
+// DASHBOARD
 // IMPORTS
-// import React, { useState, useEffect } from "react";
 import { Images, ImageUp, LibraryBig, GalleryVerticalEnd } from "lucide-react";
 import Header from "../components/module/Header";
 import { Link } from "react-router-dom";
 import { useUserData } from "../services/UserDataContext";
-import SearchBar from "../components/module/submodule/Searchbar";
 
-
-
-
+// EXPORT
 export default function Dashboard() {
-  // =========================
-  // STATE
-  // =========================
-
-  const {
-    darkMode,
-    setDarkMode,
-  } = useUserData();
+    const { darkMode, setDarkMode } = useUserData();
   
-
-  // =========================
   // RENDER
-  // =========================
   return (
-    <div
-      className={`min-h-screen p-8 transition-colors duration-300 ${
-        darkMode ? "bg-black text-white" : "bg-white text-black"
-      }`}
-    >
+    // PAGE BODY
+    <div className={`page-set ${ darkMode ? "page-set-dark" : "page-set-light" }`}>
 
       {/* HEADER */}
       <Header
@@ -48,79 +29,59 @@ export default function Dashboard() {
         <div className="w-full">
         <Link
           to="/upload"
-          className={`w-full flex flex-col items-center p-6 rounded-2xl shadow transition ${
-            darkMode
-              ? "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"
-              : "bg-[#263248] text-white hover:bg-[#122342]"
-          }`}
+          className={`bg-set-hover ${ darkMode ? "bg-set-hover-dark" : "bg-set-hover-light"  }`}
         >
           <h2 className="flex items-center gap-2 text-xl font-semibold">
-          <ImageUp size={30} /> Upload
+            <ImageUp size={30} className={`${ darkMode ? "text-[#BDD63B]" : "text-[#1E3A8A]"  }`}/> Upload
           </h2>
-          <hr className="my-4 border-black w-full" />
-          <p>Upload your very own images. Add them to your albums, but they all end up in the Gallery.</p>
+          <hr className={`my-4 w-full border-t-2 border-black-500 ${darkMode ? "border-white" : "border-black"}`}/>
+          <h6 className="w-[85%] text-center font-bold">Upload your very own images, and add them to your albums now or later, but they all end up in the Gallery.</h6>
         </Link>
       </div>
 
 
-      {/* MAIN SECTION */}
+      {/* TWO COLUMN SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-10">
-
 
         {/* ALBUMS */}
         <Link
           to="/albums"
-          className={`p-6 rounded-2xl shadow transition ${
-            darkMode
-              ? "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"
-              : "bg-[#263248] text-white hover:bg-[#122342]"
-          }`}
+          className={`bg-set-hover ${ darkMode ? "bg-set-hover-dark" : "bg-set-hover-light"  }`}
         >
-          <h2 className="flex items-center gap-2 text-xl font-semibold">
-            <LibraryBig size={30} /> Albums
+          <h2 className="flex items-center gap-2 text-xl font-semibold ">
+            <LibraryBig size={30} className={`${ darkMode ? "text-[#BDD63B]" : "text-[#1E3A8A]"  }`}/> Albums
           </h2>
-          <hr className="my-4 border-black w-full" />
-          <p>Create, View, Update, and Delete your own personal albums, and view others' albums.</p>
+          <hr className={`my-4 w-full border-t-2 border-black-500 ${darkMode ? "border-white" : "border-black"}`}/>
+          <h6 className="w-[85%] text-center font-bold">Create, View, Update, and Delete your own personal albums, and view others' albums.</h6>
         </Link>
 
           {/* PERSONAL IMAGES */}
         <Link
           to="/images"
-          className={`p-6 rounded-2xl shadow transition ${
-            darkMode
-              ? "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"
-              : "bg-[#263248] text-white hover:bg-[#122342]"
-          }`}
+          className={`bg-set-hover ${ darkMode ? "bg-set-hover-dark" : "bg-set-hover-light"  }`}
         >
           <h2 className="flex items-center gap-2 text-xl font-semibold">
-            <Images size={30} /> Personal Images
+            <Images size={30} className={`${ darkMode ? "text-[#BDD63B]" : "text-[#1E3A8A]"  }`}/> Personal Images
           </h2>
-          <hr className="my-4 border-black w-full" />
-          <p>View, Update, and Delete your personal images.</p>
+          <hr className={`my-4 w-full border-t-2 border-black-500 ${darkMode ? "border-white" : "border-black"}`}/>
+          <h6 className="w-[85%] text-center font-bold">View, Update, and Delete your personal images.</h6>
         </Link>
-
       </div>
 
+      {/* FULL SECTION */}
       {/* GALLERY */}
       <div className="w-full">
         <Link
           to="/gallery"
-          className={`w-full flex flex-col items-center p-6 rounded-2xl shadow transition ${
-            darkMode
-              ? "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"
-              : "bg-[#263248] text-white hover:bg-[#122342]"
-          }`}
+          className={`bg-set-hover ${ darkMode ? "bg-set-hover-dark" : "bg-set-hover-light"  }`}
         >
           <h2 className="flex items-center gap-2 text-xl font-semibold">
-            <GalleryVerticalEnd size={30} />Gallery
+            <GalleryVerticalEnd size={30} className={`${ darkMode ? "text-[#BDD63B]" : "text-[#1E3A8A]"  }`}/>Gallery
           </h2>
-          <hr className="my-4 border-black w-full" />
-          <p>Browse, Download, or Share all images uploaded to Insight.</p>
+          <hr className={`my-4 w-full border-t-2 border-black-500 ${darkMode ? "border-white" : "border-black"}`}/>
+          <h6 className="w-[85%] text-center font-bold">Browse, Download, or Share all images uploaded to Insight.</h6>
         </Link>
       </div>
-
-    
-
 
 {/* END */}
 </div>

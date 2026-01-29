@@ -1,18 +1,26 @@
-import React from "react";
+// frontend/src/components/module/submodule/Searchbar.jsx
+//DONE
+
+// SEARCH BAR
+// IMPORTS
 import { Search as SearchIcon } from "lucide-react";
 
+// EXPORTS
 export default function SearchBar({
   value,
   onChange,
   placeholder = "Search…",
 }) {
+  // RETURN
   return (
+    // SEARCH CONTAINER
     <div className="relative w-full ">
+      {/* ICON */}
       <SearchIcon
         size={18}
         className="absolute left-4 top-1/2 -translate-y-1/2 opacity-60 text-black"
       />
-
+      {/* INPUT */}
       <input
         type="text"
         value={value}

@@ -1,66 +1,54 @@
-// =========================
-// REGISTER PAGE
-// =========================
+// frontend/src/pages/auth/Register.jsx
+// REGISTER
 
 // IMPORTS
 import React, { useState, useEffect } from "react";
 import { Eye, EyeOff, Sun, Moon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import Slideshow from "../../components/module/Slideshow";
-import {Link} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import Slideshow, { introSlides } from "../../components/module/Slideshow";
+import { useUserData } from "../../services/UserDataContext";
 
 export default function Register() {
+  // CONTEXT
+  const { darkMode, setDarkMode } = useUserData();
+  const navigate = useNavigate();
+
+  // LOCAL FORM STATE
   const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
 
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== "undefined") {
-      return JSON.parse(localStorage.getItem("darkMode")) ?? true;
-    }
-    return true;
-  });
-
-  useEffect(() => {
-    if (darkMode) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
-  }, [darkMode]);
-
+  // DARK MODE 
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
+  // SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Placeholder until real auth is wired
     console.log({ firstName, lastName, email, password });
+
     alert("Registration submitted! (Cognito signup pending)");
     navigate("/login");
   };
 
+  // RENDER
   return (
+    // REGISTER CONTAINER
     <div className={`min-h-screen flex items-center justify-center transition-colors duration-500 ${
       darkMode ? "bg-black text-white" : "bg-white text-black"
     }`}>
       <div
         className={`flex w-[900px] max-w-full rounded-2xl shadow-2xl overflow-hidden transition-colors duration-500 ${
-          darkMode ? "bg-[#1E1C29]" : "bg-gray-100"
-        }`}
-        style={{ maxHeight: "90vh" }}
-      >
+    darkMode ? "bg-[linear-gradient(to_right,#262627,#4f4e4f,#262526)]" : "bg-[linear-gradient(to_right,#d1d5db,#e4e4e7,#e4e4e7)]"
+  }`}
+  style={{ maxHeight: "90vh" }}>
         {/* LEFT SLIDESHOW */}
         <div className="w-1/2 hidden md:block">
-  <Slideshow
-    slides={[
-      { image: "/images/winter-at-the-strater.jpg", title: "Capturing Moments", subtitle: "Creating Memories" },
-      { image: "/images/durango_road.jpg", title: "Adventure Awaits", subtitle: "Hit the Road" },
-      { image: "/images/durango_train.jpg", title: "Historic Journeys", subtitle: "Ride the Rails" }
-    ]}
-    darkMode={darkMode}
-    containerHeight="80vh" // lock height
-  />
-</div>
+          <Slideshow slides={introSlides} darkMode={darkMode} containerHeight="80vh" />
+        </div>
 
 
         {/* RIGHT FORM */}
@@ -69,12 +57,12 @@ export default function Register() {
             <h2 className={`text-2xl font-bold ${darkMode ? "text-white" : "text-black"}`}>
               Create an account
             </h2>
-            <button onClick={toggleDarkMode} className="p-2 rounded-full transition-colors duration-300">
-              {darkMode ? <Sun className="text-[#BDD63B]" size={20} /> : <Moon className="text-[#1E1C29]" size={20} />}
-            </button>
+            <button onClick={toggleDarkMode} className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-300 transition-colors duration-300">
+                          {darkMode ? <Sun className="text-black" size={30} /> : <Moon className="text-black" size={30} />}
+                        </button>
           </div>
 
-          <p className={`text-sm mb-6 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+          <p className={`text-lg mb-6 ${darkMode ? "text-white" : "text-black"}`}>
             Already have an account?{" "}
             <Link to="/login" className={`font-medium hover:underline ${darkMode ? "text-[#BDD63B]" : "text-[#1E1C29]"}`}>
               Log in
@@ -85,21 +73,19 @@ export default function Register() {
             <div className="flex gap-3">
               <input
                 type="text"
-                placeholder="First name"
+                placeholder="First Name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className={`w-1/2 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] transition-colors duration-300 ${
-                  darkMode ? "bg-[#2D2B3A] text-white placeholder-gray-400" : "bg-gray-200 text-black placeholder-gray-600"
-                }`}
+                className={`inputs-set ${ darkMode ? "inputs-set-dark" : "inputs-set-light" }`}
+
               />
               <input
                 type="text"
-                placeholder="Last name"
+                placeholder="Last Name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className={`w-1/2 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] transition-colors duration-300 ${
-                  darkMode ? "bg-[#2D2B3A] text-white placeholder-gray-400" : "bg-gray-200 text-black placeholder-gray-600"
-                }`}
+                className={`inputs-set ${ darkMode ? "inputs-set-dark" : "inputs-set-light" }`}
+
               />
             </div>
 
@@ -108,20 +94,18 @@ export default function Register() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] transition-colors duration-300 ${
-                darkMode ? "bg-[#2D2B3A] text-white placeholder-gray-400" : "bg-gray-200 text-black placeholder-gray-600"
-              }`}
+              className={`inputs-set ${ darkMode ? "inputs-set-dark" : "inputs-set-light" }`}
+
             />
 
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
+                placeholder="Enter your Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={`w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BDD63B] transition-colors duration-300 ${
-                  darkMode ? "bg-[#2D2B3A] text-white placeholder-gray-400" : "bg-gray-200 text-black placeholder-gray-600"
-                }`}
+                className={`inputs-set ${ darkMode ? "inputs-set-dark" : "inputs-set-light" }`}
+
               />
               <button
                 type="button"
@@ -132,16 +116,17 @@ export default function Register() {
               </button>
             </div>
 
-            <label className={`flex items-center text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-              <input type="checkbox" className="mr-2 accent-[#BDD63B] cursor-pointer" />
+            <label className={`flex items-center text-lg ${darkMode ? "text-white" : "text-black"}`}>
+              <input type="checkbox" className="mr-2 accent-[#BDD63B] " />
               I agree to the{" "}
               <Link to="#" className={`ml-1 hover:underline ${darkMode ? "text-[#BDD63B]" : "text-[#1E1C29]"}`}>
                 Terms & Conditions
               </Link>
             </label>
 
-            <button type="submit" className="bg-[#BDD63B] hover:bg-[#A4C22F] text-black font-semibold p-3 rounded-lg transition-colors duration-300">
-              Create account
+            <button type="submit" className={`button-set ${ darkMode ? "button-set-dark" : "button-set-light" }`}
+>
+              Create Account
             </button>
           </form>
         </div>

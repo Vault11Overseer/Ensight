@@ -1,9 +1,7 @@
 // frontend/src/main.jsx
+// DONE
 
-// =========================
-// MAIN PAGE
-// =========================
-
+// MAIN
 // IMPORTS
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -16,7 +14,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <UserDataProvider>
     <App />
-
     </UserDataProvider>
   </React.StrictMode>
 );

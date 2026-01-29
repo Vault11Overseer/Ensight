@@ -1,10 +1,15 @@
 // frontend/src/services/UserDataContext.jsx
 
+
+// USER DATA CONTEXT
+// IMPORT
 import React, {createContext, useContext, useEffect, useState,} from "react";
 import { API_BASE_URL } from "./api";
   
+// STATE
 const UserDataContext = createContext(null);
-  
+
+// EXPORT
 export function UserDataProvider({ children }) {
   const [user, setUser] = useState(null);
   const [albumsCount, setAlbumsCount] = useState(0);
@@ -13,15 +18,15 @@ export function UserDataProvider({ children }) {
     return JSON.parse(localStorage.getItem("darkMode")) ?? true;
   });
 
-  // Load user from localStorage
+  // LOAD USER FROM LOCAL STORAGE
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
   }, []);
 
-  // Sync dark mode
+  // SYNC DARK MODE
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -32,13 +37,13 @@ export function UserDataProvider({ children }) {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
 
-  // Fetch album and image counts
+  // FETCH ALBUM AND IMAGE COUNT
   useEffect(() => {
     if (!user) return;
 
     const fetchCounts = async () => {
       try {
-        // Fetch albums
+        // ALBUM COUNT
         const albumsRes = await fetch(`${API_BASE_URL}/albums/`, {
           credentials: "include",
         });
@@ -50,7 +55,7 @@ export function UserDataProvider({ children }) {
           );
         }
 
-        // Fetch images
+        // IMAGE COUNT
         const imagesRes = await fetch(`${API_BASE_URL}/images/`, {
           credentials: "include",
         });
@@ -84,6 +89,7 @@ export function UserDataProvider({ children }) {
   );
 }
 
+// EXPORT USE CONTEXT
 export function useUserData() {
   return useContext(UserDataContext);
 }

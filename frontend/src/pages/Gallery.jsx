@@ -8,7 +8,7 @@
 import React, { useState } from "react";
 import { Search, GalleryVerticalEnd } from "lucide-react";
 import Header from "../components/module/Header";
-import SearchBar from "../components/module/submodule/Searchbar";
+import SearchBar from "../components/module/Searchbar";
 import { useUserData } from "../services/UserDataContext";
 
 export default function Gallery() {

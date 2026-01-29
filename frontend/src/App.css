@@ -1,5 +1,14 @@
 /* APP.CSS */
 
+/* BUTTON */
+/* className={`button-set ${ darkMode ? "button-set-dark" : "button-set-light" }`} */
+
+/* INPUT */
+/* className={`inputs-set ${ darkMode ? "inputs-set-dark" : "inputs-set-light" }`} */
+
+/* PAGE BODY */
+/* <div className={`page-set ${ darkMode ? "page-set-dark" : "page-set-light" }`}> */
+
 /* TAILWINDS SETUP */
 @tailwind base;
 @tailwind components;
@@ -9,4 +18,153 @@
 html, body {
   margin: 0;
   padding: 0;
+}
+
+
+/* DARK / LIGHT - HOVER GLOBALS */
+@layer components {
+  /* DARK / LIGHT BASE */
+  .bg-set-hover {
+    @apply w-full flex flex-col items-center p-6 rounded-2xl shadow-xl transition-transform duration-300 hover:scale-105;
+  }
+
+  /* DARK MODE */
+  .bg-set-hover-dark {
+    @apply relative overflow-hidden border border-gray-100 rounded-2xl p-6 flex flex-col items-center 
+      hover:shadow-lg hover:shadow-gray-300/50 hover:saturate-150 text-white;
+
+    background: linear-gradient(to right, #262627, #4f4e4f, #262526); 
+    background-size: 200% 200%;
+    background-position: 0% 50%;
+    position: relative;
+  }
+
+  .bg-set-hover-dark:hover {
+    background-position: 100% 50%; 
+  }
+
+  .bg-set-hover-dark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, transparent, rgba(9, 8, 8, 0.2), transparent);
+    transform: translateX(-150%);
+    transition: transform 1.2s ease-in-out; 
+  }
+
+  .bg-set-hover-dark:hover::before {
+    transform: translateX(150%);
+  }
+
+  /* LIGHT MODE */
+  .bg-set-hover-light {
+    @apply relative overflow-hidden border border-gray-400 rounded-2xl p-6 flex flex-col items-center
+      hover:shadow-lg hover:shadow-zinc-300/50 hover:saturate-150 text-black;
+
+    background: linear-gradient(to right, #d1d5db, #e4e4e7, #e4e4e7); 
+    background-size: 200% 200%;
+    background-position: 0% 50%;
+    position: relative;
+  }
+
+  .bg-set-hover-light:hover {
+    background-position: 100% 50%;
+  }
+
+  .bg-set-hover-light::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.6), transparent);
+    transform: translateX(-150%);
+    transition: transform 1.2s ease-in-out; 
+
+  .bg-set-hover-light:hover::before {
+    transform: translateX(150%);
+  }
+}
+/* DARK / LIGHT - HOVER GLOBALS */
+
+
+
+
+
+
+/* DARK / LIGHT GLOBALS */
+@layer components {
+  .bg-set {
+    @apply my-10 
+  }
+  /* DARK MODE */
+  .bg-set-dark {
+    @apply relative overflow-hidden border border-gray-100 rounded-2xl p-6 flex flex-col items-center 
+      hover:shadow-lg hover:shadow-gray-300/50 hover:saturate-150 text-white;
+
+    background: linear-gradient(to right, #262627, #4f4e4f, #262526); 
+    background-size: 200% 200%;
+    background-position: 0% 50%;
+    position: relative;
+  }
+
+  /* LIGHT MODE */
+  .bg-set-light {
+    @apply relative overflow-hidden border border-gray-400 rounded-2xl p-6 flex flex-col items-center
+      hover:shadow-lg hover:shadow-zinc-300/50 hover:saturate-150 text-black;
+
+    background: linear-gradient(to right, #d1d5db, #e4e4e7, #e4e4e7); 
+    background-size: 200% 200%;
+    background-position: 0% 50%;
+    position: relative;
+  }
+}
+/* DARK / LIGHT GLOBALS */
+
+
+/* PAGE GLOBALS */
+@layer components { 
+  /* BASE PAGE */
+  .page-set { @apply min-h-screen p-8 transition-colors duration-300; }
+  /* LIGHT PAGE */
+  .page-set-light { @apply bg-slate-100 text-black; }
+  
+  /* DARK PAGE */
+  .page-set-dark { @apply bg-black text-white; }
+}
+/* PAGE GLOBALS */
+
+
+
+/* INPUT GLOBALS */
+@layer components { 
+  /* BASE INPUT */
+  .inputs-set
+   { @apply w-full p-3 border-2 border-slate-500 bg-slate-200 text-black transition-colors duration-300 rounded-lg focus:placeholder-zinc-500 placeholder-black focus:bg-white; }
+
+  /* DARK INPUT */
+  .inputs-set-dark
+   { @apply focus:outline-none focus:ring-2 focus:ring-[#BDD63B]; }
+
+  /* LIGHT INPUT */
+  .inputs-set-light
+   { @apply focus:outline-none focus:ring-2 focus:ring-[#263248]; }
+}
+/* INPUT GLOBALS */
+
+
+/* BUTTON GLOBALS */
+@layer components { 
+  /* BASE BUTTON */
+  .button-set
+   {@apply w-full px-6 py-4 rounded-xl font-semibold hover:scale-105 cursor-pointer;}
+
+  /* DARK BUTTON */
+  .button-set-dark
+   {@apply bg-[#BDD63B] text-black hover:bg-[#dcfa3e];}
+
+  /* LIGHT BUTTON */
+  .button-set-light
+   {@apply bg-[#263248] text-white hover:bg-[#12264a];}
+}
+/* BUTTON GLOBALS */
+
 }

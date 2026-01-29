@@ -1,21 +1,32 @@
 // frontend/src/services/api.js
 
+// API
+// EXPORT
 export const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-// =========================
-// HELPER: Get auth token from localStorage
-// =========================
+// NEW FileX, DID THIS WORK
+// GET AUTH TOKEN FROM LOCAL STORAGE
 function getAuthHeaders() {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  // For now, we'll use a simple approach - you may need to adjust based on your auth setup
-  return {
-    "Content-Type": "application/json",
-  };
-}
+  // const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const user =
+  JSON.parse(localStorage.getItem("user")) ||
+  JSON.parse(sessionStorage.getItem("user"));
 
-// =========================
+  return { "Content-Type": "application/json", };
+}
+// ADD LATER AFTER AUTH
+// function getAuthHeaders() {
+//   const token =
+//     localStorage.getItem("accessToken") ||
+//     sessionStorage.getItem("accessToken");
+
+//   return {
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${token}`,
+//   };
+// }
+
 // HEALTH CHECK
-// =========================
 export const healthCheck = async () => {
   try {
     const res = await fetch(`${API_BASE_URL}/health`);
@@ -28,9 +39,7 @@ export const healthCheck = async () => {
   }
 };
 
-// =========================
 // AUTH
-// =========================
 export const login = async (email, password) => {
   const res = await fetch(`${API_BASE_URL}/users/login`, {
     method: "POST",
@@ -41,9 +50,7 @@ export const login = async (email, password) => {
   return res.json();
 };
 
-// =========================
 // GALLERY
-// =========================
 export const getGallery = async (skip = 0, limit = 100, search = null) => {
   const params = new URLSearchParams({ skip, limit });
   if (search) params.append("search", search);
@@ -58,6 +65,7 @@ export const getGallery = async (skip = 0, limit = 100, search = null) => {
 // =========================
 // IMAGES
 // =========================
+// GET IMAGES
 export const getImages = async (skip = 0, limit = 100) => {
   const params = new URLSearchParams({ skip, limit });
   const res = await fetch(`${API_BASE_URL}/images?${params}`, {
@@ -67,6 +75,7 @@ export const getImages = async (skip = 0, limit = 100) => {
   return res.json();
 };
 
+// GET IMAGE
 export const getImage = async (imageId) => {
   const res = await fetch(`${API_BASE_URL}/images/${imageId}`, {
     headers: getAuthHeaders(),
@@ -75,6 +84,7 @@ export const getImage = async (imageId) => {
   return res.json();
 };
 
+// UPLOAD IMAGE
 export const uploadImage = async (file, title, description, albumIds = [], userTags = []) => {
   const formData = new FormData();
   formData.append("file", file);
@@ -96,6 +106,7 @@ export const uploadImage = async (file, title, description, albumIds = [], userT
   return res.json();
 };
 
+// UPDATE IMAGES
 export const updateImage = async (imageId, data) => {
   const res = await fetch(`${API_BASE_URL}/images/${imageId}`, {
     method: "PUT",
@@ -106,6 +117,7 @@ export const updateImage = async (imageId, data) => {
   return res.json();
 };
 
+// DELETE IMAGE
 export const deleteImage = async (imageId) => {
   const res = await fetch(`${API_BASE_URL}/images/${imageId}`, {
     method: "DELETE",
@@ -115,6 +127,7 @@ export const deleteImage = async (imageId) => {
   return res.json();
 };
 
+// ADD IMAGE TO ALBUM
 export const addImageToAlbum = async (imageId, albumId) => {
   const res = await fetch(`${API_BASE_URL}/images/${imageId}/albums/${albumId}`, {
     method: "POST",
@@ -124,6 +137,7 @@ export const addImageToAlbum = async (imageId, albumId) => {
   return res.json();
 };
 
+// REMOVE IMAGE FROM ALBUM
 export const removeImageFromAlbum = async (imageId, albumId) => {
   const res = await fetch(`${API_BASE_URL}/images/${imageId}/albums/${albumId}`, {
     method: "DELETE",
@@ -136,6 +150,7 @@ export const removeImageFromAlbum = async (imageId, albumId) => {
 // =========================
 // ALBUMS
 // =========================
+// GET ALBUMS
 export const getAlbums = async () => {
   const res = await fetch(`${API_BASE_URL}/albums/`, {
     headers: getAuthHeaders(),
@@ -144,6 +159,7 @@ export const getAlbums = async () => {
   return res.json();
 };
 
+// GET ALBUM
 export const getAlbum = async (albumId) => {
   const res = await fetch(`${API_BASE_URL}/albums/${albumId}`, {
     headers: getAuthHeaders(),
@@ -152,6 +168,7 @@ export const getAlbum = async (albumId) => {
   return res.json();
 };
 
+// GET ALBUM IMAGES
 export const getAlbumImages = async (albumId) => {
   const res = await fetch(`${API_BASE_URL}/albums/${albumId}/images`, {
     headers: getAuthHeaders(),
@@ -160,6 +177,7 @@ export const getAlbumImages = async (albumId) => {
   return res.json();
 };
 
+// CREATE ALBUM
 export const createAlbum = async (title, description = null) => {
   const res = await fetch(`${API_BASE_URL}/albums/`, {
     method: "POST",
@@ -170,6 +188,7 @@ export const createAlbum = async (title, description = null) => {
   return res.json();
 };
 
+// UPDATE ALBUM
 export const updateAlbum = async (albumId, data) => {
   const res = await fetch(`${API_BASE_URL}/albums/${albumId}`, {
     method: "PUT",
@@ -180,6 +199,7 @@ export const updateAlbum = async (albumId, data) => {
   return res.json();
 };
 
+// DELETE ALBUM
 export const deleteAlbum = async (albumId) => {
   const res = await fetch(`${API_BASE_URL}/albums/${albumId}`, {
     method: "DELETE",
@@ -192,6 +212,7 @@ export const deleteAlbum = async (albumId) => {
 // =========================
 // FAVORITES
 // =========================
+// GET FAVORITES
 export const getFavorites = async () => {
   const res = await fetch(`${API_BASE_URL}/favorites/`, {
     headers: getAuthHeaders(),
@@ -200,6 +221,7 @@ export const getFavorites = async () => {
   return res.json();
 };
 
+// ADD IMAGE TO FAVORITE
 export const addFavorite = async (imageId) => {
   const res = await fetch(`${API_BASE_URL}/favorites/${imageId}`, {
     method: "POST",
@@ -209,6 +231,7 @@ export const addFavorite = async (imageId) => {
   return res.json();
 };
 
+// REMOVE A FAVORITE
 export const removeFavorite = async (imageId) => {
   const res = await fetch(`${API_BASE_URL}/favorites/${imageId}`, {
     method: "DELETE",
@@ -218,6 +241,7 @@ export const removeFavorite = async (imageId) => {
   return res.json();
 };
 
+// CHECK FAVORITES
 export const checkFavorite = async (imageId) => {
   const res = await fetch(`${API_BASE_URL}/favorites/${imageId}/check`, {
     headers: getAuthHeaders(),
@@ -229,6 +253,7 @@ export const checkFavorite = async (imageId) => {
 // =========================
 // SHARE LINKS
 // =========================
+// CREATE SHARE LINK
 export const createShareLink = async (resourceType, resourceId, expiresAt = null) => {
   const res = await fetch(`${API_BASE_URL}/share-links/`, {
     method: "POST",
@@ -239,12 +264,14 @@ export const createShareLink = async (resourceType, resourceId, expiresAt = null
   return res.json();
 };
 
+// GET SHARE LINK
 export const getShareLink = async (token) => {
   const res = await fetch(`${API_BASE_URL}/share-links/token/${token}`);
   if (!res.ok) throw new Error("Failed to fetch share link");
   return res.json();
 };
 
+// DELETE SHARE LINK
 export const deleteShareLink = async (linkId) => {
   const res = await fetch(`${API_BASE_URL}/share-links/${linkId}`, {
     method: "DELETE",

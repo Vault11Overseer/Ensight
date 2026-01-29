@@ -1,9 +1,14 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
+// frontend/src/pages/auth/PrivateRoute.jsx
+// DONE
 
+// PRIVATE ROUTE
+// IMPORTS
+import { Navigate } from "react-router-dom";
+import { useUserData } from "../../services/UserDataContext";
+
+// EXPORT
 export default function PrivateRoute({ children }) {
-  const storedUser = localStorage.getItem("user");
-  const user = storedUser ? JSON.parse(storedUser) : null;
+  const { user } = useUserData();
 
   if (!user) {
     return <Navigate to="/login" replace />;

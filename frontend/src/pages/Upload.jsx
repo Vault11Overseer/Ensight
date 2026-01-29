@@ -1,5 +1,7 @@
 // frontend/src/pages/Upload.jsx
 
+// UPLOADS
+// IMPORTS
 import React, { useState, useEffect } from "react";
 import Header from "../components/module/Header";
 import { API_BASE_URL } from "../services/api";
@@ -7,9 +9,10 @@ import defaultImage from "/default_album_image.png";
 import { useUserData } from "../services/UserDataContext";
 import {ImageUp} from "lucide-react"
 
+// EXPORTS
 export default function Upload() {
+  // STATE
   const { user: currentUser, darkMode, setDarkMode } = useUserData();
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState(null);
@@ -20,9 +23,7 @@ export default function Upload() {
   const [recentUploads, setRecentUploads] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // =========================
-  // Load user albums for selection
-  // =========================
+  // LOAD USER ALBUMS
   useEffect(() => {
     const fetchAlbums = async () => {
       try {
@@ -40,9 +41,7 @@ export default function Upload() {
     if (currentUser) fetchAlbums();
   }, [currentUser]);
 
-  // =========================
-  // Image file selection & preview
-  // =========================
+  // IMAGE UPLOAD PREVIEW
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -60,38 +59,32 @@ export default function Upload() {
     if (input) input.value = "";
   };
 
-  // =========================
-  // Upload image handler
-  // =========================
+  // UPLOAD IMAGE HANDLER
   const handleUpload = async (e) => {
   e.preventDefault();
 
-  // 🚨 USER GUARD (this fixes the crash)
+  // IS USER LOGGED IN
   if (!currentUser) {
     alert("You must be logged in to upload images.");
     return;
   }
-
-  // Validation
+  // VALIDATION
   if (!title.trim()) return alert("Title is required");
   if (!description.trim()) return alert("Description is required");
   if (!imageFile) return alert("Image file is required");
   if (!userTags.trim()) return alert("Please provide at least one tag");
 
   setLoading(true);
-
+  // TRY / EXCEPT
   try {
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    // backend expects the file field to be named `file`
-    formData.append("file", imageFile);
-    formData.append("user_tags", userTags);
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("file", imageFile);
+      formData.append("user_tags", userTags);
 
-    // backend expects comma-separated album IDs in `album_ids`
-    if (albumId) {
-      formData.append("album_ids", albumId);
-    }
+    // BACKEND EXPECTS COMMA-SEPERATED ALBUM ID'S
+    if (albumId) {formData.append("album_ids", albumId);}
 
     const res = await fetch(`${API_BASE_URL}/images/`, {
       method: "POST",
@@ -108,7 +101,7 @@ export default function Upload() {
 
     setRecentUploads((prev) => [newImage, ...prev]);
 
-    // Reset form
+    // RESET FORM
     setTitle("");
     setDescription("");
     setImageFile(null);
@@ -153,63 +146,66 @@ export default function Upload() {
 
   // RENDER
   return (
-    <div className={`min-h-screen p-8 transition-colors ${darkMode ? "bg-black text-white" : "bg-white text-black"}`}>
+    // UPLOAD CONTAINER
+    <div className={`page-set ${ darkMode ? "page-set-dark" : "page-set-light" }`}>
+
       {/* HEADER */}
-      <Header
-        navigationProps={{ toggleDarkMode: () => setDarkMode((prev) => !prev) }}
-      />
+      <Header navigationProps={{ toggleDarkMode: () => setDarkMode((prev) => !prev) }} />
 
       {/* PAGE HEADER */}
       <div className="flex items-center gap-2 mt-10 mb-6">
-      <ImageUp size={30} />
+      <ImageUp size={30} className={`${ darkMode ? "text-[#BDD63B]" : "text-[#1E3A8A]"  }`}/>
         <h1 className="text-4xl font-semibold">Uploads</h1>
-        <p className="text-1xl opacity-80 mt-2">
+        <p className="text-1xl opacity-90 mt-2 font-bold">
           Upload your very own images.<br />
-          Add them to your albums now or later but they all end up in the Gallery.
+          Add them to your albums now, or later but they all end up in the Gallery.
         </p>
       </div>
 
       {/* UPLOAD FORM */}
-      <section className="my-10 w-full">
+      <section className={`bg-set ${darkMode ? "bg-set-dark" : "bg-set-light" }`}>
         <form
           onSubmit={handleUpload}
-          className={`p-6 rounded-2xl shadow space-y-4 ${darkMode ? "bg-[#BDD63B] text-black" : "bg-[#263248] text-white"}`}
+          className="p-6 rounded-2xl space-y-4"
         >
+          {/* FORM HEADER */}
           <h2 className="text-xl font-semibold">Upload New Image</h2>
 
+          {/* TITLE INPUT */}
           <input
             type="text"
-            placeholder="Image title"
+            placeholder="Image Title (Required)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-3 rounded-lg bg-white text-black outline-none"
+            className={`inputs-set ${ darkMode ? "inputs-set-dark" : "inputs-set-light" }`}
             required
           />
 
+          {/* DESCRIPTION INPUT */}
           <textarea
-            placeholder="Description (required)"
+            placeholder="Image Description (Required)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-3 rounded-lg bg-white text-black outline-none resize-none"
+            className={`inputs-set ${ darkMode ? "inputs-set-dark" : "inputs-set-light" }`}
             rows={3}
             required
           />
 
-          {/* User tags */}
+          {/* TAGS INPUT */}
           <input
             type="text"
-            placeholder="Tags (comma-separated, at least one)"
+            placeholder="Image Tags (Comma-separated, at least one tag is Required)"
             value={userTags}
             onChange={(e) => setUserTags(e.target.value)}
-            className="w-full p-3 rounded-lg bg-white text-black outline-none"
+            className={`inputs-set ${ darkMode ? "inputs-set-dark" : "inputs-set-light" }`}
             required
           />
 
-          {/* Optional album */}
+          {/* ALBUM COVER INPUT */}
           <select
             value={albumId}
             onChange={(e) => setAlbumId(e.target.value)}
-            className="w-full p-3 rounded-lg bg-white text-black outline-none"
+            className={`inputs-set ${ darkMode ? "inputs-set-dark" : "inputs-set-light" }`}
           >
             <option value="">Add to Album (optional)</option>
             {albums.map((a) => (
@@ -217,29 +213,39 @@ export default function Upload() {
             ))}
           </select>
 
-          {/* Image file */}
-          <div className="space-y-2 bg-white">
+          {/* IMAGE PREVIEW */}
+          <div className={`inputs-set ${ darkMode ? "inputs-set-dark" : "inputs-set-light" }`}
+
+>
             {imagePreview ? (
-              <div className="relative bg-white">
+              <div className="relative">
                 <img src={imagePreview} alt="Preview" className="w-full h-48 object-contain rounded-lg border-2 border-gray-300" />
-                <button type="button" onClick={handleRemoveImage} className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Remove</button>
+                <button type="button" onClick={handleRemoveImage} className="absolute top-2 right-2 bg-red-500 hover:bg-red-700 hover:scale-105 text-white px-3 py-1 rounded text-sm">Remove</button>
               </div>
             ) : (
-              <label htmlFor="image-input" className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer ${darkMode ? "border-gray-600 hover:border-gray-500 bg-gray-800" : "border-gray-300 hover:border-gray-400 bg-gray-50"}`}>
-                <div className="flex flex-col items-center justify-center pt-5 pb-6 bg-white">
-                  <p className="mb-2 text-black text-sm text-xl opacity-70">Click to upload or drag & drop</p>
+              <label htmlFor="image-input" className={"flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer"}>
+                <div className="flex flex-col items-center justify-center pt-5 pb-6 text-black">
+                  <p className="mb-2 text-sm text-xl text-center opacity-70">Click or drag & drop to upload your image.</p>
+                  <p>Accepted Image Typres: PNG, JPG, JPEG, SVG</p>
+                  <p>Upload File Size: 20 GIGS</p>
                 </div>
                 <input id="image-input" type="file" accept="image/*" onChange={handleImageChange} className="hidden" required />
               </label>
             )}
           </div>
 
-{/* BUTTON */}
-          <button type="submit" className={`px-6 py-2 rounded-full font-semibold ${darkMode ? "bg-[#263248] text-white hover:bg-[#122342]" : "bg-[#BDD63B] text-black hover:bg-[#a4c12d]"}`}>
+          {/* UPLOAD IMAGE BUTTON */}
+          <button type="submit" className={`button-set ${ darkMode ? "button-set-dark" : "button-set-light" }`}>
             Upload Image
           </button>
+
+          {/* FORM END */}
         </form>
       </section>
+
+
+
+
 
       {/* RECENT UPLOADS */}
       {recentUploads.length > 0 && (
