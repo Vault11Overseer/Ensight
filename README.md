@@ -39,37 +39,3 @@
 
 
 
-
-# Insight
-
-Blue:
-#263248
-
-Green:
-#BDD63B
-
-
-Backend
-FastAPI
-Gunicorn + Uvicorn
-Hosted on Render
-AWS Cognito
-
-Frontend
-React + Vite
-AWS Cognito
-
-Images
-S3 (already good)
-
-
-
-
-
-<!-- THINGS 2 DO -->
-
-
-Add album detail page
-
-Wire images → albums → master gallery
-
