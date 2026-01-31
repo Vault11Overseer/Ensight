@@ -54,7 +54,15 @@ python -m app.scripts.init_db
 
 
 
-
+BACKEND
+- [ ] Python
+- [ ] FastApi
+- [ ] SQLalchemy
+- [ ] Postgres
+- [ ] Gunicorn
+- [ ] Boto3
+- [ ] Unicorn
+- [ ] Pydantic
 
 
 

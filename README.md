@@ -8,7 +8,31 @@
 
     ## DESCRIPTION
         ### STACK
-            Stack list
+            Project List:
+                BACKEND
+                - [ ] Python
+                - [ ] FastApi
+                - [ ] Gunicorn
+                - [ ] Boto3
+                - [ ] Unicorn
+                - [ ] Pydantic
+                - [ ] Render
+                DATABASE
+                - [ ] SQLalchemy
+                - [ ] Postgres
+                - [ ] Render
+                AWS
+                - [ ] S3
+                - [ ] Cognito
+
+                FRONTEND
+                - [ ] Node / NPM
+                - [ ] React
+                - [ ] Axios
+                - [ ] Lucide
+                - [ ] Vite
+                - [ ] TailWinds
+                - [ ] Render
         ### SHORT DESCRIPTION
             This is a short description.
         ### LONG DESCRIPTION
@@ -18,9 +42,10 @@
 
     ## DEPLOYMENT
         ### REQUIRMENTS
-            OS:
-            Languages:
-            Libraries:
+            OS: Browser
+            Languages: Python / React / SQLAchemy
+            
+
         ### Startup Install
             This is how to set up a startup soft install.
         ### Dev Install 
